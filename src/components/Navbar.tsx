@@ -21,17 +21,17 @@ export default function Navbar() {
         <div className="flex justify-between items-center h-20">
           <Link to="/" className="flex items-center gap-3 group">
             <img src="https://scontent.fcgk33-1.fna.fbcdn.net/v/t39.30808-6/615167722_914906660867547_8653945025282446250_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=1d70fc&_nc_ohc=p-bbk2OOLpsQ7kNvwEyvUGO&_nc_oc=AdmHaT8RtBcUkhiLXaWOdDoBLHxijcRgC0Jq5bn4SDIOVu5o31SRexAmRkPdfjHv_gY&_nc_zt=23&_nc_ht=scontent.fcgk33-1.fna&_nc_gid=6rfRzEihfoaWznYJ-8ai0A&_nc_ss=8&oh=00_Afw4q8oK0t40xl01aITS6bF0spihNkZn7As5KRCsPxT_OA&oe=69B2FF21" alt="Logo PPLH Karawang" className="h-12 w-auto group-hover:scale-105 transition-transform rounded-full" loading="eager" decoding="async" />
-            <span className="font-heading font-bold text-xl text-dark">DPD KOMNAS PPLH Karawang</span>
+            <span className="font-heading font-bold text-lg sm:text-xl md:text-base lg:text-xl text-dark whitespace-nowrap">DPD KOMNAS PPLH Karawang</span>
           </Link>
 
-          <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
+          <div className="hidden md:flex items-center space-x-2 lg:space-x-8 text-xs lg:text-sm font-medium">
             <Link to="/" className={`${isActive('/') ? 'text-primary font-bold' : 'text-gray-600'} hover:text-primary transition`}>Beranda</Link>
             <Link to="/tentang-kami" className={`${isActive('/tentang-kami') ? 'text-primary font-bold' : 'text-gray-600'} hover:text-primary transition`}>Tentang Kami</Link>
             <Link to="/struktur" className={`${isActive('/struktur') ? 'text-primary font-bold' : 'text-gray-600'} hover:text-primary transition`}>Struktur</Link>
             <Link to="/program" className={`${isActive('/program') ? 'text-primary font-bold' : 'text-gray-600'} hover:text-primary transition`}>Program</Link>
             <Link to="/berita" className={`${isActive('/berita') ? 'text-primary font-bold' : 'text-gray-600'} hover:text-primary transition`}>Berita</Link>
             <Link to="/kontak" className={`${isActive('/kontak') ? 'text-primary font-bold' : 'text-gray-600'} hover:text-primary transition`}>Kontak</Link>
-            <Link to="/#aduan" className="bg-accent text-white px-6 py-2.5 rounded-full hover:bg-orange-500 transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center gap-2">
+            <Link to="/#aduan" className="bg-accent text-white px-3 lg:px-6 py-2.5 rounded-full hover:bg-orange-500 transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center gap-1 lg:gap-2">
               <i className="ph ph-warning-circle text-lg"></i> Lapor Pencemaran
             </Link>
           </div>

@@ -58,7 +58,7 @@ export default function Home() {
             <span className="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-primary/20 border border-primary/50 text-light font-semibold text-sm mb-6 backdrop-blur-sm">
               <i className="ph-fill ph-shield-check text-lg"></i> Advokasi & Pengawasan Independen
             </span>
-            <h1 className="font-heading text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4">
+            <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold leading-tight mb-4">
               DPD KOMNAS PPLH <br /><span className="text-accent">Karawang</span>
             </h1>
             <p className="text-xl md:text-2xl text-white mb-6 font-medium">
