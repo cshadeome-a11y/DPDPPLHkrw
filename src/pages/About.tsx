@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import SEO from '../components/SEO';
 
 export default function About() {
   useEffect(() => {
@@ -8,7 +9,13 @@ export default function About() {
   }, []);
 
   return (
-    <section id="tentang" className="py-16 md:py-24 bg-gray-50">
+    <>
+      <SEO 
+        title="Tentang Kami" 
+        description="Pelajari lebih lanjut tentang DPD KOMNAS PPLH Karawang, visi, misi, dan komitmen kami dalam menjaga kelestarian lingkungan hidup."
+        keywords="tentang pplh karawang, visi misi pplh karawang, profil komnas pplh"
+      />
+      <section id="tentang" className="py-16 md:py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div data-aos="fade-right">
@@ -49,5 +56,6 @@ export default function About() {
         </div>
       </div>
     </section>
+    </>
   );
 }

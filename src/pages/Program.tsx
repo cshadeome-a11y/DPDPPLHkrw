@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import SEO from '../components/SEO';
 
 export default function Program() {
   useEffect(() => {
@@ -8,7 +9,13 @@ export default function Program() {
   }, []);
 
   return (
-    <section id="program" className="py-16 md:py-24 bg-white">
+    <>
+      <SEO 
+        title="Program & Pengawasan" 
+        description="Program kerja dan kegiatan pengawasan DPD KOMNAS PPLH Karawang, mulai dari investigasi pencemaran hingga edukasi lingkungan."
+        keywords="program pplh karawang, kegiatan pplh karawang, investigasi lingkungan, advokasi lingkungan"
+      />
+      <section id="program" className="py-16 md:py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16" data-aos="fade-up">
           <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block">Aktivitas Kami</span>
@@ -41,5 +48,6 @@ export default function Program() {
         </div>
       </div>
     </section>
+    </>
   );
 }

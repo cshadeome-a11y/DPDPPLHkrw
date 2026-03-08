@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { Link } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 export default function Home() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -29,6 +30,11 @@ export default function Home() {
 
   return (
     <>
+      <SEO 
+        title="Beranda" 
+        description="DPD KOMNAS PPLH Karawang adalah lembaga pengawas lingkungan hidup yang menerima pengaduan pencemaran dan kerusakan lingkungan di Karawang."
+        keywords="pengaduan lingkungan karawang, lapor limbah karawang, komnas pplh karawang, pencemaran lingkungan"
+      />
       <section id="beranda" className="relative bg-dark text-white overflow-hidden min-h-[90vh] flex items-center">
         <div className="absolute inset-0 z-0">
           {heroImages.map((image, index) => (

@@ -6,6 +6,7 @@ import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
+import SEO from '../components/SEO';
 
 export default function News() {
   useEffect(() => {
@@ -13,7 +14,13 @@ export default function News() {
   }, []);
 
   return (
-    <section id="berita" className="py-16 md:py-24 bg-white">
+    <>
+      <SEO 
+        title="Berita & Kegiatan" 
+        description="Berita terbaru dan dokumentasi kegiatan DPD KOMNAS PPLH Karawang dalam upaya pelestarian lingkungan hidup."
+        keywords="berita pplh karawang, kegiatan pplh karawang, artikel lingkungan, berita lingkungan karawang"
+      />
+      <section id="berita" className="py-16 md:py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16" data-aos="fade-up">
           <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block">Kabar Terbaru</span>
@@ -104,5 +111,6 @@ export default function News() {
         </Swiper>
       </div>
     </section>
+    </>
   );
 }

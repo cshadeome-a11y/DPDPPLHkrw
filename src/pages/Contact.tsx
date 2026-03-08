@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
+import SEO from '../components/SEO';
 
 export default function Contact() {
   useEffect(() => {
@@ -9,6 +10,11 @@ export default function Contact() {
 
   return (
     <>
+      <SEO 
+        title="Kontak & Media Sosial" 
+        description="Hubungi DPD KOMNAS PPLH Karawang melalui email, WhatsApp, atau media sosial kami untuk pelaporan dan informasi lebih lanjut."
+        keywords="kontak pplh karawang, alamat pplh karawang, email pplh karawang, sosmed pplh karawang"
+      />
       <section id="sosmed" className="py-16 md:py-24 bg-dark text-white relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
            <div className="absolute right-0 top-0 w-96 h-96 bg-primary rounded-full blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
