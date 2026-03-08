@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { Link } from 'react-router-dom';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, EffectFade } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/effect-fade';
 import SEO from '../components/SEO';
 
 export default function Home() {
@@ -13,8 +17,7 @@ export default function Home() {
     "https://scontent.fcgk33-1.fna.fbcdn.net/v/t39.30808-6/648809042_122114675889215177_8151982047925485108_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=13d280&_nc_ohc=U7dK-zhWZ6EQ7kNvwGRSyl3&_nc_oc=AdnT2f1UP6pnact_QtSPTcDeOj5Y7gpr2w0jRKeXlHAb2yMGyqBWNj2tlyXykHhzZZk&_nc_zt=23&_nc_ht=scontent.fcgk33-1.fna&_nc_gid=7aN45CkuYSEOwZk_F6qhMg&_nc_ss=8&oh=00_Afxm8wxkwHoSLnLY8Vy7ft7LXj5MIq23wlk5nNq_By6mNg&oe=69B32201",
     "https://scontent.fcgk33-1.fna.fbcdn.net/v/t39.30808-6/648722656_122114675859215177_1917562212020656991_n.jpg?_nc_cat=111&ccb=1-7&_nc_sid=13d280&_nc_ohc=iECyTdk1OWgQ7kNvwGkQ7Tj&_nc_oc=Adm_P88hieT2GQHY7IvahligudX158z8OPAK17Gr7z7Dkm1FBYthmNzz3M6N-wQGof8&_nc_zt=23&_nc_ht=scontent.fcgk33-1.fna&_nc_gid=94bTAEwKZkcMAQYUHmqO3A&_nc_ss=8&oh=00_Afywyx9JvtkbEVwR-38A4c7eSU9Qwi6vgSxUYSftgQWgGA&oe=69B307F2",
     "https://scontent.fcgk33-1.fna.fbcdn.net/v/t39.30808-6/649109736_122114675823215177_4299429677004223139_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=13d280&_nc_ohc=dU_jbGY2AtgQ7kNvwG20F71&_nc_oc=AdmqWvIDh8RFNbpgrRn6KNEVkLn0XpnQgyJGa8FrfGBrWabZPuGjt6JonpBUrkh6p_I&_nc_zt=23&_nc_ht=scontent.fcgk33-1.fna&_nc_gid=ZbTRUJ1h22cftGNIR7dRuw&_nc_ss=8&oh=00_AfzPTqo-nf_lk_X27hVoL20GvmR_Dcc_SAfJ84vMZrXKtw&oe=69B2EE21",
-    "https://scontent.fcgk33-1.fna.fbcdn.net/v/t39.30808-6/647150881_122114675943215177_5360993793631409425_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=13d280&_nc_ohc=ePl4tEeku_gQ7kNvwEqu9OH&_nc_oc=AdkiIjgiLGWqqInMZ0cqnp2aIZL73hzMxZh-O7z6yUF1J5rf3l2ynL8LM7DsoTZOz5I&_nc_zt=23&_nc_ht=scontent.fcgk33-1.fna&_nc_gid=bNYtMobSkhjYZPL8rASmjg&_nc_ss=8&oh=00_AfxWDuxb8sI6gpyxfmfH-0i5N45XPAdOSWxEEc63nctopQ&oe=69B301D4",
-    "https://scontent.fcgk33-1.fna.fbcdn.net/v/t39.30808-6/648529412_122114675943215177_2337113495329901794_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=13d280&_nc_ohc=LDRjwxGwrMoQ7kNvwFTzY6N&_nc_oc=Adlyn6z9Kx7DZ3NuqXhsckfpXVfCUge_urTAzE4CmCpEmuZnZKZeqWxXdSilF3ytD9w&_nc_zt=23&_nc_ht=scontent.fcgk33-1.fna&_nc_gid=vzQ6fgszq4MF9_0ROdUR1Q&_nc_ss=8&oh=00_AfwHhwIiP7kaqMnV8HxGR2uFFEYKmtnCX3KAvTcejCteXA&oe=69B30844"
+    "https://scontent.fcgk33-1.fna.fbcdn.net/v/t39.30808-6/647150881_122114675943215177_5360993793631409425_n.jpg?_nc_cat=110&ccb=1-7&_nc_sid=13d280&_nc_ohc=ePl4tEeku_gQ7kNvwEqu9OH&_nc_oc=AdkiIjgiLGWqqInMZ0cqnp2aIZL73hzMxZh-O7z6yUF1J5rf3l2ynL8LM7DsoTZOz5I&_nc_zt=23&_nc_ht=scontent.fcgk33-1.fna&_nc_gid=bNYtMobSkhjYZPL8rASmjg&_nc_ss=8&oh=00_AfxWDuxb8sI6gpyxfmfH-0i5N45XPAdOSWxEEc63nctopQ&oe=69B301D4"
   ];
 
   useEffect(() => {
@@ -55,7 +58,7 @@ export default function Home() {
             <span className="inline-flex items-center gap-2 py-1.5 px-4 rounded-full bg-primary/20 border border-primary/50 text-light font-semibold text-sm mb-6 backdrop-blur-sm">
               <i className="ph-fill ph-shield-check text-lg"></i> Advokasi & Pengawasan Independen
             </span>
-            <h1 className="font-heading text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4">
+            <h1 className="font-heading text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-4">
               DPD KOMNAS PPLH <br /><span className="text-accent">Karawang</span>
             </h1>
             <p className="text-xl md:text-2xl text-white mb-6 font-medium">
@@ -105,36 +108,76 @@ export default function Home() {
       </section>
 
       {/* Tentang Kami Section */}
-      <section className="py-16 md:py-24 bg-white">
+      <section className="py-16 md:py-24 bg-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            <div className="relative" data-aos="fade-right">
-              <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Tentang PPLH Karawang" className="rounded-2xl shadow-xl w-full object-cover aspect-[4/3]" loading="lazy" />
-              <div className="absolute -bottom-6 -right-6 bg-primary p-6 rounded-2xl shadow-xl hidden md:block text-white max-w-xs">
-                <p className="font-heading font-bold text-lg mb-1">Komitmen Kami</p>
-                <p className="text-sm opacity-90">Menjaga kelestarian lingkungan Karawang untuk generasi masa depan.</p>
+            <div className="relative group" data-aos="fade-right" data-aos-duration="1000">
+              <div className="absolute -inset-4 bg-gradient-to-r from-primary to-accent rounded-2xl blur-lg opacity-30 group-hover:opacity-50 transition duration-500"></div>
+              <Swiper
+                modules={[Autoplay, EffectFade]}
+                effect="fade"
+                autoplay={{
+                  delay: 3500,
+                  disableOnInteraction: false,
+                }}
+                loop={true}
+                className="rounded-2xl shadow-2xl w-full aspect-[4/3] relative z-10"
+              >
+                <SwiperSlide>
+                  <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Pelestarian Alam" className="w-full h-full object-cover" loading="lazy" />
+                </SwiperSlide>
+                <SwiperSlide>
+                  <img src="https://images.unsplash.com/photo-1516937941348-c09645f31e88?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Pengawasan Industri" className="w-full h-full object-cover" loading="lazy" />
+                </SwiperSlide>
+                <SwiperSlide>
+                  <img src="https://images.unsplash.com/photo-1595278069441-2cf29f8005a4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Aksi Bersih Lingkungan" className="w-full h-full object-cover" loading="lazy" />
+                </SwiperSlide>
+                <SwiperSlide>
+                  <img src="https://images.unsplash.com/photo-1511497584788-876760111969?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Hutan Hijau" className="w-full h-full object-cover" loading="lazy" />
+                </SwiperSlide>
+              </Swiper>
+              
+              <div className="absolute -bottom-6 -right-6 bg-white p-6 rounded-2xl shadow-xl hidden md:block max-w-xs z-20 border-l-4 border-primary animate-bounce-slow">
+                <p className="font-heading font-bold text-lg mb-1 text-dark">Komitmen Kami</p>
+                <p className="text-sm text-gray-600">Menjaga kelestarian lingkungan Karawang untuk generasi masa depan.</p>
               </div>
             </div>
-            <div data-aos="fade-left">
-              <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block">Tentang Kami</span>
-              <h2 className="font-heading text-3xl md:text-4xl font-bold text-dark mb-6">Garda Terdepan Pelindung Lingkungan Karawang</h2>
-              <p className="text-gray-600 mb-6 leading-relaxed text-lg">
+            
+            <div className="pl-0 lg:pl-6">
+              <span className="inline-block text-primary font-bold tracking-wider uppercase text-sm mb-2 bg-primary/10 px-3 py-1 rounded-full" data-aos="fade-down" data-aos-duration="800">Tentang Kami</span>
+              <h2 className="font-heading text-3xl md:text-4xl font-bold text-dark mb-6 leading-tight" data-aos="fade-right" data-aos-delay="200" data-aos-duration="1000">
+                Garda Terdepan <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-400">Pelindung Lingkungan</span> Karawang
+              </h2>
+              <p className="text-gray-600 mb-8 leading-relaxed text-lg" data-aos="fade-up" data-aos-delay="400" data-aos-duration="1000">
                 DPD KOMNAS PPLH Karawang adalah lembaga independen yang berdedikasi untuk mengawasi, mengadvokasi, dan menindaklanjuti isu-isu lingkungan hidup. Kami hadir sebagai jembatan antara masyarakat, pemerintah, dan pelaku industri.
               </p>
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-3 text-gray-700">
-                  <i className="ph-fill ph-check-circle text-primary text-xl"></i> Pengawasan Limbah Industri
+              
+              <ul className="space-y-4 mb-8">
+                <li className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors duration-300" data-aos="fade-left" data-aos-delay="300">
+                  <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
+                    <i className="ph-fill ph-factory text-xl"></i>
+                  </div>
+                  <span className="text-gray-700 font-medium">Pengawasan Limbah Industri</span>
                 </li>
-                <li className="flex items-center gap-3 text-gray-700">
-                  <i className="ph-fill ph-check-circle text-primary text-xl"></i> Advokasi Hukum Lingkungan
+                <li className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors duration-300" data-aos="fade-left" data-aos-delay="400">
+                  <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center text-accent flex-shrink-0">
+                    <i className="ph-fill ph-gavel text-xl"></i>
+                  </div>
+                  <span className="text-gray-700 font-medium">Advokasi Hukum Lingkungan</span>
                 </li>
-                <li className="flex items-center gap-3 text-gray-700">
-                  <i className="ph-fill ph-check-circle text-primary text-xl"></i> Edukasi & Konservasi Alam
+                <li className="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-colors duration-300" data-aos="fade-left" data-aos-delay="500">
+                  <div className="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center text-green-600 flex-shrink-0">
+                    <i className="ph-fill ph-plant text-xl"></i>
+                  </div>
+                  <span className="text-gray-700 font-medium">Edukasi & Konservasi Alam</span>
                 </li>
               </ul>
-              <Link to="/tentang-kami" className="inline-flex items-center gap-2 text-primary font-bold hover:gap-3 transition-all">
-                Profil Selengkapnya <i className="ph-bold ph-arrow-right"></i>
-              </Link>
+              
+              <div data-aos="fade-up" data-aos-delay="600">
+                <Link to="/tentang-kami" className="inline-flex items-center gap-2 bg-dark text-white px-6 py-3 rounded-full font-bold hover:bg-primary transition-all duration-300 shadow-lg hover:shadow-primary/30 group">
+                  Profil Selengkapnya <i className="ph-bold ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
+                </Link>
+              </div>
             </div>
           </div>
         </div>
@@ -143,10 +186,10 @@ export default function Home() {
       {/* Program Unggulan Section */}
       <section className="py-16 md:py-24 bg-gray-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center max-w-3xl mx-auto mb-12" data-aos="fade-up">
-            <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block">Program Unggulan</span>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-dark mb-4">Aksi Nyata Untuk Bumi</h2>
-            <p className="text-gray-600 text-lg">Berbagai inisiatif strategis yang kami jalankan demi mewujudkan lingkungan yang bersih dan sehat.</p>
+          <div className="text-center max-w-3xl mx-auto mb-12">
+            <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block" data-aos="fade-down" data-aos-duration="800">Program Unggulan</span>
+            <h2 className="font-heading text-3xl md:text-4xl font-bold text-dark mb-4" data-aos="zoom-in" data-aos-delay="200" data-aos-duration="1000">Aksi Nyata Untuk Bumi</h2>
+            <p className="text-gray-600 text-lg" data-aos="fade-up" data-aos-delay="400" data-aos-duration="1000">Berbagai inisiatif strategis yang kami jalankan demi mewujudkan lingkungan yang bersih dan sehat.</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -198,12 +241,12 @@ export default function Home() {
       {/* Berita Terbaru Section */}
       <section className="py-16 md:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4" data-aos="fade-up">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-12 gap-4">
             <div className="max-w-2xl">
-              <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block">Kabar Lapangan</span>
-              <h2 className="font-heading text-3xl md:text-4xl font-bold text-dark">Berita & Kegiatan Terbaru</h2>
+              <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block" data-aos="fade-down" data-aos-duration="800">Kabar Lapangan</span>
+              <h2 className="font-heading text-3xl md:text-4xl font-bold text-dark" data-aos="fade-right" data-aos-delay="200" data-aos-duration="1000">Berita & Kegiatan Terbaru</h2>
             </div>
-            <Link to="/berita" className="hidden md:flex items-center gap-2 text-primary font-bold hover:gap-3 transition-all">
+            <Link to="/berita" className="hidden md:flex items-center gap-2 text-primary font-bold hover:gap-3 transition-all" data-aos="fade-left" data-aos-delay="400">
               Lihat Semua Berita <i className="ph-bold ph-arrow-right"></i>
             </Link>
           </div>
