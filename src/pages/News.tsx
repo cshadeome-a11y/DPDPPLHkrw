@@ -7,6 +7,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import SEO from '../components/SEO';
+import { Link } from 'react-router-dom';
 
 export default function News() {
   useEffect(() => {
@@ -46,6 +47,27 @@ export default function News() {
           data-aos="fade-up" 
           data-aos-delay="100"
         >
+          {/* Berita Terbaru - Podcast STURADA */}
+          <SwiperSlide>
+            <Link to="/berita/dukung-program-mbg" className="group block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
+              <div className="relative h-48 overflow-hidden">
+                <img src="https://fk-kim-karawang.kim.id/assets/files/data/321526100101/_OTR1127_Large.jpeg" alt="Podcast STURADA - DPD Komnas PPLH Karawang" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
+                <div className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">09 Mar 2026</div>
+              </div>
+              <div className="p-6">
+                <h3 className="font-heading font-bold text-xl text-dark mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                  DPD KOMNAS PPLH Karawang Dukung Program MBG dengan Pendekatan Ramah Lingkungan dalam Podcast STURADA
+                </h3>
+                <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                  Komnas PPLH Karawang menawarkan solusi pengolahan limbah organik dapur MBG melalui pengadaan tong komposter komunal.
+                </p>
+                <span className="text-primary font-semibold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                  Baca Selengkapnya <i className="ph-bold ph-arrow-right"></i>
+                </span>
+              </div>
+            </Link>
+          </SwiperSlide>
+
           {/* Berita 1 */}
           <SwiperSlide>
             <a href="https://www.faktajabar.co.id/2026/03/02/dpd-komnas-pplh-karawang-ingatkan-dapur-mbg-jangan-sampai-program-sehat-menghasilkan-lingkungan-sakit/" target="_blank" rel="noopener noreferrer" className="group block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">

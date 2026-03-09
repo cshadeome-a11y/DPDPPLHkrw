@@ -6,6 +6,7 @@ import About from './pages/About';
 import Structure from './pages/Structure';
 import Program from './pages/Program';
 import News from './pages/News';
+import NewsDetail from './pages/NewsDetail';
 import Contact from './pages/Contact';
 
 export default function App() {
@@ -19,6 +20,7 @@ export default function App() {
           <Route path="/struktur" element={<Structure />} />
           <Route path="/program" element={<Program />} />
           <Route path="/berita" element={<News />} />
+          <Route path="/berita/dukung-program-mbg" element={<NewsDetail />} />
           <Route path="/kontak" element={<Contact />} />
         </Routes>
       </main>

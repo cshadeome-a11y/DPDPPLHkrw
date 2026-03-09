@@ -252,8 +252,22 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+             {/* News Item Terbaru - Podcast STURADA */}
+             <Link to="/berita/dukung-program-mbg" className="group block" data-aos="fade-up" data-aos-delay="100">
+              <div className="relative h-60 rounded-2xl overflow-hidden mb-4">
+                <img src="https://fk-kim-karawang.kim.id/assets/files/data/321526100101/_OTR1127_Large.jpeg" alt="Podcast STURADA" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-dark">09 Mar 2026</div>
+              </div>
+              <h3 className="font-heading font-bold text-xl text-dark mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                DPD KOMNAS PPLH Karawang Dukung Program MBG dengan Pendekatan Ramah Lingkungan dalam Podcast STURADA
+              </h3>
+              <p className="text-gray-600 text-sm line-clamp-2">
+                Komnas PPLH Karawang menawarkan solusi pengolahan limbah organik dapur MBG melalui pengadaan tong komposter komunal.
+              </p>
+            </Link>
+
              {/* News Item 1 */}
-             <a href="https://www.faktajabar.co.id/2026/03/02/dpd-komnas-pplh-karawang-ingatkan-dapur-mbg-jangan-sampai-program-sehat-menghasilkan-lingkungan-sakit/" target="_blank" rel="noopener noreferrer" className="group block" data-aos="fade-up" data-aos-delay="100">
+             <a href="https://www.faktajabar.co.id/2026/03/02/dpd-komnas-pplh-karawang-ingatkan-dapur-mbg-jangan-sampai-program-sehat-menghasilkan-lingkungan-sakit/" target="_blank" rel="noopener noreferrer" className="group block" data-aos="fade-up" data-aos-delay="200">
               <div className="relative h-60 rounded-2xl overflow-hidden mb-4">
                 <img src="https://www.faktajabar.co.id/wp-content/uploads/2026/03/PPLH.jpg" alt="News 1" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-dark">02 Mar 2026</div>
@@ -267,7 +281,7 @@ export default function Home() {
             </a>
 
             {/* News Item 2 */}
-            <a href="https://www.pelitakarawang.com/2026/03/resmi-dilantik-dpd-komnas-pplh.html" target="_blank" rel="noopener noreferrer" className="group block" data-aos="fade-up" data-aos-delay="200">
+            <a href="https://www.pelitakarawang.com/2026/03/resmi-dilantik-dpd-komnas-pplh.html" target="_blank" rel="noopener noreferrer" className="group block" data-aos="fade-up" data-aos-delay="300">
               <div className="relative h-60 rounded-2xl overflow-hidden mb-4">
                 <img src="https://lh3.googleusercontent.com/-Gy3dEnAMw8A/aaSg1JvniMI/AAAAAAAAXR0/nd12EHXKeT0H-sbrdJBykjx5NAcg9GA-wCNcBGAsYHQ/s1600/115166.jpg" alt="News 2" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                 <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-dark">Mar 2026</div>
@@ -277,20 +291,6 @@ export default function Home() {
               </h3>
               <p className="text-gray-600 text-sm line-clamp-2">
                 DPD Komnas PPLH Kabupaten Karawang resmi dilantik dan siap mengawal kelestarian lingkungan hidup untuk periode 2026–2031.
-              </p>
-            </a>
-
-            {/* News Item 3 */}
-            <a href="https://mediapolisi.com/2026/01/28/komnas-pplh-karawang-dorong-penguatan-pengelolaan-sampah-kepala-dlh-tak-hadir-dalam-audiensi/" target="_blank" rel="noopener noreferrer" className="group block" data-aos="fade-up" data-aos-delay="300">
-              <div className="relative h-60 rounded-2xl overflow-hidden mb-4">
-                <img src="https://mediapolisi.com/wp-content/uploads/2026/01/1000087348-800x535.jpg" alt="News 3" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-dark">28 Jan 2026</div>
-              </div>
-              <h3 className="font-heading font-bold text-xl text-dark mb-2 group-hover:text-primary transition-colors line-clamp-2">
-                Komnas PPLH Karawang Dorong Penguatan Pengelolaan Sampah, Kepala DLH Tak Hadir
-              </h3>
-              <p className="text-gray-600 text-sm line-clamp-2">
-                DPD Komnas PPLH Karawang menggelar audiensi dengan DLHK Karawang membahas pengelolaan sampah.
               </p>
             </a>
           </div>
