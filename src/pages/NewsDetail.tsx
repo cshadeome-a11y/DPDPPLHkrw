@@ -13,9 +13,9 @@ export default function NewsDetail() {
   return (
     <>
       <SEO 
-        title="DPD KOMNAS PPLH Karawang Dukung Program MBG - Berita" 
-        description="DPD KOMNAS PPLH Karawang dukung program Makan Bergizi Gratis (MBG) dengan pendekatan ramah lingkungan melalui pengadaan komposter komunal."
-        keywords="pplh karawang, mbg karawang, makan bergizi gratis, komposter komunal, abdul majid pplh"
+        title="Dukungan Program MBG Ramah Lingkungan Karawang" 
+        description="DPD KOMNAS PPLH Karawang dukung program Makan Bergizi Gratis (MBG) di Karawang dengan solusi komposter komunal untuk cegah limbah dapur."
+        keywords="program MBG Karawang, makan bergizi gratis Karawang, komposter komunal Karawang, Abdul Majid PPLH, limbah dapur MBG"
       />
       
       <article className="py-16 md:py-24 bg-white">

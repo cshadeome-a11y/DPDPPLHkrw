@@ -30,6 +30,7 @@ export default function Navbar() {
             <Link to="/struktur" className={`${isActive('/struktur') ? 'text-primary font-bold' : 'text-gray-600'} hover:text-primary transition`}>Struktur</Link>
             <Link to="/program" className={`${isActive('/program') ? 'text-primary font-bold' : 'text-gray-600'} hover:text-primary transition`}>Program</Link>
             <Link to="/berita" className={`${isActive('/berita') ? 'text-primary font-bold' : 'text-gray-600'} hover:text-primary transition`}>Berita</Link>
+            <Link to="/edukasi" className={`${isActive('/edukasi') ? 'text-primary font-bold' : 'text-gray-600'} hover:text-primary transition`}>Edukasi</Link>
             <Link to="/kontak" className={`${isActive('/kontak') ? 'text-primary font-bold' : 'text-gray-600'} hover:text-primary transition`}>Kontak</Link>
             <Link to="/#aduan" className="bg-accent text-white px-3 lg:px-6 py-2.5 rounded-full hover:bg-orange-500 transition shadow-md hover:shadow-lg transform hover:-translate-y-0.5 flex items-center gap-1 lg:gap-2">
               <i className="ph ph-warning-circle text-lg"></i> Lapor Pencemaran
@@ -55,6 +56,7 @@ export default function Navbar() {
             <Link to="/struktur" onClick={closeMobileMenu} className="block px-3 py-3 text-base font-medium text-gray-700 hover:text-primary hover:bg-light rounded-lg">Struktur</Link>
             <Link to="/program" onClick={closeMobileMenu} className="block px-3 py-3 text-base font-medium text-gray-700 hover:text-primary hover:bg-light rounded-lg">Program</Link>
             <Link to="/berita" onClick={closeMobileMenu} className="block px-3 py-3 text-base font-medium text-gray-700 hover:text-primary hover:bg-light rounded-lg">Berita</Link>
+            <Link to="/edukasi" onClick={closeMobileMenu} className="block px-3 py-3 text-base font-medium text-gray-700 hover:text-primary hover:bg-light rounded-lg">Edukasi</Link>
             <Link to="/kontak" onClick={closeMobileMenu} className="block px-3 py-3 text-base font-medium text-gray-700 hover:text-primary hover:bg-light rounded-lg">Kontak</Link>
             <Link to="/#aduan" onClick={closeMobileMenu} className="block px-3 py-3 mt-4 text-center text-base font-medium text-white bg-accent hover:bg-orange-500 rounded-lg">Lapor Pencemaran</Link>
           </div>

@@ -12,15 +12,15 @@ export default function About() {
     <>
       <SEO 
         title="Tentang Kami" 
-        description="Pelajari lebih lanjut tentang DPD KOMNAS PPLH Karawang, visi, misi, dan komitmen kami dalam menjaga kelestarian lingkungan hidup."
-        keywords="tentang pplh karawang, visi misi pplh karawang, profil komnas pplh"
+        description="Profil DPD KOMNAS PPLH Karawang sebagai LSM lingkungan hidup Karawang yang berfokus pada pengawasan limbah industri dan pelestarian sungai Citarum."
+        keywords="LSM lingkungan hidup Karawang, profil PPLH Karawang, pengawasan limbah Karawang, advokasi lingkungan Karawang"
       />
       <section id="tentang" className="py-16 md:py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div data-aos="fade-right">
             <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block">Tentang Organisasi</span>
-            <h2 className="font-heading text-3xl md:text-4xl font-bold text-dark mb-6">Komite Nasional Pemanfaatan dan Pelestarian Lingkungan Hidup</h2>
+            <h1 className="font-heading text-3xl md:text-4xl font-bold text-dark mb-6">Profil LSM Lingkungan Hidup Karawang: KOMNAS PPLH</h1>
             <p className="text-gray-600 mb-6 leading-relaxed text-lg">
               PPLH Karawang hadir sebagai mitra strategis pemerintah dan masyarakat. Fokus utama kami adalah mencegah terjadinya pencemaran dan kerusakan ekosistem alam di wilayah Karawang melalui pengawasan independen dan advokasi.
             </p>

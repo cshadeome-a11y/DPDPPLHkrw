@@ -35,8 +35,8 @@ export default function Home() {
     <>
       <SEO 
         title="Beranda" 
-        description="DPD KOMNAS PPLH Karawang adalah lembaga pengawas lingkungan hidup yang menerima pengaduan pencemaran dan kerusakan lingkungan di Karawang."
-        keywords="pengaduan lingkungan karawang, lapor limbah karawang, komnas pplh karawang, pencemaran lingkungan"
+        description="Layanan pengaduan pencemaran lingkungan Karawang. DPD KOMNAS PPLH Karawang mengawasi limbah pabrik, sungai Citarum, dan kelestarian alam Karawang."
+        keywords="lapor pencemaran limbah pabrik di Karawang, LSM lingkungan hidup Karawang, pengawasan sungai Citarum Karawang, pengaduan lingkungan Karawang"
       />
       <section id="beranda" className="relative bg-dark text-white overflow-hidden min-h-[90vh] flex items-center">
         <div className="absolute inset-0 z-0">
@@ -59,13 +59,13 @@ export default function Home() {
               <i className="ph-fill ph-shield-check text-lg"></i> Advokasi & Pengawasan Independen
             </span>
             <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold leading-tight mb-4">
-              DPD KOMNAS PPLH <br /><span className="text-accent">Karawang</span>
+              LSM Lingkungan Hidup <br /><span className="text-accent">Karawang</span>
             </h1>
             <p className="text-xl md:text-2xl text-white mb-6 font-medium">
-              Menjaga Lingkungan Bersama
+              Garda Terdepan Pengawasan Limbah & Kelestarian Alam
             </p>
             <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl leading-relaxed">
-              Kami adalah wadah aksi nyata untuk alam. Laporkan kasus dugaan pencemaran lingkungan di sekitar Anda, dan mari bertindak demi masa depan bumi yang lebih baik.
+              Lapor pencemaran limbah pabrik di Karawang secara aman. Kami mengawasi sungai Citarum dan ekosistem Karawang dari kerusakan lingkungan.
             </p>
             <div className="flex flex-wrap gap-4">
               <a href="#aduan" className="bg-primary hover:bg-green-700 text-white px-8 py-4 rounded-full font-semibold transition shadow-lg hover:shadow-xl flex items-center gap-2 text-lg transform hover:-translate-y-1">

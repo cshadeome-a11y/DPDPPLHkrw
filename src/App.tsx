@@ -7,6 +7,8 @@ import Structure from './pages/Structure';
 import Program from './pages/Program';
 import News from './pages/News';
 import NewsDetail from './pages/NewsDetail';
+import Education from './pages/Education';
+import ArticleDetail from './pages/ArticleDetail';
 import Contact from './pages/Contact';
 
 export default function App() {
@@ -21,6 +23,8 @@ export default function App() {
           <Route path="/program" element={<Program />} />
           <Route path="/berita" element={<News />} />
           <Route path="/berita/dukung-program-mbg" element={<NewsDetail />} />
+          <Route path="/edukasi" element={<Education />} />
+          <Route path="/edukasi/:id" element={<ArticleDetail />} />
           <Route path="/kontak" element={<Contact />} />
         </Routes>
       </main>

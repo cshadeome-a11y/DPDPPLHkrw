@@ -12,14 +12,14 @@ export default function Program() {
     <>
       <SEO 
         title="Program & Pengawasan" 
-        description="Program kerja dan kegiatan pengawasan DPD KOMNAS PPLH Karawang, mulai dari investigasi pencemaran hingga edukasi lingkungan."
-        keywords="program pplh karawang, kegiatan pplh karawang, investigasi lingkungan, advokasi lingkungan"
+        description="Program kerja PPLH Karawang: investigasi limbah pabrik, pengawasan sungai Citarum, dan advokasi hukum lingkungan di Karawang."
+        keywords="investigasi limbah Karawang, pengawasan sungai Citarum, advokasi lingkungan Karawang, program kerja LSM Karawang"
       />
       <section id="program" className="py-16 md:py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16" data-aos="fade-up">
           <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block">Aktivitas Kami</span>
-          <h2 className="font-heading text-3xl md:text-4xl font-bold text-dark mb-4">Program & Pengawasan</h2>
+          <h1 className="font-heading text-3xl md:text-4xl font-bold text-dark mb-4">Program Kerja & Pengawasan Lingkungan Karawang</h1>
           <p className="text-gray-600 text-lg">Kami tidak hanya berbicara, tetapi turun langsung ke lapangan untuk memastikan kelestarian alam Karawang tetap terjaga.</p>
         </div>
 

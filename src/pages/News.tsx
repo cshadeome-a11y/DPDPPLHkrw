@@ -18,14 +18,14 @@ export default function News() {
     <>
       <SEO 
         title="Berita & Kegiatan" 
-        description="Berita terbaru dan dokumentasi kegiatan DPD KOMNAS PPLH Karawang dalam upaya pelestarian lingkungan hidup."
-        keywords="berita pplh karawang, kegiatan pplh karawang, artikel lingkungan, berita lingkungan karawang"
+        description="Kumpulan berita lingkungan hidup Karawang, laporan investigasi limbah, dan dokumentasi kegiatan DPD KOMNAS PPLH Karawang."
+        keywords="berita lingkungan Karawang, laporan limbah Karawang, kegiatan LSM Karawang, investigasi PPLH Karawang"
       />
       <section id="berita" className="py-16 md:py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16" data-aos="fade-up">
           <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block">Kabar Terbaru</span>
-          <h2 className="font-heading text-3xl md:text-4xl font-bold text-dark mb-4">Berita & Kegiatan</h2>
+          <h1 className="font-heading text-3xl md:text-4xl font-bold text-dark mb-4">Berita & Kegiatan Lingkungan Karawang</h1>
           <p className="text-gray-600 text-lg">Ikuti perkembangan terbaru aksi dan advokasi lingkungan DPD Komnas PPLH Karawang.</p>
         </div>
 
