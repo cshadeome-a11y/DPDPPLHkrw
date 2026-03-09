@@ -88,6 +88,56 @@ const articleData: Record<string, any> = {
         <p className="mb-6">Jangan takut untuk bersuara jika lingkungan Anda tercemar. Hukum berada di pihak Anda, dan organisasi seperti KOMNAS PPLH siap membantu mengawal proses advokasi hingga tuntas.</p>
       </>
     )
+  },
+  'tragedi-leuwigajah-hpsn-2026': {
+    title: 'Mengenang Tragedi Leuwigajah: Refleksi Hari Peduli Sampah Nasional (HPSN) 2026 untuk Indonesia ASRI',
+    description: 'Refleksi mendalam atas tragedi longsor sampah Leuwigajah 2005 dan ajakan kolaborasi untuk mewujudkan Indonesia yang Aman, Sehat, Resik, dan Indah (ASRI).',
+    keywords: 'HPSN 2026, tragedi Leuwigajah, hari peduli sampah nasional, pengelolaan sampah Karawang, Indonesia ASRI',
+    image: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    date: '20 Februari 2026',
+    content: (
+      <>
+        <div className="flex items-center gap-2 mb-8 text-dark font-bold">
+          <i className="ph-fill ph-user-circle text-2xl text-primary"></i>
+          <span>Oleh: DPD KOMNAS PPLH Karawang</span>
+        </div>
+        <p className="mb-6">Setiap tanggal 21 Februari, bangsa Indonesia memperingati Hari Peduli Sampah Nasional (HPSN). Peringatan ini bukanlah sekadar seremonial tahunan, melainkan sebuah momen refleksi mendalam atas salah satu tragedi lingkungan paling memilukan dalam sejarah pengelolaan sampah di tanah air.</p>
+        
+        <p className="mb-6">Sebagai lembaga pengawas independen yang berdedikasi pada kelestarian lingkungan, DPD KOMNAS PPLH Karawang mengajak seluruh elemen masyarakat untuk sejenak menengok ke belakang, mengambil pelajaran, dan bergerak bersama menuju masa depan yang lebih bersih.</p>
+
+        <h2 className="text-2xl font-bold text-dark mt-10 mb-4">Sejarah Kelam di Balik HPSN: Tragedi Leuwigajah 2005</h2>
+        <p className="mb-6">Peringatan HPSN lahir dari sebuah duka mendalam. Pada 21 Februari 2005, gunungan sampah di Tempat Pembuangan Akhir (TPA) Leuwigajah, Cimahi, Jawa Barat, mengalami longsor dahsyat.</p>
+        
+        <p className="mb-6">Tragedi ini dipicu oleh akumulasi gas metana (gas beracun dan mudah terbakar yang dihasilkan dari pembusukan sampah organik) yang terperangkap di bawah tumpukan sampah, ditambah dengan curah hujan yang sangat tinggi. Ledakan gas metana tersebut memicu longsoran jutaan kubik sampah yang menyapu dua permukiman warga dan merenggut lebih dari 150 korban jiwa.</p>
+
+        <p className="mb-6">Peristiwa ini menjadi tamparan keras bagi kita semua bahwa pengelolaan sampah yang buruk—hanya dengan sistem kumpul, angkut, dan buang—dapat berubah menjadi bom waktu yang mematikan.</p>
+
+        <h2 className="text-2xl font-bold text-dark mt-10 mb-4">Peringatan HPSN 2026: Kolaborasi Untuk Indonesia ASRI</h2>
+        <p className="mb-6">Tahun ini, peringatan HPSN 2026 mengusung tema besar: <strong>“Kolaborasi Untuk Indonesia ASRI (Aman, Sehat, Resik dan Indah)”</strong>.</p>
+
+        <p className="mb-6">Tema ini menekankan bahwa persoalan sampah tidak bisa diselesaikan oleh satu pihak saja. Diperlukan sinergi dan kolaborasi nyata antara pemerintah, masyarakat, dan dunia usaha. Fokus utama tahun ini adalah:</p>
+
+        <ul className="list-disc pl-6 mb-6 space-y-2">
+          <li><strong>Pengelolaan Terintegrasi:</strong> Mendorong sistem pengelolaan sampah yang berkelanjutan dari hulu ke hilir.</li>
+          <li><strong>Penurunan Emisi:</strong> Mengurangi gas rumah kaca (seperti metana dari TPA) yang berkontribusi pada perubahan iklim.</li>
+          <li><strong>Bisnis Hijau (Green Business):</strong> Mendorong partisipasi aktif sektor usaha dalam praktik ekonomi sirkular yang ramah lingkungan.</li>
+        </ul>
+
+        <h2 className="text-2xl font-bold text-dark mt-10 mb-4">Apa yang Bisa Kita Lakukan?</h2>
+        <p className="mb-6">DPD KOMNAS PPLH Karawang menegaskan bahwa perubahan besar selalu dimulai dari langkah kecil di rumah kita sendiri. Tragedi Leuwigajah mengingatkan kita akan bahaya nyata dari sampah yang diabaikan. Berikut adalah aksi nyata yang bisa kita terapkan:</p>
+
+        <ul className="list-decimal pl-6 mb-6 space-y-4">
+          <li><strong>Pilah Sampah dari Rumah:</strong> Pisahkan sampah organik (sisa makanan, daun) dengan sampah anorganik (plastik, kaca, kertas). Langkah sederhana ini mencegah penumpukan gas metana di TPA dan mempermudah proses daur ulang.</li>
+          <li><strong>Kurangi Plastik Sekali Pakai:</strong> Biasakan membawa tas belanja, botol minum, dan wadah makan sendiri untuk menekan volume sampah plastik yang sulit terurai.</li>
+          <li><strong>Tingkatkan Daur Ulang:</strong> Manfaatkan bank sampah di lingkungan sekitar atau ubah sampah organik menjadi kompos.</li>
+          <li><strong>Ikut Serta dalam Aksi Nyata:</strong> Peringatan HPSN biasanya diisi dengan kerja bakti, aksi bersih-bersih lingkungan, dan edukasi publik. Mari ambil bagian dalam kegiatan positif di lingkungan masing-masing.</li>
+        </ul>
+
+        <div className="bg-green-50 border-l-4 border-primary p-6 my-10 rounded-r-xl">
+          <p className="text-gray-700 italic">Sampah adalah tanggung jawab kita bersama. Mari wujudkan kolaborasi nyata untuk Karawang dan Indonesia yang Aman, Sehat, Resik, dan Indah. Jika Anda menemukan indikasi pelanggaran atau pencemaran lingkungan yang serius di wilayah Karawang, jangan ragu untuk melaporkannya melalui layanan pengaduan DPD KOMNAS PPLH Karawang.</p>
+        </div>
+      </>
+    )
   }
 };
 

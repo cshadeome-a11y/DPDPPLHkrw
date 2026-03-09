@@ -18,6 +18,13 @@ const articles = [
     excerpt: 'Kenali hak hukum Anda sebagai warga negara Indonesia dalam mendapatkan lingkungan hidup yang baik dan sehat sesuai Undang-Undang.',
     image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     date: '10 Mar 2026'
+  },
+  {
+    id: 'tragedi-leuwigajah-hpsn-2026',
+    title: 'Mengenang Tragedi Leuwigajah: Refleksi HPSN 2026',
+    excerpt: 'Refleksi mendalam atas tragedi longsor sampah Leuwigajah 2005 dan ajakan kolaborasi untuk mewujudkan Indonesia yang Aman, Sehat, Resik, dan Indah (ASRI).',
+    image: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    date: '20 Feb 2026'
   }
 ];
 

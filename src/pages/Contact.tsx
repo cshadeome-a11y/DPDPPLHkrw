@@ -13,7 +13,7 @@ export default function Contact() {
       <SEO 
         title="Kontak & Alamat" 
         description="Hubungi DPD KOMNAS PPLH Karawang untuk pengaduan lingkungan Karawang. Alamat sekretariat, WhatsApp, dan media sosial resmi."
-        keywords="kontak PPLH Karawang, alamat LSM Karawang, lapor pencemaran Karawang, nomor telepon PPLH Karawang"
+        keywords="kontak PPLH Karawang, alamat pengawas lingkungan Karawang, lapor pencemaran Karawang, nomor telepon PPLH Karawang"
       />
       <section id="sosmed" className="py-16 md:py-24 bg-dark text-white relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">

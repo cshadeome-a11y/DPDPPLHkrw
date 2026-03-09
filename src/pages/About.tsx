@@ -12,17 +12,17 @@ export default function About() {
     <>
       <SEO 
         title="Tentang Kami" 
-        description="Profil DPD KOMNAS PPLH Karawang sebagai LSM lingkungan hidup Karawang yang berfokus pada pengawasan limbah industri dan pelestarian sungai Citarum."
-        keywords="LSM lingkungan hidup Karawang, profil PPLH Karawang, pengawasan limbah Karawang, advokasi lingkungan Karawang"
+        description="Profil DPD KOMNAS PPLH Karawang sebagai Lembaga Pengawas Independen yang berfokus pada investigasi limbah industri dan pelestarian ekosistem."
+        keywords="Lembaga Pengawas Lingkungan Karawang, Profil PPLH Karawang, Pengawasan Limbah Karawang, Advokasi Lingkungan Karawang"
       />
       <section id="tentang" className="py-16 md:py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           <div data-aos="fade-right">
             <span className="text-primary font-bold tracking-wider uppercase text-sm mb-2 block">Tentang Organisasi</span>
-            <h1 className="font-heading text-3xl md:text-4xl font-bold text-dark mb-6">Profil LSM Lingkungan Hidup Karawang: KOMNAS PPLH</h1>
+            <h1 className="font-heading text-3xl md:text-4xl font-bold text-dark mb-6">Profil Lembaga Pengawas Independen: KOMNAS PPLH</h1>
             <p className="text-gray-600 mb-6 leading-relaxed text-lg">
-              PPLH Karawang hadir sebagai mitra strategis pemerintah dan masyarakat. Fokus utama kami adalah mencegah terjadinya pencemaran dan kerusakan ekosistem alam di wilayah Karawang melalui pengawasan independen dan advokasi.
+              DPD KOMNAS PPLH Karawang merupakan bagian dari Komite Nasional yang bergerak secara resmi dengan payung hukum yang jelas untuk mengawal kelestarian lingkungan di wilayah Karawang. Kami bukan sekadar pergerakan biasa, melainkan mitra strategis yang mengedepankan investigasi berbasis data dan advokasi profesional.
             </p>
             <ul className="space-y-4 mb-8">
               <li className="flex items-start gap-3">
@@ -35,7 +35,7 @@ export default function About() {
               </li>
               <li className="flex items-start gap-3">
                 <i className="ph-fill ph-check-circle text-primary text-xl mt-1"></i>
-                <span className="text-gray-700">Bergerak secara legal dan resmi sebagai lembaga swadaya masyarakat.</span>
+                <span className="text-gray-700">Bergerak secara legal dan resmi sebagai Organisasi Masyarakat Sipil (OMS) yang berwibawa.</span>
               </li>
             </ul>
           </div>

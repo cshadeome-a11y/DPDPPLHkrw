@@ -8,7 +8,7 @@ export default function Footer() {
           <div>
             <Link to="/" className="flex items-center gap-3 mb-6">
               <img src="https://scontent.fcgk33-1.fna.fbcdn.net/v/t39.30808-6/615167722_914906660867547_8653945025282446250_n.jpg?_nc_cat=108&ccb=1-7&_nc_sid=1d70fc&_nc_ohc=p-bbk2OOLpsQ7kNvwEyvUGO&_nc_oc=AdmHaT8RtBcUkhiLXaWOdDoBLHxijcRgC0Jq5bn4SDIOVu5o31SRexAmRkPdfjHv_gY&_nc_zt=23&_nc_ht=scontent.fcgk33-1.fna&_nc_gid=6rfRzEihfoaWznYJ-8ai0A&_nc_ss=8&oh=00_Afw4q8oK0t40xl01aITS6bF0spihNkZn7As5KRCsPxT_OA&oe=69B2FF21" alt="Logo PPLH Karawang" className="h-12 w-auto rounded-full" loading="lazy" decoding="async" />
-              <span className="font-heading font-bold text-2xl text-white">DPD KOMNAS PPLH Karawang</span>
+              <span className="font-heading font-bold text-xl sm:text-2xl text-white leading-tight">DPD KOMNAS PPLH Karawang</span>
             </Link>
             <p className="text-gray-400 mb-6 leading-relaxed">
               Komite Nasional Pemanfaatan dan Pelestarian Lingkungan Hidup Kabupaten Karawang. Mitra masyarakat untuk advokasi alam.

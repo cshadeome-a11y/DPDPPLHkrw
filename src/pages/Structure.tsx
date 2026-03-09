@@ -13,7 +13,7 @@ export default function Structure() {
       <SEO 
         title="Struktur Organisasi" 
         description="Daftar pengurus DPD KOMNAS PPLH Karawang periode 2026–2031. Dipimpin oleh Abdul Majid, S.Ag., MM. untuk mengawal lingkungan Karawang."
-        keywords="pengurus PPLH Karawang, Abdul Majid Karawang, struktur organisasi LSM Karawang, tim investigasi lingkungan Karawang"
+        keywords="pengurus PPLH Karawang, Abdul Majid Karawang, struktur organisasi pengawas lingkungan, tim investigasi lingkungan Karawang"
       />
       <section id="struktur" className="py-16 md:py-24 bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

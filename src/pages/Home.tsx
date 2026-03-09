@@ -35,8 +35,8 @@ export default function Home() {
     <>
       <SEO 
         title="Beranda" 
-        description="Layanan pengaduan pencemaran lingkungan Karawang. DPD KOMNAS PPLH Karawang mengawasi limbah pabrik, sungai Citarum, dan kelestarian alam Karawang."
-        keywords="lapor pencemaran limbah pabrik di Karawang, LSM lingkungan hidup Karawang, pengawasan sungai Citarum Karawang, pengaduan lingkungan Karawang"
+        description="Lembaga Pengawas Independen untuk Kelestarian Alam. DPD KOMNAS PPLH Karawang hadir sebagai garda terdepan dalam investigasi, advokasi, dan pengawasan lingkungan hidup."
+        keywords="Lembaga Pengawas Lingkungan Karawang, Pelaporan Pencemaran Lingkungan, DPD KOMNAS PPLH, investigasi limbah industri"
       />
       <section id="beranda" className="relative bg-dark text-white overflow-hidden min-h-[90vh] flex items-center">
         <div className="absolute inset-0 z-0">
@@ -59,13 +59,13 @@ export default function Home() {
               <i className="ph-fill ph-shield-check text-lg"></i> Advokasi & Pengawasan Independen
             </span>
             <h1 className="font-heading text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold leading-tight mb-4">
-              LSM Lingkungan Hidup <br /><span className="text-accent">Karawang</span>
+              Lembaga Pengawas <br /><span className="text-accent">Independen</span>
             </h1>
             <p className="text-xl md:text-2xl text-white mb-6 font-medium">
-              Garda Terdepan Pengawasan Limbah & Kelestarian Alam
+              Garda Terdepan Investigasi & Advokasi Lingkungan Hidup
             </p>
             <p className="text-lg md:text-xl text-gray-300 mb-10 max-w-2xl leading-relaxed">
-              Lapor pencemaran limbah pabrik di Karawang secara aman. Kami mengawasi sungai Citarum dan ekosistem Karawang dari kerusakan lingkungan.
+              DPD KOMNAS PPLH Karawang hadir untuk memastikan kelestarian alam melalui pengawasan ketat terhadap aktivitas industri dan perlindungan ekosistem secara profesional.
             </p>
             <div className="flex flex-wrap gap-4">
               <a href="#aduan" className="bg-primary hover:bg-green-700 text-white px-8 py-4 rounded-full font-semibold transition shadow-lg hover:shadow-xl flex items-center gap-2 text-lg transform hover:-translate-y-1">
@@ -280,17 +280,59 @@ export default function Home() {
               </p>
             </a>
 
-            {/* News Item 2 */}
-            <a href="https://www.pelitakarawang.com/2026/03/resmi-dilantik-dpd-komnas-pplh.html" target="_blank" rel="noopener noreferrer" className="group block" data-aos="fade-up" data-aos-delay="300">
+            {/* News Item 2 - Fakta Jabar Pelantikan */}
+            <a href="https://www.faktajabar.co.id/2026/02/28/resmi-dilantik-dpd-komnas-pplh-kabupaten-karawang-siap-kawal-kelestarian-lingkungan-hidup-periode-2026-2031/" target="_blank" rel="noopener noreferrer" className="group block" data-aos="fade-up" data-aos-delay="300">
               <div className="relative h-60 rounded-2xl overflow-hidden mb-4">
-                <img src="https://lh3.googleusercontent.com/-Gy3dEnAMw8A/aaSg1JvniMI/AAAAAAAAXR0/nd12EHXKeT0H-sbrdJBykjx5NAcg9GA-wCNcBGAsYHQ/s1600/115166.jpg" alt="News 2" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-dark">Mar 2026</div>
+                <img src="https://www.faktajabar.co.id/wp-content/uploads/2026/02/Komnas-PPLH.jpg" alt="News 2" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-dark">28 Feb 2026</div>
               </div>
               <h3 className="font-heading font-bold text-xl text-dark mb-2 group-hover:text-primary transition-colors line-clamp-2">
                 Resmi Dilantik, DPD Komnas PPLH Kabupaten Karawang Siap Kawal Kelestarian Lingkungan Hidup
               </h3>
               <p className="text-gray-600 text-sm line-clamp-2">
                 DPD Komnas PPLH Kabupaten Karawang resmi dilantik dan siap mengawal kelestarian lingkungan hidup untuk periode 2026–2031.
+              </p>
+            </a>
+
+            {/* News Item 3 - Mitra Polisi */}
+            <a href="https://www.mitrapolisi.com/berita/3412204955/komnas-pplh-karawang-dorong-penguatan-pengelolaan-sampah-kepala-dlh-tak-hadir-dalam-audiensi" target="_blank" rel="noopener noreferrer" className="group block" data-aos="fade-up" data-aos-delay="400">
+              <div className="relative h-60 rounded-2xl overflow-hidden mb-4">
+                <img src="https://mediapolisi.com/wp-content/uploads/2026/01/1000087348-800x535.jpg" alt="News 3" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-dark">28 Jan 2026</div>
+              </div>
+              <h3 className="font-heading font-bold text-xl text-dark mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                Komnas PPLH Karawang Dorong Penguatan Pengelolaan Sampah, Kepala DLH Tak Hadir dalam Audiensi
+              </h3>
+              <p className="text-gray-600 text-sm line-clamp-2">
+                DPD Komnas PPLH Karawang menggelar audiensi dengan DLHK Karawang membahas pengelolaan sampah secara komprehensif.
+              </p>
+            </a>
+
+            {/* News Item 4 - Berita Pasundan */}
+            <a href="https://beritapasundan.com/audiensi-dengan-dlhk-komnas-pplh-soroti-pengelolaan-sampah-berbasis-perda/" target="_blank" rel="noopener noreferrer" className="group block" data-aos="fade-up" data-aos-delay="500">
+              <div className="relative h-60 rounded-2xl overflow-hidden mb-4">
+                <img src="https://beritapasundan.com/wp-content/uploads/2026/01/IMG-20260129-WA0026-e1769683993529.jpg" alt="News 4" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-dark">29 Jan 2026</div>
+              </div>
+              <h3 className="font-heading font-bold text-xl text-dark mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                Audiensi dengan DLHK, Komnas PPLH Soroti Pengelolaan Sampah Berbasis Perda
+              </h3>
+              <p className="text-gray-600 text-sm line-clamp-2">
+                Komnas PPLH DPD Karawang menyoroti implementasi pengelolaan sampah sesuai UU No. 18 Tahun 2008.
+              </p>
+            </a>
+
+            {/* News Item 5 - Komnas PPLH Pusat */}
+            <a href="https://komnaspplh.org/dpp-komnas-pplh-rapat-koordinasi-tentang-penanganan-sampah-dengan-dlh-kab-karawang/" target="_blank" rel="noopener noreferrer" className="group block" data-aos="fade-up" data-aos-delay="600">
+              <div className="relative h-60 rounded-2xl overflow-hidden mb-4">
+                <img src="https://komnaspplh.org/wp-content/uploads/2025/03/WhatsApp-Image-2025-03-18-at-10.47.07.jpeg" alt="News 5" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <div className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-xs font-bold text-dark">28 Jan 2026</div>
+              </div>
+              <h3 className="font-heading font-bold text-xl text-dark mb-2 group-hover:text-primary transition-colors line-clamp-2">
+                DPP KOMNAS PPLH Rapat Koordinasi Tentang Penanganan Sampah Dengan DLH KAB. Karawang
+              </h3>
+              <p className="text-gray-600 text-sm line-clamp-2">
+                Koordinasi strategis antara pengurus pusat Komnas PPLH dengan DLH Kabupaten Karawang guna memperkuat tata kelola sampah.
               </p>
             </a>
           </div>

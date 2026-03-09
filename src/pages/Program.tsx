@@ -13,7 +13,7 @@ export default function Program() {
       <SEO 
         title="Program & Pengawasan" 
         description="Program kerja PPLH Karawang: investigasi limbah pabrik, pengawasan sungai Citarum, dan advokasi hukum lingkungan di Karawang."
-        keywords="investigasi limbah Karawang, pengawasan sungai Citarum, advokasi lingkungan Karawang, program kerja LSM Karawang"
+        keywords="investigasi limbah Karawang, pengawasan sungai Citarum, advokasi lingkungan Karawang, program kerja pengawas lingkungan"
       />
       <section id="program" className="py-16 md:py-24 bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
