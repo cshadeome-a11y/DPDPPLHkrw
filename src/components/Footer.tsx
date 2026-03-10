@@ -37,6 +37,7 @@ export default function Footer() {
               <li><Link to="/program" className="text-gray-400 hover:text-primary transition flex items-center gap-2"><i className="ph ph-caret-right"></i> Program Pengawasan</Link></li>
               <li><Link to="/berita" className="text-gray-400 hover:text-primary transition flex items-center gap-2"><i className="ph ph-caret-right"></i> Berita & Kegiatan</Link></li>
               <li><Link to="/edukasi" className="text-gray-400 hover:text-primary transition flex items-center gap-2"><i className="ph ph-caret-right"></i> Edukasi Masyarakat</Link></li>
+              <li><Link to="/bank-hukum" className="text-gray-400 hover:text-primary transition flex items-center gap-2"><i className="ph ph-caret-right"></i> Bank Produk Hukum</Link></li>
               <li><Link to="/#aduan" className="text-gray-400 hover:text-primary transition flex items-center gap-2"><i className="ph ph-caret-right"></i> Formulir Pengaduan</Link></li>
             </ul>
           </div>

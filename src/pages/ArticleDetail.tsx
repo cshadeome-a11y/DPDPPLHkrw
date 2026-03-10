@@ -6,6 +6,254 @@ import SEO from '../components/SEO';
 import PDFViewer from '../components/PDFViewer';
 
 const articleData: Record<string, any> = {
+  'inovasi-rdf-sampah-energi': {
+    title: 'Inovasi Sampah Jadi Energi: Karawang Proyeksikan Teknologi RDF Serap Residu Desa ke Industri',
+    description: 'Pemerintah Kabupaten Karawang mulai melangkah ke fase pemanfaatan teknologi tinggi dalam menangani sisa sampah yang tidak lagi bisa didaur ulang melalui teknologi RDF.',
+    keywords: 'RDF Karawang, sampah jadi energi, RISPS 2025, ekonomi sirkular Karawang, bahan bakar alternatif',
+    image: 'https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    date: '10 Maret 2026',
+    content: (
+      <>
+        <p className="mb-6"><strong>KARAWANG</strong> – Pemerintah Kabupaten Karawang mulai melangkah ke fase pemanfaatan teknologi tinggi dalam menangani sisa sampah yang tidak lagi bisa didaur ulang. Melalui Rencana Induk Sistem Pengelolaan Sampah (RISPS) 2025–2045, residu sampah dari desa-desa diproyeksikan akan diolah menjadi bahan bakar alternatif atau Refuse Derived Fuel (RDF) untuk kebutuhan industri.</p>
+        
+        <p className="mb-6">Langkah ini selaras dengan Gerakan Nasional ASRI (Aman, Sehat, Resik, Indah) yang menempatkan penanganan sampah sebagai agenda prioritas nasional. Dengan teknologi RDF, residu sampah seperti plastik bernilai rendah, kain, dan sisa olahan lainnya akan diproses menjadi material yang memiliki kalori tinggi untuk menggantikan batu bara di pabrik semen atau pembangkit listrik.</p>
+
+        <h2 className="text-2xl font-bold text-dark mt-10 mb-4">Target Pengurangan Beban TPA</h2>
+        <p className="mb-6">Keberadaan fasilitas RDF ini sangat krusial untuk mencapai misi "Karawang Emas 2045", yaitu membatasi sampah yang masuk ke Tempat Pemrosesan Akhir (TPA) maksimal hanya 10 persen. Selama ini, residu menjadi beban utama karena sulit terurai secara alami dan tidak memiliki nilai jual di bank sampah konvensional.</p>
+        
+        <blockquote className="border-l-4 border-primary pl-6 py-2 my-8 italic text-gray-700 bg-gray-50 rounded-r-xl">
+          "Dengan adanya teknologi RDF, kita tidak hanya membuang sampah, tapi mengubahnya menjadi energi. Desa-desa sekitar kawasan industri akan menjadi pemasok utama bahan baku residu terpilah," sebagaimana ditekankan dalam dokumen rencana induk tersebut.
+        </blockquote>
+
+        <h2 className="text-2xl font-bold text-dark mt-10 mb-4">Integrasi dengan Pengolahan di Desa</h2>
+        <p className="mb-6">Sistem ini menuntut pemilahan yang ketat di tingkat hulu. Sampah organik tetap diolah di desa menjadi kompos atau maggot, sementara residu non-organik yang kering akan dikumpulkan secara khusus untuk dibawa ke fasilitas pengolahan RDF milik kabupaten. Saat ini, pemerintah terus memperkuat infrastruktur pendukung agar distribusi bahan baku dari Tempat Pengolahan Sampah Terpadu (TPST) desa ke pabrik pengolah RDF berjalan efisien.</p>
+        
+        <p className="mb-6">Inovasi ini juga diharapkan dapat menarik minat sektor swasta untuk menjadi offtaker atau pembeli hasil olahan RDF desa. Dengan demikian, pengelolaan sampah di Karawang tidak hanya berdampak pada kebersihan lingkungan, tetapi juga menciptakan ekosistem ekonomi sirkular yang menghubungkan desa dengan sektor industri besar.</p>
+
+        <div className="bg-primary/5 p-8 rounded-3xl border border-primary/20 my-12">
+          <h3 className="font-heading font-bold text-xl text-dark mb-6 flex items-center gap-2">
+            <i className="ph ph-file-pdf text-primary"></i> Dokumen Referensi & Regulasi
+          </h3>
+          
+          <div className="space-y-8">
+            <div>
+              <h4 className="font-bold text-dark mb-3">1. Peraturan Bupati Karawang Nomor 39 Tahun 2025</h4>
+              <p className="text-sm text-gray-500 mb-4 italic">Tentang Rencana Induk Sistem Pengelolaan Sampah (RISPS)</p>
+              <PDFViewer 
+                url="https://jdih.karawangkab.go.id/document/download/2832/lampiran" 
+                title="Perbup RISPS 2025" 
+              />
+            </div>
+
+            <div>
+              <h4 className="font-bold text-dark mb-3">2. Nota Keuangan RAPBD Kabupaten Karawang TA 2025</h4>
+              <p className="text-sm text-gray-500 mb-4 italic">Prioritas Infrastruktur Lingkungan</p>
+              <PDFViewer 
+                url="https://karawangkab.go.id/sites/default/files/pdf/Nota%20Keuangan%20RAPBD%202025.pdf" 
+                title="Nota Keuangan RAPBD 2025" 
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-blue-50 border-l-4 border-blue-500 p-6 my-10 rounded-r-xl">
+          <h4 className="font-bold text-dark mb-2 flex items-center gap-2">
+            <i className="ph-fill ph-info text-blue-500"></i> Sumber Referensi & Berita
+          </h4>
+          <ul className="text-sm text-gray-700 space-y-2">
+            <li>• <a href="https://www.metrotvnews.com/read/NG9Cz5EA-dukung-gerakan-asri-pemkab-karawang-olah-sampah-jadi-bahan-bakar-alternatif" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Metro TV: Pemkab Karawang Olah Sampah Jadi Bahan Bakar Alternatif</a></li>
+            <li>• <a href="https://jdih.karawangkab.go.id/document/download/2832/lampiran" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Peraturan Bupati Karawang Nomor 39 Tahun 2025</a></li>
+            <li>• <a href="https://jdih.karawangkab.go.id/document/download/3243/abstraksi" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Peraturan Daerah Kabupaten Karawang Nomor 14 Tahun 2025</a></li>
+          </ul>
+        </div>
+      </>
+    )
+  },
+  'insentif-rt-rw-sampah-2025': {
+    title: 'Garda Terdepan Kebersihan: Pemkab Karawang Pastikan Insentif RT/RW Pendukung Pengelolaan Sampah 2025',
+    description: 'Pemerintah Kabupaten Karawang menetapkan insentif khusus bagi ketua RT dan RW guna mengapresiasi peran mereka dalam menjaga kebersihan wilayah.',
+    keywords: 'insentif RT RW Karawang, ADD Karawang 2025, pengelolaan sampah desa, Perbup 85 Tahun 2025, apresiasi aparat lingkungan',
+    image: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    date: '10 Maret 2026',
+    content: (
+      <>
+        <p className="mb-6"><strong>KARAWANG</strong> – Kesuksesan pengelolaan sampah berbasis desa di Kabupaten Karawang tidak lepas dari peran vital para ketua Rukun Tetangga (RT) dan Rukun Warga (RW). Menyadari hal tersebut, Pemerintah Kabupaten Karawang melalui Alokasi Dana Desa (ADD) tahun anggaran 2025 telah menetapkan insentif khusus guna mengapresiasi peran aparat lingkungan tersebut dalam menjaga kebersihan wilayah.</p>
+        
+        <p className="mb-6">Berdasarkan Peraturan Bupati Karawang Nomor 85 Tahun 2025, pemerintah daerah menetapkan besaran insentif bulanan bagi ketua RT dan RW sebagai bagian dari penguatan kelembagaan desa. Langkah ini diambil agar pengawasan pengelolaan sampah di tingkat paling bawah dapat berjalan lebih efektif dan disiplin.</p>
+
+        <h2 className="text-2xl font-bold text-dark mt-10 mb-4">Rincian Insentif dan Peran Strategis</h2>
+        <p className="mb-6">Dalam regulasi tersebut, besaran insentif yang dialokasikan setiap bulannya adalah sebagai berikut:</p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 my-8">
+          <div className="bg-white p-8 rounded-3xl border border-primary/20 shadow-sm text-center">
+            <div className="text-gray-500 text-sm uppercase tracking-wider mb-2">Ketua RW</div>
+            <div className="text-3xl font-bold text-primary mb-2">Rp 600.000</div>
+            <div className="text-gray-400 text-xs italic">Per Bulan</div>
+          </div>
+          <div className="bg-white p-8 rounded-3xl border border-primary/20 shadow-sm text-center">
+            <div className="text-gray-500 text-sm uppercase tracking-wider mb-2">Ketua RT</div>
+            <div className="text-3xl font-bold text-primary mb-2">Rp 500.000</div>
+            <div className="text-gray-400 text-xs italic">Per Bulan</div>
+          </div>
+        </div>
+
+        <p className="mb-6">Pemberian insentif ini dibarengi dengan tanggung jawab strategis dalam menyukseskan program kebersihan desa. Sebagaimana tertuang dalam model Peraturan Desa Medangasem Nomor 4 Tahun 2025, lembaga pengelola tingkat RT memiliki tugas teknis yang meliputi:</p>
+        
+        <ul className="space-y-4 my-8">
+          <li className="flex gap-4 items-start">
+            <i className="ph-fill ph-check-circle text-primary text-2xl shrink-0"></i>
+            <div>
+              <span className="font-bold text-dark">Fasilitator Sarana:</span> Memfasilitasi ketersediaan tempat sampah di masing-masing rumah tangga dan menyediakan alat angkut dari rumah ke Tempat Penampungan Sementara (TPS).
+            </div>
+          </li>
+          <li className="flex gap-4 items-start">
+            <i className="ph-fill ph-check-circle text-primary text-2xl shrink-0"></i>
+            <div>
+              <span className="font-bold text-dark">Edukasi Pemilahan:</span> Menjamin terwujudnya tertib pemilahan sampah (organik dan anorganik) di tingkat keluarga.
+            </div>
+          </li>
+          <li className="flex gap-4 items-start">
+            <i className="ph-fill ph-check-circle text-primary text-2xl shrink-0"></i>
+            <div>
+              <span className="font-bold text-dark">Pengusulan Infrastruktur:</span> Memberikan usulan penempatan lokasi TPS kepada Kepala Desa agar pengangkutan sampah lebih efisien.
+            </div>
+          </li>
+        </ul>
+
+        <h2 className="text-2xl font-bold text-dark mt-10 mb-4">Integrasi dengan Dana Desa</h2>
+        <p className="mb-6">Pemerintah Kabupaten Karawang menekankan bahwa insentif ini merupakan bentuk sinkronisasi kebijakan antara kabupaten dan desa. Penyaluran ADD dilakukan secara bertahap melalui Rekening Kas Desa, di mana tahap pertama mencakup operasional pemerintah desa dan 25% dari total besaran insentif RT/RW.</p>
+        
+        <p className="mb-6">Dengan adanya kepastian dukungan fiskal ini, para ketua RT dan RW diharapkan dapat lebih proaktif dalam mengedukasi warga untuk tidak membuang sampah ke sungai atau saluran irigasi. Peran mereka menjadi kunci utama bagi Karawang untuk mencapai target pengurangan sampah sebesar 30% pada tahun 2030 mendatang.</p>
+
+        <div className="bg-primary/5 p-8 rounded-3xl border border-primary/20 my-12">
+          <h3 className="font-heading font-bold text-xl text-dark mb-6 flex items-center gap-2">
+            <i className="ph ph-file-pdf text-primary"></i> Dokumen Referensi & Regulasi
+          </h3>
+          
+          <div className="space-y-8">
+            <div>
+              <h4 className="font-bold text-dark mb-3">1. Peraturan Bupati Karawang Nomor 85 Tahun 2025</h4>
+              <p className="text-sm text-gray-500 mb-4 italic">Tentang Perubahan Alokasi Dana Desa 2025</p>
+              <PDFViewer 
+                url="https://jdih.karawangkab.go.id/storage/1768267869_2025pb3215085.pdf" 
+                title="Perbup No. 85 Tahun 2025" 
+              />
+            </div>
+
+            <div>
+              <h4 className="font-bold text-dark mb-3">2. Peraturan Bupati Karawang Nomor 45 Tahun 2024</h4>
+              <p className="text-sm text-gray-500 mb-4 italic">Tentang Pedoman Penyusunan APBDes 2025</p>
+              <PDFViewer 
+                url="https://jdih.karawangkab.go.id/document/download/1974/lampiran" 
+                title="Perbup No. 45 Tahun 2024" 
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-blue-50 border-l-4 border-blue-500 p-6 my-10 rounded-r-xl">
+          <h4 className="font-bold text-dark mb-2 flex items-center gap-2">
+            <i className="ph-fill ph-info text-blue-500"></i> Sumber Referensi JDIH Karawang
+          </h4>
+          <ul className="text-sm text-gray-700 space-y-2">
+            <li>• <a href="https://jdih.karawangkab.go.id/storage/1768267869_2025pb3215085.pdf" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Perbup Karawang No. 85 Tahun 2025 (Insentif RT/RW)</a></li>
+            <li>• <a href="https://jdih.karawangkab.go.id/document/download/1974/lampiran" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Perbup Karawang No. 45 Tahun 2024 (Pedoman APBDes)</a></li>
+            <li>• <a href="https://jdih.karawangkab.go.id/document/download/2832/lampiran" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Perbup Karawang No. 39 Tahun 2025 (RISPS)</a></li>
+            <li>• <a href="https://jdih.karawangkab.go.id/document/peraturan-desa/medangasem-nomor-4-tahun-2025" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Peraturan Desa Medangasem Nomor 4 Tahun 2025</a></li>
+          </ul>
+        </div>
+      </>
+    )
+  },
+  'sanksi-sosial-pelanggar-sampah': {
+    title: 'Awas Kena Sanksi Sosial: Foto Pelanggar Sampah di Karawang Bakal Dipajang 30 Hari di Tempat Umum',
+    description: 'Pemerintah Desa di Kabupaten Karawang mulai menerapkan tindakan tegas bagi warga atau pelaku usaha yang kedapatan membuang sampah sembarangan.',
+    keywords: 'sanksi sampah Karawang, denda buang sampah, Perdes Medangasem, sanksi sosial sampah, hukum lingkungan desa',
+    image: 'https://images.unsplash.com/photo-1605600611284-195205ef91b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    date: '10 Maret 2026',
+    content: (
+      <>
+        <p className="mb-6"><strong>KARAWANG</strong> – Pemerintah Desa di Kabupaten Karawang mulai menerapkan tindakan tegas bagi warga atau pelaku usaha yang kedapatan membuang sampah sembarangan. Tidak main-main, selain denda materi, para pelanggar kini dibayangi sanksi sosial berupa pemajangan foto diri di area publik sebagai efek jera.</p>
+        
+        <p className="mb-6">Ketentuan sanksi ini salah satunya tertuang dalam Peraturan Desa (Perdes) Medangasem Nomor 4 Tahun 2025 tentang Pengelolaan Sampah. Dalam regulasi tersebut, pemerintah desa mengatur mekanisme penegakan hukum yang bertujuan mengubah perilaku masyarakat agar lebih disiplin dalam menangani residu rumah tangga.</p>
+
+        <h2 className="text-2xl font-bold text-dark mt-10 mb-4">Jenis Pelanggaran dan Sanksi Berlapis</h2>
+        <p className="mb-6">Regulasi desa secara eksplisit melarang pembuangan sampah ke sungai, saluran irigasi, jalan raya, maupun lahan terbuka milik pribadi dengan sistem open dumping. Bagi mereka yang melanggar, sanksi akan diberikan secara bertahap:</p>
+        
+        <div className="space-y-6 my-8">
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex gap-4 items-start">
+            <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold shrink-0">1</div>
+            <div>
+              <h4 className="font-bold text-dark mb-1">Teguran Lisan dan Tertulis</h4>
+              <p className="text-sm text-gray-600">Dilakukan sebagai langkah pembinaan awal oleh aparatur desa atau unit pengelola sampah BUMDes.</p>
+            </div>
+          </div>
+          
+          <div className="bg-white p-6 rounded-2xl border border-red-100 shadow-sm flex gap-4 items-start">
+            <div className="w-10 h-10 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold shrink-0">2</div>
+            <div>
+              <h4 className="font-bold text-dark mb-1">Sanksi Sosial (Pajang Foto)</h4>
+              <p className="text-sm text-gray-600">Pelanggar yang tetap membandel akan dikenakan sanksi sosial berupa pemasangan foto diri di tempat-tempat umum (seperti papan pengumuman desa atau balai desa) selama 30 hari penuh.</p>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm flex gap-4 items-start">
+            <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold shrink-0">3</div>
+            <div>
+              <h4 className="font-bold text-dark mb-1">Denda Materi</h4>
+              <p className="text-sm text-gray-600">Selain sanksi sosial, pelanggar dapat dikenakan denda berupa uang setinggi-tingginya sebesar Rp100.000 per pelanggaran.</p>
+            </div>
+          </div>
+        </div>
+
+        <h2 className="text-2xl font-bold text-dark mt-10 mb-4">Sanksi Administratif Retribusi</h2>
+        <p className="mb-6">Selain sanksi bagi pembuang sampah sembarangan, pemerintah desa juga menerapkan sanksi administratif bagi warga yang lalai membayar retribusi bulanan. Warga yang tidak memenuhi kewajiban iuran sampah akan dikenakan sanksi berupa penghentian layanan pengangkutan sampah dari rumah oleh petugas BUMDes.</p>
+
+        <h2 className="text-2xl font-bold text-dark mt-10 mb-4">Perlindungan dan Kompensasi</h2>
+        <p className="mb-6">Menariknya, regulasi ini juga berpihak pada keadilan bagi warga yang terdampak. Berdasarkan Pasal 38 Perdes Medangasem No. 4/2025, pemerintah desa wajib memberikan kompensasi kepada warga yang terkena dampak negatif langsung dari aktivitas penanganan sampah di Tempat Pemrosesan Akhir (TPA) desa atau TPST. Kompensasi tersebut dapat berupa biaya kesehatan, pengobatan, hingga pemulihan lingkungan.</p>
+        
+        <p className="mb-6">Langkah tegas ini diambil semata-mata untuk menjamin hak setiap warga negara atas lingkungan hidup yang bersih dan sehat, serta mendukung target besar Kabupaten Karawang untuk membatasi tumpukan sampah residu di masa depan.</p>
+
+        <div className="bg-primary/5 p-8 rounded-3xl border border-primary/20 my-12">
+          <h3 className="font-heading font-bold text-xl text-dark mb-6 flex items-center gap-2">
+            <i className="ph ph-file-pdf text-primary"></i> Dokumen Referensi & Regulasi
+          </h3>
+          
+          <div className="space-y-8">
+            <div>
+              <h4 className="font-bold text-dark mb-3">1. Peraturan Desa Medangasem Nomor 4 Tahun 2025</h4>
+              <p className="text-sm text-gray-500 mb-4 italic">Tentang Pengelolaan Sampah & Sanksi</p>
+              <PDFViewer 
+                url="https://jdih.karawangkab.go.id/document/download/3243/lampiran" 
+                title="Perdes Medangasem No. 4 Tahun 2025" 
+              />
+            </div>
+
+            <div>
+              <h4 className="font-bold text-dark mb-3">2. Peraturan Daerah Kabupaten Karawang Nomor 14 Tahun 2025</h4>
+              <p className="text-sm text-gray-500 mb-4 italic">Amandemen Pengelolaan Sampah</p>
+              <PDFViewer 
+                url="https://jdih.karawangkab.go.id/document/download/3243/lampiran" 
+                title="Perda No. 14 Tahun 2025" 
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-blue-50 border-l-4 border-blue-500 p-6 my-10 rounded-r-xl">
+          <h4 className="font-bold text-dark mb-2 flex items-center gap-2">
+            <i className="ph-fill ph-info text-blue-500"></i> Sumber Referensi JDIH Karawang
+          </h4>
+          <ul className="text-sm text-gray-700 space-y-2">
+            <li>• <a href="https://jdih.karawangkab.go.id/document/peraturan-desa/medangasem-nomor-4-tahun-2025" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Peraturan Desa Medangasem Nomor 4 Tahun 2025</a></li>
+            <li>• <a href="https://walahar.desa.id/pengelolaan-sampah/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Peraturan Desa Walahar Nomor 2 Tahun 2012</a></li>
+            <li>• <a href="https://jdih.karawangkab.go.id/document/download/3243/abstraksi" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Peraturan Daerah Kabupaten Karawang Nomor 14 Tahun 2025</a></li>
+            <li>• <a href="https://jdih.karawangkab.go.id/document/download/2832/lampiran" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Peraturan Bupati Karawang Nomor 39 Tahun 2025</a></li>
+          </ul>
+        </div>
+      </>
+    )
+  },
   'bumdes-ujung-tombak-sampah': {
     title: 'BUMDes Sebagai Ujung Tombak: Transformasi Sampah Jadi Sumber PADes di Desa-Desa Karawang',
     description: 'Pengelolaan sampah di tingkat desa kini tidak lagi sekadar urusan kebersihan, tetapi mulai bertransformasi menjadi unit bisnis produktif melalui BUMDes.',
@@ -409,7 +657,7 @@ const articleData: Record<string, any> = {
     title: 'Panduan Pilah Sampah dari Rumah: Mandat Baru Warga Karawang Menuju Lingkungan Asri',
     description: 'Panduan teknis pemilahan sampah rumah tangga di Karawang berdasarkan Perbup No. 39 Tahun 2025 untuk mendukung target Karawang Emas 2045.',
     keywords: 'pilah sampah Karawang, pengelolaan sampah rumah tangga, Perbup 39 Tahun 2025, sampah organik anorganik residu, edukasi lingkungan Karawang',
-    image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    image: 'https://images.unsplash.com/photo-1595273670150-bd0c3c392e46?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     date: '10 Maret 2026',
     content: (
       <>

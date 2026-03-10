@@ -51,7 +51,7 @@ export default function News() {
           <SwiperSlide>
             <Link to="/edukasi/panduan-pilah-sampah-rumah" className="group block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
               <div className="relative h-48 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Panduan Pilah Sampah" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
+                <img src="https://images.unsplash.com/photo-1595273670150-bd0c3c392e46?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Panduan Pilah Sampah" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
                 <div className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">10 Mar 2026</div>
               </div>
               <div className="p-6">

@@ -9,6 +9,7 @@ import News from './pages/News';
 import NewsDetail from './pages/NewsDetail';
 import Education from './pages/Education';
 import ArticleDetail from './pages/ArticleDetail';
+import LegalBank from './pages/LegalBank';
 import Contact from './pages/Contact';
 import Report from './pages/Report';
 
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="/berita/dukung-program-mbg" element={<NewsDetail />} />
           <Route path="/edukasi" element={<Education />} />
           <Route path="/edukasi/:id" element={<ArticleDetail />} />
+          <Route path="/bank-hukum" element={<LegalBank />} />
           <Route path="/kontak" element={<Contact />} />
           <Route path="/lapor" element={<Report />} />
         </Routes>

@@ -11,6 +11,27 @@ import SEO from '../components/SEO';
 
 const articles = [
   {
+    id: 'inovasi-rdf-sampah-energi',
+    title: 'Inovasi Sampah Jadi Energi: Karawang Proyeksikan Teknologi RDF Serap Residu Desa ke Industri',
+    excerpt: 'Pemerintah Kabupaten Karawang mulai melangkah ke fase pemanfaatan teknologi RDF untuk mengubah residu sampah menjadi bahan bakar alternatif industri.',
+    image: 'https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    date: '10 Mar 2026'
+  },
+  {
+    id: 'insentif-rt-rw-sampah-2025',
+    title: 'Garda Terdepan Kebersihan: Pemkab Karawang Pastikan Insentif RT/RW Pendukung Pengelolaan Sampah 2025',
+    excerpt: 'Pemerintah Kabupaten Karawang menetapkan insentif khusus bagi ketua RT dan RW guna mengapresiasi peran mereka dalam menjaga kebersihan wilayah.',
+    image: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    date: '10 Mar 2026'
+  },
+  {
+    id: 'sanksi-sosial-pelanggar-sampah',
+    title: 'Awas Kena Sanksi Sosial: Foto Pelanggar Sampah di Karawang Bakal Dipajang 30 Hari',
+    excerpt: 'Pemerintah Desa di Karawang mulai menerapkan tindakan tegas bagi warga yang membuang sampah sembarangan, termasuk sanksi sosial pemajangan foto.',
+    image: 'https://images.unsplash.com/photo-1605600611284-195205ef91b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    date: '10 Mar 2026'
+  },
+  {
     id: 'bumdes-ujung-tombak-sampah',
     title: 'BUMDes Sebagai Ujung Tombak: Transformasi Sampah Jadi Sumber PADes di Desa-Desa Karawang',
     excerpt: 'Pengelolaan sampah di tingkat desa kini tidak lagi sekadar urusan kebersihan, tetapi mulai bertransformasi menjadi unit bisnis produktif melalui BUMDes.',
@@ -28,7 +49,7 @@ const articles = [
     id: 'panduan-pilah-sampah-rumah',
     title: 'Panduan Pilah Sampah dari Rumah: Mandat Baru Warga Karawang',
     excerpt: 'Pelajari cara memilah sampah organik, anorganik, dan residu sesuai mandat Perbup No. 39 Tahun 2025 untuk lingkungan Karawang yang lebih asri.',
-    image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    image: 'https://images.unsplash.com/photo-1595273670150-bd0c3c392e46?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     date: '10 Mar 2026'
   },
   {

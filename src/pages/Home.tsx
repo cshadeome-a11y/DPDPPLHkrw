@@ -74,9 +74,14 @@ export default function Home() {
               <a href="#aduan" className="bg-primary hover:bg-green-700 text-white px-8 py-4 rounded-full font-semibold transition shadow-lg hover:shadow-xl flex items-center gap-2 text-lg transform hover:-translate-y-1">
                 <i className="ph ph-siren text-2xl"></i> Laporkan Sekarang
               </a>
-              <Link to="/program" className="bg-white/10 hover:bg-white/20 border border-white/20 text-white px-8 py-4 rounded-full font-semibold backdrop-blur-md transition flex items-center gap-2 text-lg">
-                Pelajari Program
-              </Link>
+              <a 
+                href="https://drive.google.com/file/d/1qjU5jB7SPOhHnB_iqrJou3JU9eRmqlf6/view?usp=sharing" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="bg-white/10 hover:bg-white/20 border border-white/20 text-white px-8 py-4 rounded-full font-semibold backdrop-blur-md transition flex items-center gap-2 text-lg"
+              >
+                <i className="ph ph-file-pdf text-2xl"></i> SK Pengangkatan
+              </a>
             </div>
           </div>
         </div>
@@ -241,6 +246,89 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Bank Hukum Highlight Section */}
+      <section className="py-16 md:py-24 bg-dark text-white overflow-hidden relative">
+        <div className="absolute top-0 right-0 w-1/3 h-full bg-primary/10 skew-x-12 translate-x-1/2"></div>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div data-aos="fade-right">
+              <span className="text-accent font-bold tracking-wider uppercase text-sm mb-2 block">Landasan Hukum</span>
+              <h2 className="font-heading text-3xl md:text-4xl font-bold mb-6">Pusat Data & Bank Produk Hukum Karawang</h2>
+              <p className="text-gray-300 text-lg mb-8 leading-relaxed">
+                Kami menyediakan akses terbuka terhadap berbagai regulasi, mulai dari Undang-Undang hingga Peraturan Desa, yang menjadi dasar tata kelola lingkungan dan anggaran desa di Kabupaten Karawang.
+              </p>
+              <div className="grid grid-cols-2 gap-6 mb-10">
+                <div className="flex items-center gap-3">
+                  <i className="ph-fill ph-check-circle text-primary text-2xl"></i>
+                  <span className="font-medium">Update Regulasi 2025</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <i className="ph-fill ph-check-circle text-primary text-2xl"></i>
+                  <span className="font-medium">Akses Publik Terbuka</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <i className="ph-fill ph-check-circle text-primary text-2xl"></i>
+                  <span className="font-medium">Hierarki Hukum Lengkap</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <i className="ph-fill ph-check-circle text-primary text-2xl"></i>
+                  <span className="font-medium">Referensi JDIH Resmi</span>
+                </div>
+              </div>
+              <Link to="/bank-hukum" className="inline-flex items-center gap-2 bg-primary text-white px-8 py-4 rounded-full font-bold hover:bg-green-700 transition-all shadow-lg group">
+                Buka Bank Produk Hukum <i className="ph-bold ph-arrow-right group-hover:translate-x-1 transition-transform"></i>
+              </Link>
+            </div>
+            <div className="relative" data-aos="fade-left">
+              <div className="bg-white/5 backdrop-blur-sm p-8 rounded-3xl border border-white/10 shadow-2xl">
+                <div className="space-y-4">
+                  <div className="bg-white/10 p-4 rounded-xl border border-white/5 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
+                        <i className="ph ph-file-text text-xl"></i>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-400 uppercase font-bold">Perbup Karawang</p>
+                        <p className="text-sm font-bold">No. 39 Tahun 2025 (RISPS)</p>
+                      </div>
+                    </div>
+                    <i className="ph ph-download text-gray-500"></i>
+                  </div>
+                  <div className="bg-white/10 p-4 rounded-xl border border-white/5 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-blue-500/20 flex items-center justify-center text-blue-400">
+                        <i className="ph ph-file-text text-xl"></i>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-400 uppercase font-bold">Perda Karawang</p>
+                        <p className="text-sm font-bold">No. 14 Tahun 2025 (Sampah)</p>
+                      </div>
+                    </div>
+                    <i className="ph ph-download text-gray-500"></i>
+                  </div>
+                  <div className="bg-white/10 p-4 rounded-xl border border-white/5 flex items-center justify-between opacity-60">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-lg bg-accent/20 flex items-center justify-center text-accent">
+                        <i className="ph ph-file-text text-xl"></i>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-400 uppercase font-bold">Undang-Undang</p>
+                        <p className="text-sm font-bold">No. 32 Tahun 2009 (PPLH)</p>
+                      </div>
+                    </div>
+                    <i className="ph ph-download text-gray-500"></i>
+                  </div>
+                </div>
+              </div>
+              <div className="absolute -bottom-6 -left-6 bg-accent p-6 rounded-2xl shadow-xl hidden md:block">
+                <p className="text-3xl font-bold">25+</p>
+                <p className="text-xs font-bold uppercase tracking-wider">Dokumen Hukum</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Berita Terbaru Section */}
       <section className="py-16 md:py-24 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -287,7 +375,7 @@ export default function Home() {
               <SwiperSlide>
                 <Link to="/edukasi/panduan-pilah-sampah-rumah" className="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 h-full">
                   <div className="relative h-60 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Panduan Pilah Sampah" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <img src="https://images.unsplash.com/photo-1595273670150-bd0c3c392e46?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Panduan Pilah Sampah" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                     <div className="absolute top-4 left-4 bg-primary text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">10 Mar 2026</div>
                   </div>
                   <div className="p-6">
