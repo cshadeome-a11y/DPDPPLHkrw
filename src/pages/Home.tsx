@@ -13,6 +13,7 @@ import LaporForm from '../components/LaporForm';
 
 export default function Home() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [pexelsPhotos, setPexelsPhotos] = useState<any[]>([]);
 
   const heroImages = [
     "https://scontent.fcgk33-1.fna.fbcdn.net/v/t39.30808-6/648529409_122114675001215177_6631640995499234967_n.webp?stp=dst-jpg_tt6&_nc_cat=103&ccb=1-7&_nc_sid=13d280&_nc_ohc=4xI-aKOrBU8Q7kNvwEoDsrT&_nc_oc=AdnCGEKRylewgfxaMruTn4f642lDraNbVftt38rMpmYukw2cyvcnJp4C6XRKjEz6brQ&_nc_zt=23&_nc_ht=scontent.fcgk33-1.fna&_nc_gid=1FUWvkY7dFDG1YiHEOeuzQ&_nc_ss=8&oh=00_AfwwU4mjU7zfj_-yqJFaVKj-rQy1SLu96mqNN0enndhjnA&oe=69B2FBAC",
@@ -32,6 +33,26 @@ export default function Home() {
 
   useEffect(() => {
     AOS.init({ duration: 800, once: true, offset: 100 });
+
+    const fetchPhotos = async () => {
+      try {
+        const queries = ['waste sorting', 'village environment'];
+        const results = await Promise.all(queries.map(q => 
+          fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(q)}&per_page=1`, {
+            headers: {
+              Authorization: 'HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU'
+            }
+          }).then(res => res.json())
+        ));
+        
+        const photos = results.map(data => data.photos?.[0]);
+        setPexelsPhotos(photos);
+      } catch (error) {
+        console.error('Error fetching Pexels photos:', error);
+      }
+    };
+
+    fetchPhotos();
   }, []);
 
   return (
@@ -375,8 +396,9 @@ export default function Home() {
               <SwiperSlide>
                 <Link to="/edukasi/panduan-pilah-sampah-rumah" className="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 h-full">
                   <div className="relative h-60 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1595273670150-bd0c3c392e46?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Panduan Pilah Sampah" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <img src={pexelsPhotos[0]?.src?.large || "https://images.unsplash.com/photo-1595273670150-bd0c3c392e46?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"} alt="Panduan Pilah Sampah" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                     <div className="absolute top-4 left-4 bg-primary text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">10 Mar 2026</div>
+                    <div className="absolute bottom-2 right-2 bg-black/50 text-white text-[10px] px-2 py-1 rounded">Photos/ilustration by Pexels</div>
                   </div>
                   <div className="p-6">
                     <h3 className="font-heading font-bold text-xl text-dark mb-3 group-hover:text-primary transition-colors line-clamp-2">
@@ -396,8 +418,9 @@ export default function Home() {
               <SwiperSlide>
                 <Link to="/edukasi/dana-desa-karawang-2025-sampah" className="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 h-full">
                   <div className="relative h-60 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Dana Desa Karawang 2025" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <img src={pexelsPhotos[1]?.src?.large || "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"} alt="Dana Desa Karawang 2025" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                     <div className="absolute top-4 left-4 bg-primary text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">10 Mar 2026</div>
+                    <div className="absolute bottom-2 right-2 bg-black/50 text-white text-[10px] px-2 py-1 rounded">Photos/ilustration by Pexels</div>
                   </div>
                   <div className="p-6">
                     <h3 className="font-heading font-bold text-xl text-dark mb-3 group-hover:text-primary transition-colors line-clamp-2">

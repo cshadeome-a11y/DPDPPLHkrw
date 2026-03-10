@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -10,8 +10,30 @@ import SEO from '../components/SEO';
 import { Link } from 'react-router-dom';
 
 export default function News() {
+  const [pexelsPhotos, setPexelsPhotos] = useState<any[]>([]);
+
   useEffect(() => {
     AOS.init({ duration: 800, once: true, offset: 100 });
+
+    const fetchPhotos = async () => {
+      try {
+        const queries = ['waste sorting', 'village environment'];
+        const results = await Promise.all(queries.map(q => 
+          fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(q)}&per_page=1`, {
+            headers: {
+              Authorization: 'HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU'
+            }
+          }).then(res => res.json())
+        ));
+        
+        const photos = results.map(data => data.photos?.[0]);
+        setPexelsPhotos(photos);
+      } catch (error) {
+        console.error('Error fetching Pexels photos:', error);
+      }
+    };
+
+    fetchPhotos();
   }, []);
 
   return (
@@ -47,12 +69,13 @@ export default function News() {
           data-aos="fade-up" 
           data-aos-delay="100"
         >
-          {/* Berita Terbaru - Panduan Pilah Sampah */}
+              {/* Berita Terbaru - Panduan Pilah Sampah */}
           <SwiperSlide>
             <Link to="/edukasi/panduan-pilah-sampah-rumah" className="group block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
               <div className="relative h-48 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1595273670150-bd0c3c392e46?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Panduan Pilah Sampah" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
+                <img src={pexelsPhotos[0]?.src?.large || "https://images.unsplash.com/photo-1595273670150-bd0c3c392e46?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"} alt="Panduan Pilah Sampah" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
                 <div className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">10 Mar 2026</div>
+                <div className="absolute bottom-2 right-2 bg-black/50 text-white text-[10px] px-2 py-1 rounded">Photos/ilustration by Pexels</div>
               </div>
               <div className="p-6">
                 <h3 className="font-heading font-bold text-xl text-dark mb-3 group-hover:text-primary transition-colors line-clamp-2">
@@ -72,8 +95,9 @@ export default function News() {
           <SwiperSlide>
             <Link to="/edukasi/dana-desa-karawang-2025-sampah" className="group block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
               <div className="relative h-48 overflow-hidden">
-                <img src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Dana Desa Karawang 2025" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
+                <img src={pexelsPhotos[1]?.src?.large || "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"} alt="Dana Desa Karawang 2025" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
                 <div className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">10 Mar 2026</div>
+                <div className="absolute bottom-2 right-2 bg-black/50 text-white text-[10px] px-2 py-1 rounded">Photos/ilustration by Pexels</div>
               </div>
               <div className="p-6">
                 <h3 className="font-heading font-bold text-xl text-dark mb-3 group-hover:text-primary transition-colors line-clamp-2">

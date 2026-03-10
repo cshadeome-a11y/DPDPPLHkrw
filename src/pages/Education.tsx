@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { Link } from 'react-router-dom';
@@ -15,6 +15,7 @@ const articles = [
     title: 'Inovasi Sampah Jadi Energi: Karawang Proyeksikan Teknologi RDF Serap Residu Desa ke Industri',
     excerpt: 'Pemerintah Kabupaten Karawang mulai melangkah ke fase pemanfaatan teknologi RDF untuk mengubah residu sampah menjadi bahan bakar alternatif industri.',
     image: 'https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    query: 'waste to energy',
     date: '10 Mar 2026'
   },
   {
@@ -22,6 +23,7 @@ const articles = [
     title: 'Garda Terdepan Kebersihan: Pemkab Karawang Pastikan Insentif RT/RW Pendukung Pengelolaan Sampah 2025',
     excerpt: 'Pemerintah Kabupaten Karawang menetapkan insentif khusus bagi ketua RT dan RW guna mengapresiasi peran mereka dalam menjaga kebersihan wilayah.',
     image: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    query: 'community cleaning',
     date: '10 Mar 2026'
   },
   {
@@ -29,6 +31,7 @@ const articles = [
     title: 'Awas Kena Sanksi Sosial: Foto Pelanggar Sampah di Karawang Bakal Dipajang 30 Hari',
     excerpt: 'Pemerintah Desa di Karawang mulai menerapkan tindakan tegas bagi warga yang membuang sampah sembarangan, termasuk sanksi sosial pemajangan foto.',
     image: 'https://images.unsplash.com/photo-1605600611284-195205ef91b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    query: 'littering',
     date: '10 Mar 2026'
   },
   {
@@ -36,6 +39,7 @@ const articles = [
     title: 'BUMDes Sebagai Ujung Tombak: Transformasi Sampah Jadi Sumber PADes di Desa-Desa Karawang',
     excerpt: 'Pengelolaan sampah di tingkat desa kini tidak lagi sekadar urusan kebersihan, tetapi mulai bertransformasi menjadi unit bisnis produktif melalui BUMDes.',
     image: 'https://images.unsplash.com/photo-1591193680737-26165880ba81?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    query: 'recycling village',
     date: '10 Mar 2026'
   },
   {
@@ -43,6 +47,7 @@ const articles = [
     title: 'Menuju Karawang Emas 2045: Strategi RISPS Targetkan Residu Sampah ke TPA Hanya 10 Persen',
     excerpt: 'Pemerintah Kabupaten Karawang menetapkan peta jalan transformasi pengelolaan sampah 20 tahun ke depan melalui RISPS 2025-2045.',
     image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    query: 'green city',
     date: '10 Mar 2026'
   },
   {
@@ -50,6 +55,7 @@ const articles = [
     title: 'Panduan Pilah Sampah dari Rumah: Mandat Baru Warga Karawang',
     excerpt: 'Pelajari cara memilah sampah organik, anorganik, dan residu sesuai mandat Perbup No. 39 Tahun 2025 untuk lingkungan Karawang yang lebih asri.',
     image: 'https://images.unsplash.com/photo-1595273670150-bd0c3c392e46?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    query: 'waste sorting',
     date: '10 Mar 2026'
   },
   {
@@ -57,6 +63,7 @@ const articles = [
     title: 'Karawang Guyur Rp358,9 Miliar Dana Desa 2025: Prioritas Sampah di APBDes',
     excerpt: 'Pemerintah Kabupaten Karawang memastikan kesiapan fiskal desa untuk mendukung penanganan masalah lingkungan melalui Dana Desa 2025.',
     image: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    query: 'village environment',
     date: '10 Mar 2026'
   },
   {
@@ -64,6 +71,7 @@ const articles = [
     title: 'Mengenal Limbah Cair Industri dan Dampaknya',
     excerpt: 'Pelajari apa itu limbah cair, faktor yang mempengaruhinya, serta berbagai jenis pencemar fisik, kimia, dan mikrobiologi yang terkandung di dalamnya.',
     image: 'https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    query: 'water pollution',
     date: '10 Mar 2026'
   },
   {
@@ -71,6 +79,7 @@ const articles = [
     title: 'Cara Membedakan Limbah B3 dan Non-B3',
     excerpt: 'Panduan lengkap bagi masyarakat Karawang untuk mengenali jenis limbah industri yang berbahaya (B3) dan limbah rumah tangga biasa.',
     image: 'https://images.unsplash.com/photo-1621451537084-482c73073a0f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    query: 'toxic waste',
     date: '10 Mar 2026'
   },
   {
@@ -78,6 +87,7 @@ const articles = [
     title: 'Hak Warga Negara Atas Lingkungan yang Bersih Menurut UU',
     excerpt: 'Kenali hak hukum Anda sebagai warga negara Indonesia dalam mendapatkan lingkungan hidup yang baik dan sehat sesuai Undang-Undang.',
     image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    query: 'clean environment',
     date: '10 Mar 2026'
   },
   {
@@ -85,13 +95,36 @@ const articles = [
     title: 'Mengenang Tragedi Leuwigajah: Refleksi HPSN 2026',
     excerpt: 'Refleksi mendalam atas tragedi longsor sampah Leuwigajah 2005 dan ajakan kolaborasi untuk mewujudkan Indonesia yang Aman, Sehat, Resik, dan Indah (ASRI).',
     image: 'https://images.unsplash.com/photo-1611284446314-60a58ac0deb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    query: 'landfill garbage',
     date: '20 Feb 2026'
   }
 ];
 
 export default function Education() {
+  const [pexelsPhotos, setPexelsPhotos] = useState<any[]>([]);
+
   useEffect(() => {
     AOS.init({ duration: 800, once: true, offset: 100 });
+
+    const fetchPhotos = async () => {
+      try {
+        const queries = articles.map(a => a.query);
+        const results = await Promise.all(queries.map(q => 
+          fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(q)}&per_page=1`, {
+            headers: {
+              Authorization: 'HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU'
+            }
+          }).then(res => res.json())
+        ));
+        
+        const photos = results.map(data => data.photos?.[0]);
+        setPexelsPhotos(photos);
+      } catch (error) {
+        console.error('Error fetching Pexels photos:', error);
+      }
+    };
+
+    fetchPhotos();
   }, []);
 
   return (
@@ -145,17 +178,21 @@ export default function Education() {
               }}
               className="education-swiper !pb-20 !px-4"
             >
-              {articles.map((article) => (
+              {articles.map((article, index) => {
+                return (
                 <SwiperSlide key={article.id}>
                   <div className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 group h-full flex flex-col border border-gray-100">
                     <div className="relative h-72 overflow-hidden">
                       <img 
-                        src={article.image} 
+                        src={pexelsPhotos.length > 0 && pexelsPhotos[index] ? pexelsPhotos[index]?.src?.large : article.image} 
                         alt={article.title} 
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
                       />
                       <div className="absolute top-6 left-6 bg-primary text-white px-5 py-1.5 rounded-full text-sm font-bold shadow-lg z-10">
                         Edukasi
+                      </div>
+                      <div className="absolute bottom-2 right-2 bg-black/50 text-white text-[10px] px-2 py-1 rounded z-10">
+                        Photos/ilustration by Pexels
                       </div>
                       <div className="absolute inset-0 bg-gradient-to-t from-dark/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     </div>
@@ -181,7 +218,8 @@ export default function Education() {
                     </div>
                   </div>
                 </SwiperSlide>
-              ))}
+                );
+              })}
             </Swiper>
           </div>
         </div>

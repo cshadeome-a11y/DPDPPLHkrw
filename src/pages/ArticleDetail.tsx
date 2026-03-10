@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
@@ -11,6 +11,7 @@ const articleData: Record<string, any> = {
     description: 'Pemerintah Kabupaten Karawang mulai melangkah ke fase pemanfaatan teknologi tinggi dalam menangani sisa sampah yang tidak lagi bisa didaur ulang melalui teknologi RDF.',
     keywords: 'RDF Karawang, sampah jadi energi, RISPS 2025, ekonomi sirkular Karawang, bahan bakar alternatif',
     image: 'https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    query: 'waste to energy',
     date: '10 Maret 2026',
     content: (
       <>
@@ -74,6 +75,7 @@ const articleData: Record<string, any> = {
     description: 'Pemerintah Kabupaten Karawang menetapkan insentif khusus bagi ketua RT dan RW guna mengapresiasi peran mereka dalam menjaga kebersihan wilayah.',
     keywords: 'insentif RT RW Karawang, ADD Karawang 2025, pengelolaan sampah desa, Perbup 85 Tahun 2025, apresiasi aparat lingkungan',
     image: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    query: 'community cleaning',
     date: '10 Maret 2026',
     content: (
       <>
@@ -170,6 +172,7 @@ const articleData: Record<string, any> = {
     description: 'Pemerintah Desa di Kabupaten Karawang mulai menerapkan tindakan tegas bagi warga atau pelaku usaha yang kedapatan membuang sampah sembarangan.',
     keywords: 'sanksi sampah Karawang, denda buang sampah, Perdes Medangasem, sanksi sosial sampah, hukum lingkungan desa',
     image: 'https://images.unsplash.com/photo-1605600611284-195205ef91b2?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    query: 'littering',
     date: '10 Maret 2026',
     content: (
       <>
@@ -259,6 +262,7 @@ const articleData: Record<string, any> = {
     description: 'Pengelolaan sampah di tingkat desa kini tidak lagi sekadar urusan kebersihan, tetapi mulai bertransformasi menjadi unit bisnis produktif melalui BUMDes.',
     keywords: 'BUMDes Karawang, PADes Karawang, pengelolaan sampah desa, Perdes Medangasem, retribusi sampah desa',
     image: 'https://images.unsplash.com/photo-1591193680737-26165880ba81?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    query: 'recycling village',
     date: '10 Maret 2026',
     content: (
       <>
@@ -353,6 +357,7 @@ const articleData: Record<string, any> = {
     description: 'Pemerintah Kabupaten Karawang menetapkan peta jalan transformasi pengelolaan sampah 20 tahun ke depan melalui RISPS 2025-2045.',
     keywords: 'RISPS Karawang, pengelolaan sampah Karawang, Karawang Emas 2045, Perbup 39 Tahun 2025, Perda 14 Tahun 2025',
     image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    query: 'green city',
     date: '10 Maret 2026',
     content: (
       <>
@@ -418,6 +423,7 @@ const articleData: Record<string, any> = {
     description: 'Edukasi mengenai definisi limbah cair, faktor yang mempengaruhi, serta jenis-jenis pencemar fisik, kimia, dan mikrobiologi dalam air limbah.',
     keywords: 'limbah cair industri, pencemaran air, BOD COD, limbah sablon, edukasi lingkungan Karawang',
     image: 'https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    query: 'water pollution',
     date: '10 Maret 2026',
     content: (
       <>
@@ -496,6 +502,7 @@ const articleData: Record<string, any> = {
     description: 'Panduan mengenali limbah Bahan Berbahaya dan Beracun (B3) serta perbedaannya dengan limbah non-B3 untuk masyarakat Karawang.',
     keywords: 'limbah B3 Karawang, perbedaan limbah B3 dan non-B3, pengelolaan limbah industri, limbah berbahaya',
     image: 'https://images.unsplash.com/photo-1621451537084-482c73073a0f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    query: 'toxic waste',
     date: '10 Maret 2026',
     content: (
       <>
@@ -534,6 +541,7 @@ const articleData: Record<string, any> = {
     description: 'Memahami hak konstitusional warga negara Indonesia atas lingkungan hidup yang baik dan sehat berdasarkan UU No. 32 Tahun 2009.',
     keywords: 'hak lingkungan hidup, UU PPLH, hukum lingkungan Karawang, hak warga negara Indonesia',
     image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    query: 'clean environment',
     date: '10 Maret 2026',
     content: (
       <>
@@ -580,6 +588,7 @@ const articleData: Record<string, any> = {
     description: 'Pemerintah Kabupaten Karawang memastikan kesiapan fiskal desa untuk mendukung penanganan masalah lingkungan melalui Dana Desa 2025.',
     keywords: 'Dana Desa Karawang 2025, pengelolaan sampah desa, APBDes 2025 Karawang, Perbup 45 Tahun 2024, prioritas lingkungan desa',
     image: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    query: 'village environment',
     date: '10 Maret 2026',
     content: (
       <>
@@ -658,6 +667,7 @@ const articleData: Record<string, any> = {
     description: 'Panduan teknis pemilahan sampah rumah tangga di Karawang berdasarkan Perbup No. 39 Tahun 2025 untuk mendukung target Karawang Emas 2045.',
     keywords: 'pilah sampah Karawang, pengelolaan sampah rumah tangga, Perbup 39 Tahun 2025, sampah organik anorganik residu, edukasi lingkungan Karawang',
     image: 'https://images.unsplash.com/photo-1595273670150-bd0c3c392e46?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    query: 'waste sorting',
     date: '10 Maret 2026',
     content: (
       <>
@@ -741,6 +751,7 @@ const articleData: Record<string, any> = {
     description: 'Refleksi mendalam atas tragedi longsor sampah Leuwigajah 2005 dan ajakan kolaborasi untuk mewujudkan Indonesia yang Aman, Sehat, Resik, dan Indah (ASRI).',
     keywords: 'HPSN 2026, tragedi Leuwigajah, hari peduli sampah nasional, pengelolaan sampah Karawang, Indonesia ASRI',
     image: 'https://images.unsplash.com/photo-1611284446314-60a58ac0deb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    query: 'landfill garbage',
     date: '20 Februari 2026',
     content: (
       <>
@@ -792,16 +803,40 @@ export default function ArticleDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const article = id ? articleData[id] : null;
+  const [pexelsPhoto, setPexelsPhoto] = useState<string | null>(null);
 
   useEffect(() => {
     if (!article) {
       navigate('/edukasi');
+      return;
     }
     AOS.init({ duration: 800, once: true });
     window.scrollTo(0, 0);
-  }, [article, navigate]);
+
+    if (article.image.includes('unsplash.com')) {
+      const fetchPhoto = async () => {
+        try {
+          const query = article.query || 'nature environment';
+          const response = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=1`, {
+            headers: {
+              Authorization: 'HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU'
+            }
+          });
+          const data = await response.json();
+          if (data && data.photos && data.photos.length > 0) {
+            setPexelsPhoto(data.photos[0].src.large);
+          }
+        } catch (error) {
+          console.error('Error fetching Pexels photos:', error);
+        }
+      };
+      fetchPhoto();
+    }
+  }, [article, navigate, id]);
 
   if (!article) return null;
+
+  const displayImage = pexelsPhoto || article.image;
 
   return (
     <>
@@ -831,7 +866,12 @@ export default function ArticleDetail() {
           </header>
 
           <div className="rounded-3xl overflow-hidden mb-12 shadow-xl relative group" data-aos="zoom-in">
-            <img src={article.image} alt={article.title} className="w-full h-auto object-cover max-h-[500px]" />
+            <img src={displayImage} alt={article.title} className="w-full h-auto object-cover max-h-[500px]" />
+            {pexelsPhoto && (
+              <div className="absolute bottom-4 right-4 bg-black/50 text-white text-xs px-3 py-1.5 rounded-md z-10">
+                Photos/ilustration by Pexels
+              </div>
+            )}
             {article.id === 'karawang-emas-2045-risps' && (
               <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                 <button 
