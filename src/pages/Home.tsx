@@ -7,6 +7,7 @@ import { Autoplay, EffectFade } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/effect-fade';
 import SEO from '../components/SEO';
+import LaporForm from '../components/LaporForm';
 
 export default function Home() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -355,61 +356,7 @@ export default function Home() {
             <p className="text-gray-600 text-lg">Sertakan detail dan lokasi yang akurat agar tim PPLH dapat segera memverifikasi laporan Anda ke lapangan.</p>
           </div>
 
-          <div className="bg-white p-8 md:p-10 rounded-3xl shadow-xl border border-gray-100" data-aos="fade-up" data-aos-delay="100">
-            <form action="https://api.web3forms.com/submit" method="POST" encType="multipart/form-data" className="space-y-6">
-              
-              <input type="hidden" name="access_key" value="99f68c44-c3d1-473b-a014-6bac8c53ad6f" />
-              <input type="hidden" name="subject" value="[URGENT] Laporan Aduan Lingkungan Baru dari Website" />
-              <input type="checkbox" name="botcheck" className="hidden" style={{ display: 'none' }} />
-              <input type="hidden" name="redirect" value="https://web3forms.com/success" />
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Nama Pelapor / Inisial <span className="text-red-500">*</span></label>
-                  <input type="text" name="Nama_Pelapor" required className="w-full px-4 py-3.5 bg-gray-50 rounded-xl border border-gray-200 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition outline-none" placeholder="Masukkan nama Anda" />
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-2">Nomor WhatsApp Aktif <span className="text-red-500">*</span></label>
-                  <input type="tel" name="WhatsApp" required className="w-full px-4 py-3.5 bg-gray-50 rounded-xl border border-gray-200 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition outline-none" placeholder="Contoh: 08123456xxxx" />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Lokasi Kejadian Lengkap <span className="text-red-500">*</span></label>
-                <input type="text" name="Lokasi" required className="w-full px-4 py-3.5 bg-gray-50 rounded-xl border border-gray-200 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition outline-none" placeholder="Contoh: Sungai Citarum, Desa X, Kec. Y" />
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Link Google Maps (Sangat Disarankan)</label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <i className="ph ph-map-pin text-gray-400 text-lg"></i>
-                  </div>
-                  <input type="url" name="Link_Maps" className="w-full pl-11 pr-4 py-3.5 bg-gray-50 rounded-xl border border-gray-200 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition outline-none" placeholder="Paste link Google Maps di sini" />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Deskripsi Kasus <span className="text-red-500">*</span></label>
-                <textarea name="Deskripsi" rows={4} required className="w-full px-4 py-3.5 bg-gray-50 rounded-xl border border-gray-200 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition outline-none resize-none" placeholder="Ceritakan kronologi, warna limbah, bau, atau nama perusahaan yang diduga melanggar..."></textarea>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">Upload Bukti Foto (Opsional via form)</label>
-                <input type="file" name="attachment" accept="image/*" className="w-full text-sm text-gray-500 file:mr-4 file:py-3 file:px-6 file:rounded-xl file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20 transition cursor-pointer" />
-                <p className="text-xs text-gray-500 mt-2"><i className="ph ph-info text-accent"></i> Jika file terlalu besar, Anda bisa mengirimkan video/foto via WhatsApp setelah menekan tombol kirim.</p>
-              </div>
-
-              <div className="pt-6 border-t border-gray-100 flex flex-col sm:flex-row gap-4">
-                <button type="submit" className="flex-1 bg-primary text-white font-bold py-4 px-6 rounded-xl hover:bg-dark transition shadow-lg hover:shadow-xl flex justify-center items-center gap-2">
-                  <i className="ph ph-paper-plane-right text-xl"></i> Kirim Laporan Resmi
-                </button>
-                <a href="https://wa.me/628123456789?text=Halo%20Tim%20Advokasi%20PPLH%20Karawang.%20Saya%20ingin%20melaporkan%20kasus%20lingkungan." target="_blank" rel="noreferrer" className="flex-1 bg-[#25D366] text-white font-bold py-4 px-6 rounded-xl hover:bg-green-600 transition shadow-lg hover:shadow-xl flex justify-center items-center gap-2">
-                  <i className="ph ph-whatsapp-logo text-xl"></i> Fast Response (WA)
-                </a>
-              </div>
-            </form>
-          </div>
+          <LaporForm />
         </div>
       </section>
 
