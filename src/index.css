@@ -24,3 +24,54 @@
 .animate-bounce-slow {
   animation: bounce-slow 3s infinite;
 }
+
+/* PDF Viewer Styles */
+.pdf-viewer-container {
+  @apply relative overflow-hidden transition-all duration-500 rounded-2xl border border-gray-200;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+.pdf-viewer-container:hover {
+  @apply shadow-2xl;
+}
+
+.pdf-viewer-iframe {
+  @apply w-full h-full border-none;
+  filter: grayscale(10%) contrast(105%);
+}
+
+.pdf-viewer-toolbar {
+  @apply bg-[#202124] text-white px-4 py-2 flex items-center justify-between z-20;
+}
+
+/* Swiper Customization */
+.education-swiper .swiper-button-next,
+.education-swiper .swiper-button-prev,
+.news-swiper .swiper-button-next,
+.news-swiper .swiper-button-prev {
+  @apply bg-white/90 backdrop-blur-sm text-primary w-12 h-12 rounded-full shadow-lg border border-gray-100 transition-all duration-300;
+}
+
+.education-swiper .swiper-button-next:after,
+.education-swiper .swiper-button-prev:after,
+.news-swiper .swiper-button-next:after,
+.news-swiper .swiper-button-prev:after {
+  @apply text-lg font-bold;
+}
+
+.education-swiper .swiper-button-next:hover,
+.education-swiper .swiper-button-prev:hover,
+.news-swiper .swiper-button-next:hover,
+.news-swiper .swiper-button-prev:hover {
+  @apply bg-primary text-white scale-110;
+}
+
+.education-swiper .swiper-pagination-bullet,
+.news-swiper .swiper-pagination-bullet {
+  @apply w-3 h-3 bg-gray-300 opacity-100 transition-all duration-300;
+}
+
+.education-swiper .swiper-pagination-bullet-active,
+.news-swiper .swiper-pagination-bullet-active {
+  @apply w-8 bg-primary rounded-full;
+}

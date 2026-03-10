@@ -47,6 +47,48 @@ export default function News() {
           data-aos="fade-up" 
           data-aos-delay="100"
         >
+          {/* Berita Terbaru - Panduan Pilah Sampah */}
+          <SwiperSlide>
+            <Link to="/edukasi/panduan-pilah-sampah-rumah" className="group block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
+              <div className="relative h-48 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Panduan Pilah Sampah" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
+                <div className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">10 Mar 2026</div>
+              </div>
+              <div className="p-6">
+                <h3 className="font-heading font-bold text-xl text-dark mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                  Panduan Pilah Sampah dari Rumah: Mandat Baru Warga Karawang Menuju Lingkungan Asri
+                </h3>
+                <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                  Masyarakat Kabupaten Karawang kini memiliki tanggung jawab baru dalam menjaga kebersihan lingkungan melalui pemilahan sampah mandiri.
+                </p>
+                <span className="text-primary font-semibold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                  Baca Selengkapnya <i className="ph-bold ph-arrow-right"></i>
+                </span>
+              </div>
+            </Link>
+          </SwiperSlide>
+
+          {/* Berita Terbaru - Dana Desa Karawang 2025 */}
+          <SwiperSlide>
+            <Link to="/edukasi/dana-desa-karawang-2025-sampah" className="group block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
+              <div className="relative h-48 overflow-hidden">
+                <img src="https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Dana Desa Karawang 2025" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
+                <div className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">10 Mar 2026</div>
+              </div>
+              <div className="p-6">
+                <h3 className="font-heading font-bold text-xl text-dark mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                  Karawang Guyur Rp358,9 Miliar Dana Desa 2025: Pengelolaan Sampah Jadi Prioritas Mandatori
+                </h3>
+                <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                  Pemerintah Kabupaten Karawang memastikan kesiapan fiskal desa untuk mendukung penanganan masalah lingkungan melalui Dana Desa 2025.
+                </p>
+                <span className="text-primary font-semibold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                  Baca Selengkapnya <i className="ph-bold ph-arrow-right"></i>
+                </span>
+              </div>
+            </Link>
+          </SwiperSlide>
+
           {/* Berita Terbaru - Podcast STURADA */}
           <SwiperSlide>
             <Link to="/berita/dukung-program-mbg" className="group block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">

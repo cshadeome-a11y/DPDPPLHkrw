@@ -3,13 +3,251 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import SEO from '../components/SEO';
+import PDFViewer from '../components/PDFViewer';
 
 const articleData: Record<string, any> = {
+  'bumdes-ujung-tombak-sampah': {
+    title: 'BUMDes Sebagai Ujung Tombak: Transformasi Sampah Jadi Sumber PADes di Desa-Desa Karawang',
+    description: 'Pengelolaan sampah di tingkat desa kini tidak lagi sekadar urusan kebersihan, tetapi mulai bertransformasi menjadi unit bisnis produktif melalui BUMDes.',
+    keywords: 'BUMDes Karawang, PADes Karawang, pengelolaan sampah desa, Perdes Medangasem, retribusi sampah desa',
+    image: 'https://images.unsplash.com/photo-1591193680737-26165880ba81?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    date: '10 Maret 2026',
+    content: (
+      <>
+        <p className="mb-6"><strong>KARAWANG</strong> – Pengelolaan sampah di tingkat desa kini tidak lagi sekadar urusan kebersihan, tetapi mulai bertransformasi menjadi unit bisnis produktif. Pemerintah Kabupaten Karawang melalui berbagai regulasi mendorong Badan Usaha Milik Desa (BUMDes) untuk mengambil peran sentral sebagai pengelola teknis dan pelaksana operasional persampahan guna meningkatkan Pendapatan Asli Desa (PADes).</p>
+        
+        <p className="mb-6">Salah satu contoh sukses penerapan sistem ini tertuang dalam Peraturan Desa (Perdes) Medangasem Nomor 4 Tahun 2025. Dalam aturan tersebut, BUMDes diberikan mandat penuh untuk mengelola seluruh rantai pasok sampah, mulai dari pengambilan di rumah tangga hingga pemrosesan di Tempat Pengolahan Sampah Terpadu (TPST) desa.</p>
+
+        <h2 className="text-2xl font-bold text-dark mt-10 mb-4">Profesionalisme Pengelolaan dan Tarif Retribusi</h2>
+        <p className="mb-6">Melalui unit usaha persampahan, BUMDes beroperasi secara profesional layaknya entitas bisnis. Pendanaan operasionalnya didukung oleh retribusi jasa pelayanan yang ditarik dari warga dan pelaku usaha. Berdasarkan kesepakatan musyawarah desa, tarif retribusi diatur secara proporsional berdasarkan volume dan jenis penghasil sampah.</p>
+        
+        <p className="mb-4 font-bold">Berikut adalah rincian tarif retribusi pelayanan sampah di Desa Medangasem sebagai rujukan kemandirian desa:</p>
+        <div className="bg-gray-50 p-6 rounded-2xl border border-gray-200 mb-8">
+          <ul className="space-y-3">
+            <li className="flex justify-between border-b border-gray-200 pb-2">
+              <span>Rumah Tangga Kecil</span>
+              <span className="font-bold text-primary">Rp 2.000 / hari</span>
+            </li>
+            <li className="flex justify-between border-b border-gray-200 pb-2">
+              <span>Rumah Tangga Menengah Atas</span>
+              <span className="font-bold text-primary">Rp 3.000 / hari</span>
+            </li>
+            <li className="flex justify-between border-b border-gray-200 pb-2">
+              <span>Lembaga Pendidikan (SD/TK/PAUD)</span>
+              <span className="font-bold text-primary">Rp 200.000 / bulan</span>
+            </li>
+            <li className="flex justify-between border-b border-gray-200 pb-2">
+              <span>Lembaga Pendidikan (SMP/SMA/SMK)</span>
+              <span className="font-bold text-primary">Rp 300.000 / bulan</span>
+            </li>
+            <li className="flex justify-between border-b border-gray-200 pb-2">
+              <span>Pelaku Usaha Kecil (Warung/Kios)</span>
+              <span className="font-bold text-primary">Rp 300.000 / bulan</span>
+            </li>
+            <li className="flex justify-between border-b border-gray-200 pb-2">
+              <span>Pelaku Usaha Menengah</span>
+              <span className="font-bold text-primary">Rp 400.000 / bulan</span>
+            </li>
+            <li className="flex justify-between pb-2">
+              <span>Kegiatan Hajatan (Per Acara)</span>
+              <span className="font-bold text-primary">Rp 200.000 - Rp 400.000</span>
+            </li>
+          </ul>
+        </div>
+
+        <h2 className="text-2xl font-bold text-dark mt-10 mb-4">Transparansi dan Dampak Ekonomi</h2>
+        <p className="mb-6">Hasil dari pungutan retribusi tersebut disetorkan ke rekening Kas Desa sebagai PADes setelah dikurangi biaya operasional pengelolaan. BUMDes diwajibkan memberikan laporan pertanggungjawaban berkala kepada Kepala Desa melalui Badan Permusyawaratan Desa (BPD) untuk menjamin transparansi anggaran.</p>
+        
+        <p className="mb-6">Selain memberikan keuntungan finansial bagi desa, pengelolaan sampah oleh BUMDes juga membuka lapangan kerja baru bagi warga lokal. Dengan skema ini, desa tidak lagi bergantung sepenuhnya pada anggaran kabupaten untuk menjaga kebersihan lingkungan, melainkan mampu mendanai perawatan fasilitas sampah secara mandiri.</p>
+
+        <div className="bg-primary/5 p-8 rounded-3xl border border-primary/20 my-12">
+          <h3 className="font-heading font-bold text-xl text-dark mb-6 flex items-center gap-2">
+            <i className="ph ph-file-pdf text-primary"></i> Dokumen Referensi & Regulasi
+          </h3>
+          
+          <div className="space-y-8">
+            <div>
+              <h4 className="font-bold text-dark mb-3">1. Peraturan Desa Medangasem Nomor 4 Tahun 2025</h4>
+              <p className="text-sm text-gray-500 mb-4 italic">Tentang Pengelolaan Sampah & Retribusi</p>
+              <PDFViewer 
+                url="https://jdih.karawangkab.go.id/document/download/3243/lampiran" 
+                title="Perdes Medangasem No. 4 Tahun 2025" 
+              />
+            </div>
+
+            <div>
+              <h4 className="font-bold text-dark mb-3">2. Peraturan Bupati Karawang Nomor 82 Tahun 2025</h4>
+              <p className="text-sm text-gray-500 mb-4 italic">Tentang Pedoman Penyertaan Modal Desa Kepada BUMDes</p>
+              <PDFViewer 
+                url="https://jdih.karawangkab.go.id/document/download/2832/lampiran" 
+                title="Perbup No. 82 Tahun 2025" 
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-blue-50 border-l-4 border-blue-500 p-6 my-10 rounded-r-xl">
+          <h4 className="font-bold text-dark mb-2 flex items-center gap-2">
+            <i className="ph-fill ph-info text-blue-500"></i> Sumber Referensi JDIH Karawang
+          </h4>
+          <ul className="text-sm text-gray-700 space-y-2">
+            <li>• <a href="https://jdih.karawangkab.go.id/document/peraturan-desa/medangasem-nomor-4-tahun-2025" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Peraturan Desa Medangasem Nomor 4 Tahun 2025</a></li>
+            <li>• <a href="https://jdih.karawangkab.go.id/document/download/2832/lampiran" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Peraturan Bupati Karawang Nomor 39 Tahun 2025 (RISPS)</a></li>
+            <li>• <a href="https://jdih.karawangkab.go.id/document/peraturan-bupati/nomor-82-tahun-2025" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Peraturan Bupati Karawang Nomor 82 Tahun 2025</a></li>
+            <li>• <a href="https://walahar.desa.id/pengelolaan-sampah/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Peraturan Desa Walahar Nomor 2 Tahun 2012</a></li>
+          </ul>
+        </div>
+      </>
+    )
+  },
+  'karawang-emas-2045-risps': {
+    title: 'Menuju Karawang Emas 2045: Strategi RISPS Targetkan Residu Sampah ke TPA Hanya 10 Persen',
+    description: 'Pemerintah Kabupaten Karawang menetapkan peta jalan transformasi pengelolaan sampah 20 tahun ke depan melalui RISPS 2025-2045.',
+    keywords: 'RISPS Karawang, pengelolaan sampah Karawang, Karawang Emas 2045, Perbup 39 Tahun 2025, Perda 14 Tahun 2025',
+    image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    date: '10 Maret 2026',
+    content: (
+      <>
+        <p className="mb-6"><strong>KARAWANG</strong> – Pemerintah Kabupaten Karawang secara resmi telah menetapkan peta jalan transformasi pengelolaan sampah untuk 20 tahun ke depan. Melalui Peraturan Bupati (Perbup) Nomor 39 Tahun 2025 tentang Rencana Induk Sistem Pengelolaan Sampah (RISPS), Karawang menargetkan pengurangan sampah yang drastis dengan membatasi residu yang dibuang ke Tempat Pemrosesan Akhir (TPA) hingga hanya 10 persen pada tahun 2045 mendatang.</p>
+        
+        <p className="mb-6">Langkah strategis ini merupakan respon terhadap pertumbuhan beban sampah yang selaras dengan perkembangan industri dan populasi di Karawang. RISPS 2025–2045 dirancang sebagai dokumen induk yang mengintegrasikan aspek teknis operasional, penguatan kelembagaan di tingkat desa, hingga bauran pembiayaan yang berkelanjutan.</p>
+
+        <h2 className="text-2xl font-bold text-dark mt-10 mb-4">Target Bertahap Menuju Pengelolaan 100 Persen</h2>
+        <p className="mb-6">Dalam pelaksanaannya, pemerintah menetapkan milestone atau target pencapaian secara bertahap. Pada jangka pendek tahun 2025, target pengurangan sampah dipatok sebesar 10,34% dengan tingkat penanganan 41,25%. Target ini akan terus ditingkatkan hingga mencapai titik krusial pada tahun 2030, di mana pengelolaan sampah harus mencapai 100% (30% pengurangan di sumber dan 70% penanganan).</p>
+        
+        <p className="mb-6">Visi puncaknya pada periode Indonesia Emas 2045 adalah mewujudkan layanan pengumpulan sampah rumah tangga sebesar 100% di seluruh wilayah Karawang. Pada tahap ini, efisiensi pengolahan diharapkan sangat tinggi sehingga hanya menyisakan 10% residu yang benar-benar tidak bisa diolah untuk diteruskan ke lahan urug TPA.</p>
+
+        <h2 className="text-2xl font-bold text-dark mt-10 mb-4">Desentralisasi ke Tingkat Desa</h2>
+        <p className="mb-6">Strategi utama dalam RISPS ini adalah desentralisasi pengelolaan sampah dengan menggeser titik berat pemrosesan ke tingkat desa dan kelurahan. Desa didorong untuk tidak lagi sekadar mengumpulkan dan mengangkut sampah, tetapi wajib melakukan pemrosesan di hulu.</p>
+        
+        <p className="mb-6">Sesuai aturan teknis, setiap desa diinstruksikan untuk menyediakan infrastruktur berupa Tempat Pengolahan Sampah Terpadu (TPST) atau TPS3R (Reuse, Reduce, Recycle) dengan luas lahan minimal 200 meter persegi. Di fasilitas ini, sampah organik harus diolah sedekat mungkin dengan sumbernya menjadi kompos atau pakan ternak (maggot), sementara sampah anorganik disalurkan melalui sistem Bank Sampah desa.</p>
+
+        <h2 className="text-2xl font-bold text-dark mt-10 mb-4">Kolaborasi dan Partisipasi Masyarakat</h2>
+        <p className="mb-6">Pemerintah Kabupaten Karawang menekankan bahwa pencapaian target RISPS ini mustahil terwujud tanpa partisipasi aktif warga. Masyarakat diwajibkan melakukan pemilahan mandiri sejak dari rumah tangga untuk memisahkan kategori organik, anorganik, dan residu.</p>
+        
+        <p className="mb-6">Dukungan pendanaan untuk program ini akan menggunakan skema bauran, mulai dari pemanfaatan Dana Desa (DD) dan Alokasi Dana Desa (ADD), hingga optimalisasi retribusi jasa usaha yang dikelola secara profesional melalui Badan Usaha Milik Desa (BUMDes).</p>
+
+        <div className="bg-primary/5 p-8 rounded-3xl border border-primary/20 my-12">
+          <h3 className="font-heading font-bold text-xl text-dark mb-6 flex items-center gap-2">
+            <i className="ph ph-file-pdf text-primary"></i> Dokumen Referensi & Regulasi
+          </h3>
+          
+          <div className="space-y-8">
+            <div>
+              <h4 className="font-bold text-dark mb-3">1. Peraturan Daerah (PERDA) No. 14 Tahun 2025</h4>
+              <p className="text-sm text-gray-500 mb-4 italic">Tentang Perubahan Atas Perda No. 9 Tahun 2017 tentang Pengelolaan Sampah</p>
+              <PDFViewer 
+                url="https://jdih.karawangkab.go.id/document/download/3243/lampiran" 
+                title="Dokumen Perubahan Perda Sampah" 
+              />
+            </div>
+
+            <div>
+              <h4 className="font-bold text-dark mb-3">2. Peraturan Bupati (PERBUP) No. 39 Tahun 2025</h4>
+              <p className="text-sm text-gray-500 mb-4 italic">Tentang Rencana Induk Sistem Pengelolaan Sampah (RISPS)</p>
+              <PDFViewer 
+                url="https://jdih.karawangkab.go.id/document/download/2832/lampiran" 
+                title="Lampiran Perbup RISPS 2025" 
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-blue-50 border-l-4 border-blue-500 p-6 my-10 rounded-r-xl">
+          <h4 className="font-bold text-dark mb-2 flex items-center gap-2">
+            <i className="ph-fill ph-info text-blue-500"></i> Sumber Referensi JDIH Karawang
+          </h4>
+          <ul className="text-sm text-gray-700 space-y-2">
+            <li>• <a href="https://jdih.karawangkab.go.id/document/download/3243/abstraksi" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Abstraksi PERDA No. 14 Tahun 2025</a></li>
+            <li>• <a href="https://jdih.karawangkab.go.id/document/download/2832/abstraksi" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Abstraksi PERBUP No. 39 Tahun 2025</a></li>
+          </ul>
+        </div>
+      </>
+    )
+  },
+  'mengenal-limbah-cair-industri': {
+    title: 'Mengenal Limbah Cair Industri dan Dampaknya bagi Lingkungan',
+    description: 'Edukasi mengenai definisi limbah cair, faktor yang mempengaruhi, serta jenis-jenis pencemar fisik, kimia, dan mikrobiologi dalam air limbah.',
+    keywords: 'limbah cair industri, pencemaran air, BOD COD, limbah sablon, edukasi lingkungan Karawang',
+    image: 'https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    date: '10 Maret 2026',
+    content: (
+      <>
+        <p className="mb-6">Limbah cair merupakan salah satu tantangan lingkungan terbesar, terutama di daerah industri seperti Karawang. Pemahaman yang mendalam mengenai karakteristik dan dampak limbah cair sangat penting bagi masyarakat dan pelaku industri untuk mencegah kerusakan ekosistem yang lebih parah.</p>
+        
+        <h2 className="text-2xl font-bold text-dark mt-10 mb-4">Apa itu Limbah Cair?</h2>
+        <p className="mb-6">Menurut Kaswinarni (2008), limbah cair adalah limbah yang dihasilkan dari proses industri yang berwujud cair dan mengandung padatan tersuspensi atau terlarut. Limbah ini akan mengalami proses perubahan fisik, kimia, maupun biologi yang menghasilkan zat beracun dan dapat menimbulkan gangguan ataupun risiko terjadinya penyakit serta kerusakan lingkungan.</p>
+        <p className="mb-6">Sebagai contoh, limbah cair yang dihasilkan dari kegiatan industri sablon dapat mengandung bahan yang menghasilkan zat beracun bagi kesehatan lingkungan dan menyebabkan terjadinya pencemaran lingkungan jika tidak dikelola dengan benar.</p>
+        
+        <h2 className="text-2xl font-bold text-dark mt-10 mb-4">Sumber dan Jenis Pencemar dalam Limbah Cair</h2>
+        <p className="mb-6">Berdasarkan sumbernya, pencemar limbah cair dapat dibedakan menjadi tiga kategori utama (Suharto, 2011):</p>
+        
+        <div className="space-y-8 my-8">
+          <div className="bg-gray-50 p-6 rounded-2xl border-l-4 border-primary">
+            <h3 className="text-xl font-bold text-dark mb-3 flex items-center gap-2">
+              <i className="ph-fill ph-thermometer text-primary"></i> 1. Pencemar Fisik
+            </h3>
+            <p className="text-gray-600">Meliputi parameter yang dapat dilihat atau dirasakan secara fisik, seperti:</p>
+            <ul className="list-disc pl-6 mt-2 space-y-1">
+              <li>Suhu (temperatur air yang meningkat)</li>
+              <li>Nilai pH (keasaman atau kebasaan)</li>
+              <li>Warna dan Bau yang tidak wajar</li>
+              <li>Total Padatan Tersuspensi (TSS)</li>
+            </ul>
+          </div>
+
+          <div className="bg-gray-50 p-6 rounded-2xl border-l-4 border-accent">
+            <h3 className="text-xl font-bold text-dark mb-3 flex items-center gap-2">
+              <i className="ph-fill ph-flask text-accent"></i> 2. Pencemar Kimia (Organik & Anorganik)
+            </h3>
+            <p className="text-gray-600 mb-3"><strong>Senyawa Organik:</strong> Karbohidrat, protein, lemak, minyak, pelumas, serta parameter Biochemical Oxygen Demand (BOD) dan Chemical Oxygen Demand (COD).</p>
+            <p className="text-gray-600 mb-3"><strong>Senyawa Anorganik:</strong> Logam berat, Nitrogen (N), Fosfor (P), Khlorida, Sulfur, Hidrogen Sulfit, dan gas terlarut.</p>
+            <div className="bg-white p-4 rounded-xl border border-gray-200 mt-4 italic text-sm">
+              "Jika nilai BOD tinggi atau melebihi ambang batas, maka terdapat kelebihan senyawa organik pada limbah cair yang mengonsumsi oksigen terlarut (Dissolved Oxygen) dalam air."
+            </div>
+          </div>
+
+          <div className="bg-gray-50 p-6 rounded-2xl border-l-4 border-red-500">
+            <h3 className="text-xl font-bold text-dark mb-3 flex items-center gap-2">
+              <i className="ph-fill ph-virus text-red-500"></i> 3. Pencemar Mikrobiologi
+            </h3>
+            <p className="text-gray-600">Pencemar ini berupa mikroba patogen yang dapat menyebabkan penyakit berbahaya, antara lain:</p>
+            <ul className="list-disc pl-6 mt-2 space-y-1">
+              <li>Bakteri (Salmonella typhi, Coliform)</li>
+              <li>Virus (Poliovirus, Hepatitis B)</li>
+              <li>Protozoa, Algae, dan Cacing Parasit</li>
+              <li>Penyakit yang ditimbulkan: Typhus, Cholera, Dysentri</li>
+            </ul>
+          </div>
+        </div>
+
+        <h2 className="text-2xl font-bold text-dark mt-10 mb-4">Komponen Utama Air Limbah</h2>
+        <p className="mb-6">Menurut Siregar (2005), komponen air limbah dari senyawa kimia diklasifikasikan dalam tiga kelompok utama:</p>
+        <ul className="list-decimal pl-6 mb-6 space-y-4">
+          <li><strong>Protein:</strong> Merupakan bahan dasar dari sel-sel binatang (sekitar 40-60%).</li>
+          <li><strong>Karbohidrat:</strong> Bahan penyusun utama dalam sel tumbuhan.</li>
+          <li><strong>Lipida:</strong> Bahan yang tidak terlarut dalam air.</li>
+        </ul>
+        
+        <div className="bg-red-50 border border-red-100 p-6 my-10 rounded-2xl">
+          <h4 className="font-bold text-red-700 mb-2 flex items-center gap-2">
+            <i className="ph-fill ph-warning-octagon"></i> Bahaya Senyawa Organik Berlebih
+          </h4>
+          <p className="text-red-600 leading-relaxed">
+            Keberadaan senyawa organik yang berlebihan dalam air alam sangat membahayakan karena bersifat racun. Hal ini menyebabkan penurunan kandungan oksigen dalam air secara drastis dan memicu terbentuknya substansi-substansi beracun yang mematikan bagi biota air.
+          </p>
+        </div>
+
+        <h2 className="text-2xl font-bold text-dark mt-10 mb-4">Kesimpulan</h2>
+        <p className="mb-6">Pengawasan terhadap pembuangan limbah cair industri adalah tanggung jawab kita bersama. Dengan mengenali ciri-ciri fisik dan dampak kimianya, kita dapat lebih waspada terhadap potensi pencemaran di lingkungan sekitar kita, khususnya di aliran sungai Karawang.</p>
+      </>
+    )
+  },
   'limbah-b3-vs-non-b3': {
     title: 'Cara Membedakan Limbah B3 dan Non-B3',
     description: 'Panduan mengenali limbah Bahan Berbahaya dan Beracun (B3) serta perbedaannya dengan limbah non-B3 untuk masyarakat Karawang.',
     keywords: 'limbah B3 Karawang, perbedaan limbah B3 dan non-B3, pengelolaan limbah industri, limbah berbahaya',
-    image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    image: 'https://images.unsplash.com/photo-1621451537084-482c73073a0f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     date: '10 Maret 2026',
     content: (
       <>
@@ -47,7 +285,7 @@ const articleData: Record<string, any> = {
     title: 'Hak Warga Negara Atas Lingkungan yang Bersih Menurut UU',
     description: 'Memahami hak konstitusional warga negara Indonesia atas lingkungan hidup yang baik dan sehat berdasarkan UU No. 32 Tahun 2009.',
     keywords: 'hak lingkungan hidup, UU PPLH, hukum lingkungan Karawang, hak warga negara Indonesia',
-    image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     date: '10 Maret 2026',
     content: (
       <>
@@ -89,11 +327,172 @@ const articleData: Record<string, any> = {
       </>
     )
   },
+  'dana-desa-karawang-2025-sampah': {
+    title: 'Karawang Guyur Rp358,9 Miliar Dana Desa 2025: Pengelolaan Sampah Jadi Prioritas Mandatori di APBDes',
+    description: 'Pemerintah Kabupaten Karawang memastikan kesiapan fiskal desa untuk mendukung penanganan masalah lingkungan melalui Dana Desa 2025.',
+    keywords: 'Dana Desa Karawang 2025, pengelolaan sampah desa, APBDes 2025 Karawang, Perbup 45 Tahun 2024, prioritas lingkungan desa',
+    image: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    date: '10 Maret 2026',
+    content: (
+      <>
+        <p className="mb-6"><strong>KARAWANG</strong> – Pemerintah Kabupaten Karawang memastikan kesiapan fiskal desa untuk mendukung penanganan masalah lingkungan pada tahun anggaran 2025. Melalui dukungan Pemerintah Pusat, sebanyak 297 desa di seluruh wilayah Karawang akan menerima kucuran Dana Desa (DD) dengan total nilai fantastis mencapai Rp358.978.734.000.</p>
+        
+        <p className="mb-6">Alokasi dana tersebut mewajibkan pemerintah desa untuk menyinkronkan belanja mereka dengan prioritas daerah, terutama dalam hal tata kelola sampah rumah tangga. Berdasarkan Peraturan Bupati Karawang Nomor 45 Tahun 2024 tentang Pedoman Penyusunan APBDes 2025, setiap desa diarahkan untuk mengalokasikan anggaran secara mandatori pada sub-bidang lingkungan hidup dan kawasan pemukiman.</p>
+
+        <h2 className="text-2xl font-bold text-dark mt-10 mb-4">Rincian Alokasi dan Kode Rekening Mandatori</h2>
+        <p className="mb-6">Rata-rata desa di Karawang akan menerima jatah sekitar Rp1 miliar, dengan beberapa desa seperti Desa Duren, Desa Bengle, dan Desa Cibalongsari tercatat sebagai penerima alokasi tertinggi di atas Rp2,3 miliar. Untuk memastikan dana tersebut terserap tepat sasaran, pemerintah telah menetapkan kode rekening khusus dalam struktur APBDes 2025:</p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 my-8">
+          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+            <div className="text-primary font-bold text-lg mb-2">Kode 02.04.07</div>
+            <p className="text-sm text-gray-600">Pemeliharaan fasilitas pengelolaan sampah desa seperti TPS dan Bank Sampah.</p>
+          </div>
+          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+            <div className="text-primary font-bold text-lg mb-2">Kode 02.04.15</div>
+            <p className="text-sm text-gray-600">Pembangunan atau peningkatan infrastruktur fasilitas sampah.</p>
+          </div>
+          <div className="bg-white p-6 rounded-2xl border border-gray-200 shadow-sm">
+            <div className="text-primary font-bold text-lg mb-2">Kode 02.05.02</div>
+            <p className="text-sm text-gray-600">Kegiatan operasional pengelolaan lingkungan hidup milik desa.</p>
+          </div>
+        </div>
+
+        <h2 className="text-2xl font-bold text-dark mt-10 mb-4">Skema Padat Karya Tunai (PKT)</h2>
+        <p className="mb-6">Penyusunan anggaran tahun 2025 menekankan pada prinsip swakelola dengan skema Padat Karya Tunai (PKT). Instruksi ini mewajibkan desa untuk menggunakan tenaga kerja lokal dan bahan baku desa dalam kegiatan pembersihan selokan, pemeliharaan sistem drainase, hingga operasional fasilitas sampah.</p>
+        
+        <blockquote className="border-l-4 border-primary pl-6 py-2 my-8 italic text-gray-700 bg-gray-50 rounded-r-xl">
+          "Desa harus memastikan bahwa anggaran sampah tidak hanya menyelesaikan masalah residu, tetapi juga memberikan dampak ekonomi langsung bagi masyarakat berpenghasilan rendah melalui PKT," sebagaimana ditekankan dalam pedoman teknis tersebut.
+        </blockquote>
+
+        <h2 className="text-2xl font-bold text-dark mt-10 mb-4">Target Ketepatan Waktu</h2>
+        <p className="mb-6">Agar pengalokasian dana berjalan sah, pemerintah desa diwajibkan menyelesaikan penetapan Peraturan Desa tentang APBDes 2025 paling lambat tanggal 31 Desember 2024. Desa-desa yang terlambat dalam pelaporan kinerja tahun sebelumnya atau gagal menyusun rencana anggaran sesuai prioritas lingkungan terancam mengalami kendala dalam proses pencairan dana dari pemerintah pusat.</p>
+
+        <div className="bg-primary/5 p-8 rounded-3xl border border-primary/20 my-12">
+          <h3 className="font-heading font-bold text-xl text-dark mb-6 flex items-center gap-2">
+            <i className="ph ph-file-pdf text-primary"></i> Dokumen Referensi & Regulasi
+          </h3>
+          
+          <div className="space-y-8">
+            <div>
+              <h4 className="font-bold text-dark mb-3">1. Peraturan Bupati Karawang Nomor 45 Tahun 2024</h4>
+              <p className="text-sm text-gray-500 mb-4 italic">Tentang Pedoman Penyusunan APB Desa Tahun Anggaran 2025</p>
+              <PDFViewer 
+                url="https://jdih.karawangkab.go.id/document/download/1974/lampiran" 
+                title="Perbup Pedoman APBDes 2025" 
+              />
+            </div>
+
+            <div>
+              <h4 className="font-bold text-dark mb-3">2. Nota Keuangan RAPBD Kabupaten Karawang TA 2025</h4>
+              <p className="text-sm text-gray-500 mb-4 italic">Sumber: Pemerintah Kabupaten Karawang</p>
+              <PDFViewer 
+                url="https://karawangkab.go.id/sites/default/files/pdf/Nota%20Keuangan%20RAPBD%202025.pdf" 
+                title="Nota Keuangan RAPBD 2025" 
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-blue-50 border-l-4 border-blue-500 p-6 my-10 rounded-r-xl">
+          <h4 className="font-bold text-dark mb-2 flex items-center gap-2">
+            <i className="ph-fill ph-info text-blue-500"></i> Sumber Berita & Data
+          </h4>
+          <ul className="text-sm text-gray-700 space-y-2">
+            <li>• <a href="https://www.antaranews.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Berita Resmi: Alokasi Dana Desa Karawang 2025 (Antara News)</a></li>
+            <li>• <a href="https://www.karawangpos.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Data Rincian Pagu Dana Desa per Desa Kabupaten Karawang TA 2025</a></li>
+          </ul>
+        </div>
+      </>
+    )
+  },
+  'panduan-pilah-sampah-rumah': {
+    title: 'Panduan Pilah Sampah dari Rumah: Mandat Baru Warga Karawang Menuju Lingkungan Asri',
+    description: 'Panduan teknis pemilahan sampah rumah tangga di Karawang berdasarkan Perbup No. 39 Tahun 2025 untuk mendukung target Karawang Emas 2045.',
+    keywords: 'pilah sampah Karawang, pengelolaan sampah rumah tangga, Perbup 39 Tahun 2025, sampah organik anorganik residu, edukasi lingkungan Karawang',
+    image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    date: '10 Maret 2026',
+    content: (
+      <>
+        <p className="mb-6"><strong>KARAWANG</strong> – Sejalan dengan penetapan Rencana Induk Sistem Pengelolaan Sampah (RISPS) 2025–2045, masyarakat Kabupaten Karawang kini memiliki tanggung jawab baru dalam menjaga kebersihan lingkungan. Pemerintah melalui Peraturan Bupati Nomor 39 Tahun 2025 mewajibkan setiap rumah tangga untuk melakukan pemilahan sampah langsung dari sumbernya guna mengurangi beban residu yang dibuang ke Tempat Pemrosesan Akhir (TPA).</p>
+        
+        <p className="mb-6">Pemilahan sampah bukan lagi sekadar imbauan, melainkan instruksi teknis yang bertujuan agar sampah dapat diolah kembali menjadi sumber daya bernilai ekonomi. Berikut adalah panduan teknis pemilahan sampah di tingkat rumah tangga berdasarkan standar regulasi terbaru di Karawang:</p>
+
+        <div className="space-y-8 my-10">
+          <div className="bg-green-50 p-8 rounded-3xl border-l-8 border-primary shadow-sm">
+            <h3 className="text-xl font-bold text-dark mb-4 flex items-center gap-3">
+              <i className="ph-fill ph-leaf text-primary text-2xl"></i> 1. Sampah Organik (Sampah Basah)
+            </h3>
+            <p className="text-gray-700 leading-relaxed">
+              Sampah organik mencakup sisa makanan, kulit buah, sisa sayuran, dan guguran daun. Berdasarkan standar operasional, sampah jenis ini harus dipisahkan karena akan diolah oleh unit pengelola desa menjadi kompos atau pakan ternak (maggot). <strong>Sampah organik wajib diangkut minimal setiap dua hari sekali</strong> untuk mencegah pembusukan.
+            </p>
+          </div>
+
+          <div className="bg-blue-50 p-8 rounded-3xl border-l-8 border-blue-500 shadow-sm">
+            <h3 className="text-xl font-bold text-dark mb-4 flex items-center gap-3">
+              <i className="ph-fill ph-recycle text-blue-500 text-2xl"></i> 2. Sampah Anorganik (Sampah Daur Ulang)
+            </h3>
+            <p className="text-gray-700 leading-relaxed">
+              Kategori ini meliputi plastik, kertas, kardus, logam, kaleng, dan botol kaca. Sampah anorganik memiliki nilai ekonomi tinggi jika dalam keadaan bersih. Masyarakat diminta untuk mengumpulkan sampah ini secara terpisah untuk kemudian disetorkan ke <strong>Bank Sampah desa</strong> atau unit usaha BUMDes.
+            </p>
+          </div>
+
+          <div className="bg-red-50 p-8 rounded-3xl border-l-8 border-red-500 shadow-sm">
+            <h3 className="text-xl font-bold text-dark mb-4 flex items-center gap-3">
+              <i className="ph-fill ph-trash text-red-500 text-2xl"></i> 3. Sampah Residu
+            </h3>
+            <p className="text-gray-700 leading-relaxed">
+              Sampah residu adalah sampah yang benar-benar tidak dapat diolah kembali, seperti popok sekali pakai, pembalut, tisu bekas, dan puntung rokok. Sesuai target Karawang Emas 2045, volume sampah jenis inilah yang akan dibatasi hingga maksimal <strong>hanya 10%</strong> dari total timbulan sampah desa.
+            </p>
+          </div>
+        </div>
+
+        <h2 className="text-2xl font-bold text-dark mt-10 mb-4">Pentingnya Pemilahan dari Sumber</h2>
+        <p className="mb-6">Unit pengelola di tingkat desa kini mulai memberlakukan aturan tegas bahwa petugas hanya akan mengangkut sampah yang sudah terpilah. Masyarakat juga diwajibkan menyediakan tempat sampah tertutup secara swadaya untuk menghindari polusi lingkungan. Dengan memilah dari rumah, warga turut membantu menurunkan biaya operasional desa dan menjaga kelestarian sungai serta saluran irigasi dari polusi plastik.</p>
+
+        <div className="bg-primary/5 p-8 rounded-3xl border border-primary/20 my-12">
+          <h3 className="font-heading font-bold text-xl text-dark mb-6 flex items-center gap-2">
+            <i className="ph ph-file-pdf text-primary"></i> Dokumen Referensi & Regulasi
+          </h3>
+          
+          <div className="space-y-8">
+            <div>
+              <h4 className="font-bold text-dark mb-3">1. Peraturan Bupati Karawang Nomor 39 Tahun 2025</h4>
+              <p className="text-sm text-gray-500 mb-4 italic">Tentang Rencana Induk Sistem Pengelolaan Sampah (RISPS) 2025-2045</p>
+              <PDFViewer 
+                url="https://jdih.karawangkab.go.id/document/download/2832/lampiran" 
+                title="Perbup RISPS 2025" 
+              />
+            </div>
+
+            <div>
+              <h4 className="font-bold text-dark mb-3">2. Peraturan Bupati Karawang Nomor 72 Tahun 2018</h4>
+              <p className="text-sm text-gray-500 mb-4 italic">Tentang Kebijakan dan Strategi Daerah (Jakstrada) Pengelolaan Sampah</p>
+              <PDFViewer 
+                url="https://jdih.karawangkab.go.id/storage/lampiran_files/2020pb32150093.pdf" 
+                title="Perbup Jakstrada Sampah" 
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-blue-50 border-l-4 border-blue-500 p-6 my-10 rounded-r-xl">
+          <h4 className="font-bold text-dark mb-2 flex items-center gap-2">
+            <i className="ph-fill ph-info text-blue-500"></i> Sumber Referensi Tambahan
+          </h4>
+          <ul className="text-sm text-gray-700 space-y-2">
+            <li>• <a href="https://jdih.karawangkab.go.id/document/download/3243/abstraksi" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Abstraksi PERDA No. 14 Tahun 2025 (Amandemen Pengelolaan Sampah)</a></li>
+            <li>• <a href="https://walahar.desa.id/pengelolaan-sampah/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Peraturan Desa Walahar No. 2 Tahun 2012 (Mekanisme Pengelolaan Sampah Desa)</a></li>
+            <li>• <a href="https://www.scribd.com/document/888286265/Surat-Edaran-Bupati-Karawang" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">Surat Edaran Bupati Karawang No. 1406 Tahun 2025 (Aksi Bersih Sampah Plastik)</a></li>
+          </ul>
+        </div>
+      </>
+    )
+  },
   'tragedi-leuwigajah-hpsn-2026': {
     title: 'Mengenang Tragedi Leuwigajah: Refleksi Hari Peduli Sampah Nasional (HPSN) 2026 untuk Indonesia ASRI',
     description: 'Refleksi mendalam atas tragedi longsor sampah Leuwigajah 2005 dan ajakan kolaborasi untuk mewujudkan Indonesia yang Aman, Sehat, Resik, dan Indah (ASRI).',
     keywords: 'HPSN 2026, tragedi Leuwigajah, hari peduli sampah nasional, pengelolaan sampah Karawang, Indonesia ASRI',
-    image: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    image: 'https://images.unsplash.com/photo-1611284446314-60a58ac0deb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     date: '20 Februari 2026',
     content: (
       <>
@@ -183,13 +582,28 @@ export default function ArticleDetail() {
             </h1>
           </header>
 
-          <div className="rounded-3xl overflow-hidden mb-12 shadow-xl" data-aos="zoom-in">
+          <div className="rounded-3xl overflow-hidden mb-12 shadow-xl relative group" data-aos="zoom-in">
             <img src={article.image} alt={article.title} className="w-full h-auto object-cover max-h-[500px]" />
+            {article.id === 'karawang-emas-2045-risps' && (
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                <button 
+                  onClick={() => {
+                    const el = document.getElementById('dokumen-regulasi');
+                    el?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className="bg-primary text-white px-8 py-3 rounded-full font-bold shadow-2xl flex items-center gap-2 hover:scale-105 transition-transform"
+                >
+                  <i className="ph-fill ph-book-open text-2xl"></i> Baca Dokumen (Flipbook)
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="prose prose-lg max-w-none text-gray-600 leading-relaxed" data-aos="fade-up">
             {article.content}
           </div>
+
+          {article.id === 'karawang-emas-2045-risps' && <div id="dokumen-regulasi" className="scroll-mt-24"></div>}
 
           <div className="mt-16 pt-10 border-t border-gray-100" data-aos="fade-up">
             <div className="bg-gray-50 p-8 rounded-3xl flex flex-col md:flex-row items-center justify-between gap-6">

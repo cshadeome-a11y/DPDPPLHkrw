@@ -10,18 +10,28 @@ const LaporForm: React.FC = () => {
     setIsLoading(true);
     setError(null);
 
-    const formData = new FormData(e.currentTarget);
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbxwXDxsLCc8UtrENWXi50ELko2HB9qZfDDcAsB8-ICuOjkjbP6mAzK7QYx2tFt64REaNg/exec';
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwrSL8hY87_uqG9S97MHHxN_41lv_78ArA7Q5xFzzFrkGCinuBAy7AkTkMZdLW9Gw7Lvw/exec';
+    const formElement = e.currentTarget;
 
     try {
+      const formData = new FormData(formElement);
+      // Konversi FormData menjadi URLSearchParams agar cocok dengan Google Apps Script
+      const data = new URLSearchParams(formData as any).toString();
+      
       await fetch(scriptURL, {
         method: 'POST',
-        body: formData,
         mode: 'no-cors',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: data,
       });
 
-      // With no-cors, we can't read the response, so we assume success if no error is thrown
+      // Karena mode 'no-cors', kita tidak bisa membaca respon sukses/gagal dari server.
+      // Kita asumsikan berhasil jika tidak ada error network.
       setIsSuccess(true);
+      formElement.reset();
+      
     } catch (err) {
       console.error('Error submitting form:', err);
       setError('Terjadi kesalahan saat mengirim laporan. Silakan coba lagi atau hubungi kami via WhatsApp.');
@@ -91,6 +101,12 @@ const LaporForm: React.FC = () => {
               type="tel" 
               name="WhatsApp" 
               required 
+              pattern="^0[0-9]{9,13}$"
+              title="Nomor WhatsApp harus diawali dengan 0 dan terdiri dari 10-14 digit angka."
+              onInput={(e) => {
+                const target = e.target as HTMLInputElement;
+                target.value = target.value.replace(/[^0-9]/g, '');
+              }}
               disabled={isLoading}
               className="w-full px-4 py-3.5 bg-gray-50 rounded-xl border border-gray-200 focus:bg-white focus:ring-2 focus:ring-primary/20 focus:border-primary transition outline-none disabled:opacity-50" 
               placeholder="Contoh: 08123456xxxx" 
@@ -137,7 +153,7 @@ const LaporForm: React.FC = () => {
             />
           </div>
           <p className="text-[10px] sm:text-xs text-gray-500 mt-2 leading-relaxed">
-            <i className="ph ph-info text-accent"></i> Masukkan link Google Drive (pastikan akses diset ke 'Siapa saja yang memiliki link'). Jika kesulitan, kosongkan saja dan kirim foto/video via WhatsApp ke admin kami setelah Anda mendapatkan Nomor Registrasi.
+            <i className="ph ph-info text-accent"></i> Masukkan link Google Drive (pastikan akses diset ke 'Siapa saja yang memiliki link'). Jika kesulitan, kosongkan saja dan kirim foto/video via WhatsApp ke admin kami.
           </p>
         </div>
 

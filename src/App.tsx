@@ -10,6 +10,7 @@ import NewsDetail from './pages/NewsDetail';
 import Education from './pages/Education';
 import ArticleDetail from './pages/ArticleDetail';
 import Contact from './pages/Contact';
+import Report from './pages/Report';
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
           <Route path="/edukasi" element={<Education />} />
           <Route path="/edukasi/:id" element={<ArticleDetail />} />
           <Route path="/kontak" element={<Contact />} />
+          <Route path="/lapor" element={<Report />} />
         </Routes>
       </main>
       <Footer />

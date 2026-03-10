@@ -2,28 +2,68 @@ import { useEffect } from 'react';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import { Link } from 'react-router-dom';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Autoplay, Pagination, Navigation } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/pagination';
+import 'swiper/css/navigation';
 import SEO from '../components/SEO';
 
 const articles = [
   {
+    id: 'bumdes-ujung-tombak-sampah',
+    title: 'BUMDes Sebagai Ujung Tombak: Transformasi Sampah Jadi Sumber PADes di Desa-Desa Karawang',
+    excerpt: 'Pengelolaan sampah di tingkat desa kini tidak lagi sekadar urusan kebersihan, tetapi mulai bertransformasi menjadi unit bisnis produktif melalui BUMDes.',
+    image: 'https://images.unsplash.com/photo-1591193680737-26165880ba81?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    date: '10 Mar 2026'
+  },
+  {
+    id: 'karawang-emas-2045-risps',
+    title: 'Menuju Karawang Emas 2045: Strategi RISPS Targetkan Residu Sampah ke TPA Hanya 10 Persen',
+    excerpt: 'Pemerintah Kabupaten Karawang menetapkan peta jalan transformasi pengelolaan sampah 20 tahun ke depan melalui RISPS 2025-2045.',
+    image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    date: '10 Mar 2026'
+  },
+  {
+    id: 'panduan-pilah-sampah-rumah',
+    title: 'Panduan Pilah Sampah dari Rumah: Mandat Baru Warga Karawang',
+    excerpt: 'Pelajari cara memilah sampah organik, anorganik, dan residu sesuai mandat Perbup No. 39 Tahun 2025 untuk lingkungan Karawang yang lebih asri.',
+    image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    date: '10 Mar 2026'
+  },
+  {
+    id: 'dana-desa-karawang-2025-sampah',
+    title: 'Karawang Guyur Rp358,9 Miliar Dana Desa 2025: Prioritas Sampah di APBDes',
+    excerpt: 'Pemerintah Kabupaten Karawang memastikan kesiapan fiskal desa untuk mendukung penanganan masalah lingkungan melalui Dana Desa 2025.',
+    image: 'https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    date: '10 Mar 2026'
+  },
+  {
+    id: 'mengenal-limbah-cair-industri',
+    title: 'Mengenal Limbah Cair Industri dan Dampaknya',
+    excerpt: 'Pelajari apa itu limbah cair, faktor yang mempengaruhinya, serta berbagai jenis pencemar fisik, kimia, dan mikrobiologi yang terkandung di dalamnya.',
+    image: 'https://images.unsplash.com/photo-1611273426858-450d8e3c9fce?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    date: '10 Mar 2026'
+  },
+  {
     id: 'limbah-b3-vs-non-b3',
     title: 'Cara Membedakan Limbah B3 dan Non-B3',
     excerpt: 'Panduan lengkap bagi masyarakat Karawang untuk mengenali jenis limbah industri yang berbahaya (B3) dan limbah rumah tangga biasa.',
-    image: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    image: 'https://images.unsplash.com/photo-1621451537084-482c73073a0f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     date: '10 Mar 2026'
   },
   {
     id: 'hak-warga-negara-lingkungan',
     title: 'Hak Warga Negara Atas Lingkungan yang Bersih Menurut UU',
     excerpt: 'Kenali hak hukum Anda sebagai warga negara Indonesia dalam mendapatkan lingkungan hidup yang baik dan sehat sesuai Undang-Undang.',
-    image: 'https://images.unsplash.com/photo-1589829545856-d10d557cf95f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    image: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     date: '10 Mar 2026'
   },
   {
     id: 'tragedi-leuwigajah-hpsn-2026',
     title: 'Mengenang Tragedi Leuwigajah: Refleksi HPSN 2026',
     excerpt: 'Refleksi mendalam atas tragedi longsor sampah Leuwigajah 2005 dan ajakan kolaborasi untuk mewujudkan Indonesia yang Aman, Sehat, Resik, dan Indah (ASRI).',
-    image: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
+    image: 'https://images.unsplash.com/photo-1611284446314-60a58ac0deb9?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     date: '20 Feb 2026'
   }
 ];
@@ -50,33 +90,78 @@ export default function Education() {
         </div>
       </div>
 
-      <section className="py-16 md:py-24 bg-gray-50">
+      <section className="py-16 md:py-24 bg-gray-50 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
-            {articles.map((article, index) => (
-              <div key={article.id} className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 group" data-aos="fade-up" data-aos-delay={index * 100}>
-                <div className="relative h-64 overflow-hidden">
-                  <img src={article.image} alt={article.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                  <div className="absolute top-4 left-4 bg-primary text-white px-4 py-1 rounded-full text-sm font-bold">
-                    Edukasi
+          <div data-aos="fade-up">
+            <Swiper
+              modules={[Autoplay, Pagination, Navigation]}
+              spaceBetween={30}
+              slidesPerView={1}
+              loop={true}
+              centeredSlides={true}
+              grabCursor={true}
+              autoplay={{
+                delay: 5000,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true,
+              }}
+              pagination={{
+                clickable: true,
+                dynamicBullets: true,
+              }}
+              navigation={true}
+              breakpoints={{
+                768: {
+                  slidesPerView: 2,
+                  spaceBetween: 30,
+                  centeredSlides: false,
+                },
+                1280: {
+                  slidesPerView: 3,
+                  spaceBetween: 40,
+                  centeredSlides: false,
+                },
+              }}
+              className="education-swiper !pb-20 !px-4"
+            >
+              {articles.map((article) => (
+                <SwiperSlide key={article.id}>
+                  <div className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 group h-full flex flex-col border border-gray-100">
+                    <div className="relative h-72 overflow-hidden">
+                      <img 
+                        src={article.image} 
+                        alt={article.title} 
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" 
+                      />
+                      <div className="absolute top-6 left-6 bg-primary text-white px-5 py-1.5 rounded-full text-sm font-bold shadow-lg z-10">
+                        Edukasi
+                      </div>
+                      <div className="absolute inset-0 bg-gradient-to-t from-dark/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    </div>
+                    <div className="p-10 flex-grow flex flex-col">
+                      <div className="text-gray-400 text-sm mb-4 flex items-center gap-2 font-medium">
+                        <i className="ph-fill ph-calendar text-primary"></i> {article.date}
+                      </div>
+                      <h2 className="font-heading text-2xl font-bold text-dark mb-4 group-hover:text-primary transition-colors leading-tight">
+                        {article.title}
+                      </h2>
+                      <p className="text-gray-600 mb-8 leading-relaxed line-clamp-3">
+                        {article.excerpt}
+                      </p>
+                      <div className="mt-auto">
+                        <Link 
+                          to={`/edukasi/${article.id}`} 
+                          className="inline-flex items-center gap-2 text-primary font-bold hover:gap-4 transition-all group/btn"
+                        >
+                          Baca Selengkapnya 
+                          <i className="ph-bold ph-arrow-right group-hover/btn:translate-x-1 transition-transform"></i>
+                        </Link>
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className="p-8">
-                  <div className="text-gray-400 text-sm mb-3 flex items-center gap-2">
-                    <i className="ph ph-calendar"></i> {article.date}
-                  </div>
-                  <h2 className="font-heading text-2xl font-bold text-dark mb-4 group-hover:text-primary transition-colors">
-                    {article.title}
-                  </h2>
-                  <p className="text-gray-600 mb-6 leading-relaxed">
-                    {article.excerpt}
-                  </p>
-                  <Link to={`/edukasi/${article.id}`} className="inline-flex items-center gap-2 text-primary font-bold hover:gap-3 transition-all">
-                    Baca Selengkapnya <i className="ph-bold ph-arrow-right"></i>
-                  </Link>
-                </div>
-              </div>
-            ))}
+                </SwiperSlide>
+              ))}
+            </Swiper>
           </div>
         </div>
       </section>
