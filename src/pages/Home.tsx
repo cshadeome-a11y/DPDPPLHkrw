@@ -457,6 +457,27 @@ export default function Home() {
                 </Link>
               </SwiperSlide>
 
+              {/* News Item Terbaru - ESDM Jabar Hentikan Tambang */}
+              <SwiperSlide>
+                <a href="https://lensaind.com/esdm-jabar-hentikan-sementara-operasional-tambang-pt-mpb-di-karawang/" target="_blank" rel="noopener noreferrer" className="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 h-full">
+                  <div className="relative h-60 overflow-hidden">
+                    <img src="https://lensaind.com/wp-content/uploads/2026/03/IMG_8916-400x231.webp" alt="ESDM Jabar Hentikan Sementara Operasional Tambang PT MPB di Karawang" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute top-4 left-4 bg-primary text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">15 Mar 2026</div>
+                  </div>
+                  <div className="p-6">
+                    <h3 className="font-heading font-bold text-xl text-dark mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                      ESDM Jabar Hentikan Sementara Operasional Tambang PT MPB di Karawang
+                    </h3>
+                    <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                      Dinas ESDM Provinsi Jawa Barat menghentikan sementara operasional tambang PT MPB di Karawang terkait masalah perizinan dan lingkungan.
+                    </p>
+                    <span className="text-primary font-bold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                      Baca Selengkapnya <i className="ph-bold ph-arrow-right"></i>
+                    </span>
+                  </div>
+                </a>
+              </SwiperSlide>
+
               {/* News Item 1 */}
               <SwiperSlide>
                 <a href="https://www.faktajabar.co.id/2026/03/02/dpd-komnas-pplh-karawang-ingatkan-dapur-mbg-jangan-sampai-program-sehat-menghasilkan-lingkungan-sakit/" target="_blank" rel="noopener noreferrer" className="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 h-full">
