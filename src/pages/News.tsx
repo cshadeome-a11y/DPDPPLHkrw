@@ -65,7 +65,7 @@ export default function News() {
               slidesPerView: 3,
             },
           }}
-          className="pb-12"
+          className="news-swiper pb-12"
           data-aos="fade-up" 
           data-aos-delay="100"
         >
@@ -132,6 +132,27 @@ export default function News() {
                 </span>
               </div>
             </Link>
+          </SwiperSlide>
+
+          {/* Berita Terbaru - Spanduk Penghentian Tambang Hilang */}
+          <SwiperSlide>
+            <a href="https://lensaind.com/spanduk-penghentian-tambang-pt-mpb-di-karawang-hilang-sehari-setelah-dipasang/" target="_blank" rel="noopener noreferrer" className="group block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
+              <div className="relative h-48 overflow-hidden">
+                <img src="https://lensaind.com/wp-content/uploads/2026/03/Jumat-13-Maret-2026-400x247.webp" alt="Spanduk Penghentian Tambang PT MPB di Karawang Hilang Sehari Setelah Dipasang" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
+                <div className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">15 Mar 2026</div>
+              </div>
+              <div className="p-6">
+                <h3 className="font-heading font-bold text-xl text-dark mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                  Spanduk Penghentian Tambang PT MPB di Karawang Hilang Sehari Setelah Dipasang
+                </h3>
+                <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                  Spanduk penghentian sementara operasional tambang PT MPB yang dipasang oleh Dinas ESDM Jabar dilaporkan hilang secara misterius.
+                </p>
+                <span className="text-primary font-semibold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                  Baca Selengkapnya <i className="ph-bold ph-arrow-right"></i>
+                </span>
+              </div>
+            </a>
           </SwiperSlide>
 
           {/* Berita Terbaru - ESDM Jabar Hentikan Tambang */}

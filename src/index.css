@@ -49,21 +49,21 @@
 .education-swiper .swiper-button-prev,
 .news-swiper .swiper-button-next,
 .news-swiper .swiper-button-prev {
-  @apply bg-white/90 backdrop-blur-sm text-primary w-12 h-12 rounded-full shadow-lg border border-gray-100 transition-all duration-300;
+  @apply bg-white text-gray-400 w-10 h-10 rounded-full border border-gray-200 shadow-sm transition-all duration-300 flex items-center justify-center;
 }
 
 .education-swiper .swiper-button-next:after,
 .education-swiper .swiper-button-prev:after,
 .news-swiper .swiper-button-next:after,
 .news-swiper .swiper-button-prev:after {
-  @apply text-lg font-bold;
+  @apply text-sm font-light;
 }
 
 .education-swiper .swiper-button-next:hover,
 .education-swiper .swiper-button-prev:hover,
 .news-swiper .swiper-button-next:hover,
 .news-swiper .swiper-button-prev:hover {
-  @apply bg-primary text-white scale-110;
+  @apply text-primary border-primary bg-primary/5 shadow-md;
 }
 
 .education-swiper .swiper-pagination-bullet,
