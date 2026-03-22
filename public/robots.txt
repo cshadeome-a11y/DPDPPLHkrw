@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://dpdkomnaspplh.vercel.app/sitemap.xml
+Sitemap: https://komnaspplhkarawang.my.id/sitemap.xml

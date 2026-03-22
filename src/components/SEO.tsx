@@ -20,7 +20,8 @@ export default function SEO({
   const siteTitle = 'DPD KOMNAS PPLH Karawang';
   const fullTitle = `${title} | ${siteTitle}`;
   const baseUrl = 'https://komnaspplhkarawang.my.id';
-  const url = canonical ? `${baseUrl}${canonical}` : baseUrl;
+  const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
+  const url = canonical ? `${baseUrl}${canonical}` : `${baseUrl}${currentPath === '/' ? '/' : currentPath}`;
 
   return (
     <Helmet>
