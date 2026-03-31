@@ -12,6 +12,7 @@ import ArticleDetail from './pages/ArticleDetail';
 import LegalBank from './pages/LegalBank';
 import Contact from './pages/Contact';
 import Report from './pages/Report';
+import ReportsDashboard from './pages/ReportsDashboard';
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
           <Route path="/bank-hukum" element={<LegalBank />} />
           <Route path="/kontak" element={<Contact />} />
           <Route path="/lapor" element={<Report />} />
+          <Route path="/dashboard-laporan" element={<ReportsDashboard />} />
         </Routes>
       </main>
       <Footer />

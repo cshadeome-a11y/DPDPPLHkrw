@@ -805,6 +805,13 @@ export default function ArticleDetail() {
   const article = id ? articleData[id] : null;
   const [pexelsPhoto, setPexelsPhoto] = useState<string | null>(null);
 
+  // Get related articles (3 random articles excluding the current one)
+  const relatedArticles = Object.keys(articleData)
+    .filter(key => key !== id)
+    .sort(() => 0.5 - Math.random())
+    .slice(0, 3)
+    .map(key => ({ id: key, ...articleData[key] }));
+
   useEffect(() => {
     if (!article) {
       navigate('/edukasi');
@@ -900,16 +907,71 @@ export default function ArticleDetail() {
                 <p className="text-gray-500">Bantu sebarkan edukasi lingkungan ini ke orang terdekat Anda.</p>
               </div>
               <div className="flex gap-4">
-                <button className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center hover:scale-110 transition-transform">
+                <a 
+                  href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-12 h-12 rounded-full bg-blue-600 text-white flex items-center justify-center hover:scale-110 transition-transform"
+                >
                   <i className="ph-fill ph-facebook-logo text-2xl"></i>
-                </button>
-                <button className="w-12 h-12 rounded-full bg-green-500 text-white flex items-center justify-center hover:scale-110 transition-transform">
+                </a>
+                <a 
+                  href={`https://wa.me/?text=${encodeURIComponent(article.title + ' ' + window.location.href)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-12 h-12 rounded-full bg-green-500 text-white flex items-center justify-center hover:scale-110 transition-transform"
+                >
                   <i className="ph-fill ph-whatsapp-logo text-2xl"></i>
-                </button>
-                <button className="w-12 h-12 rounded-full bg-sky-500 text-white flex items-center justify-center hover:scale-110 transition-transform">
+                </a>
+                <a 
+                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(window.location.href)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-12 h-12 rounded-full bg-sky-500 text-white flex items-center justify-center hover:scale-110 transition-transform"
+                >
                   <i className="ph-fill ph-twitter-logo text-2xl"></i>
-                </button>
+                </a>
               </div>
+            </div>
+          </div>
+
+          {/* Related Articles Section */}
+          <div className="mt-20" data-aos="fade-up">
+            <div className="flex items-center justify-between mb-8">
+              <h3 className="font-heading text-2xl font-bold text-dark">Artikel Terkait</h3>
+              <Link to="/edukasi" className="text-primary font-bold hover:underline">Lihat Semua</Link>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {relatedArticles.map((item) => (
+                <Link key={item.id} to={`/edukasi/${item.id}`} className="group block">
+                  <div className="rounded-2xl overflow-hidden mb-4 shadow-sm group-hover:shadow-md transition-all">
+                    <img src={item.image} alt={item.title} className="w-full h-40 object-cover group-hover:scale-105 transition-transform duration-500" />
+                  </div>
+                  <h4 className="font-bold text-dark group-hover:text-primary transition-colors line-clamp-2 mb-2">
+                    {item.title}
+                  </h4>
+                  <span className="text-gray-400 text-xs">{item.date}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
+
+          {/* Latest News CTA */}
+          <div className="mt-20 bg-dark text-white p-10 rounded-[2.5rem] relative overflow-hidden" data-aos="zoom-in">
+            <div className="relative z-10">
+              <h3 className="font-heading text-2xl md:text-3xl font-bold mb-4">Ingin Tahu Kabar Terbaru?</h3>
+              <p className="text-green-100/80 mb-8 max-w-xl">
+                Ikuti perkembangan terbaru aksi dan advokasi lingkungan DPD Komnas PPLH Karawang di halaman berita kami.
+              </p>
+              <Link 
+                to="/berita" 
+                className="inline-flex items-center gap-2 bg-primary text-white px-8 py-3 rounded-full font-bold hover:bg-white hover:text-primary transition-all shadow-xl"
+              >
+                Buka Halaman Berita <i className="ph-bold ph-arrow-right"></i>
+              </Link>
+            </div>
+            <div className="absolute -right-10 -bottom-10 opacity-10">
+              <i className="ph ph-newspaper text-[200px]"></i>
             </div>
           </div>
         </div>

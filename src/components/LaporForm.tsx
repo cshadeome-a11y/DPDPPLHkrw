@@ -11,10 +11,27 @@ const LaporForm: React.FC = () => {
     setError(null);
 
     const scriptURL = 'https://script.google.com/macros/s/AKfycbwrSL8hY87_uqG9S97MHHxN_41lv_78ArA7Q5xFzzFrkGCinuBAy7AkTkMZdLW9Gw7Lvw/exec';
+    const localAPI = '/api/reports';
     const formElement = e.currentTarget;
 
     try {
       const formData = new FormData(formElement);
+      
+      // 1. Send to local API (SQLite)
+      const localData = Object.fromEntries(formData.entries());
+      const localResponse = await fetch(localAPI, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(localData),
+      });
+
+      if (!localResponse.ok) {
+        throw new Error('Gagal menyimpan ke database lokal.');
+      }
+
+      // 2. Send to Google Apps Script (Optional/Backup)
       // Konversi FormData menjadi URLSearchParams agar cocok dengan Google Apps Script
       const data = new URLSearchParams(formData as any).toString();
       
@@ -27,7 +44,7 @@ const LaporForm: React.FC = () => {
         body: data,
       });
 
-      // Karena mode 'no-cors', kita tidak bisa membaca respon sukses/gagal dari server.
+      // Karena mode 'no-cors', kita tidak bisa membaca respon sukses/gagal dari server Google.
       // Kita asumsikan berhasil jika tidak ada error network.
       setIsSuccess(true);
       formElement.reset();

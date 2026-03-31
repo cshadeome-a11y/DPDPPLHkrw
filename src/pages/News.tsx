@@ -17,7 +17,7 @@ export default function News() {
 
     const fetchPhotos = async () => {
       try {
-        const queries = ['waste sorting', 'village environment'];
+        const queries = ['waste management', 'landfill infrastructure', 'waste sorting', 'village environment'];
         const results = await Promise.all(queries.map(q => 
           fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(q)}&per_page=1`, {
             headers: {
@@ -69,11 +69,55 @@ export default function News() {
           data-aos="fade-up" 
           data-aos-delay="100"
         >
-              {/* Berita Terbaru - Panduan Pilah Sampah */}
+          {/* Berita Terbaru - Perpres 109/2025 */}
+          <SwiperSlide>
+            <a href="https://www.kompasiana.com/agung68809/69cac2ecc925c46d035e0d72/sekretaris-dpd-pplh-karawang-soroti-perpres-109-2025-dorong-pengelolaan-sampah-desa-dan-tata-kelola-iplt-yang-transparan" target="_blank" rel="noopener noreferrer" className="group block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
+              <div className="relative h-48 overflow-hidden">
+                <img src={pexelsPhotos[0]?.src?.large || "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"} alt="Perpres 109/2025" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
+                <div className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">31 Mar 2026</div>
+                <div className="absolute bottom-2 right-2 bg-black/50 text-white text-[10px] px-2 py-1 rounded">Photos/ilustration by Pexels</div>
+              </div>
+              <div className="p-6">
+                <h3 className="font-heading font-bold text-xl text-dark mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                  Sekretaris DPD PPLH Karawang Soroti Perpres 109/2025: Dorong Pengelolaan Sampah Desa dan Tata Kelola IPLT yang Transparan
+                </h3>
+                <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                  Sekretaris DPD PPLH Karawang menyoroti pentingnya transparansi dalam tata kelola IPLT dan pengelolaan sampah desa sesuai Perpres 109/2025.
+                </p>
+                <span className="text-primary font-semibold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                  Baca Selengkapnya <i className="ph-bold ph-arrow-right"></i>
+                </span>
+              </div>
+            </a>
+          </SwiperSlide>
+
+          {/* Berita Terbaru - Anggaran TPAS Jalupang */}
+          <SwiperSlide>
+            <a href="https://www.kompasiana.com/agung68809/69ca8ec5ed64151643026f32/dpd-komnas-pplh-karawang-dukung-anggaran-rp-10-miliar-tpas-jalupang-wahidin-investasi-lingkungan-bukan-sekadar-infrastruktur" target="_blank" rel="noopener noreferrer" className="group block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
+              <div className="relative h-48 overflow-hidden">
+                <img src={pexelsPhotos[1]?.src?.large || "https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"} alt="Anggaran TPAS Jalupang" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
+                <div className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">30 Mar 2026</div>
+                <div className="absolute bottom-2 right-2 bg-black/50 text-white text-[10px] px-2 py-1 rounded">Photos/ilustration by Pexels</div>
+              </div>
+              <div className="p-6">
+                <h3 className="font-heading font-bold text-xl text-dark mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                  DPD KOMNAS PPLH Karawang Dukung Anggaran Rp 10 Miliar TPAS Jalupang, Wahidin: Investasi Lingkungan Bukan Sekadar Infrastruktur
+                </h3>
+                <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                  Wahidin menekankan bahwa investasi Rp 10 miliar untuk TPAS Jalupang harus dipandang sebagai investasi lingkungan jangka panjang bagi Karawang.
+                </p>
+                <span className="text-primary font-semibold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                  Baca Selengkapnya <i className="ph-bold ph-arrow-right"></i>
+                </span>
+              </div>
+            </a>
+          </SwiperSlide>
+
+          {/* Berita Terbaru - Panduan Pilah Sampah */}
           <SwiperSlide>
             <Link to="/edukasi/panduan-pilah-sampah-rumah" className="group block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
               <div className="relative h-48 overflow-hidden">
-                <img src={pexelsPhotos[0]?.src?.large || "https://images.unsplash.com/photo-1595273670150-bd0c3c392e46?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"} alt="Panduan Pilah Sampah" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
+                <img src={pexelsPhotos[2]?.src?.large || "https://images.unsplash.com/photo-1595273670150-bd0c3c392e46?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"} alt="Panduan Pilah Sampah" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
                 <div className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">10 Mar 2026</div>
                 <div className="absolute bottom-2 right-2 bg-black/50 text-white text-[10px] px-2 py-1 rounded">Photos/ilustration by Pexels</div>
               </div>
@@ -95,7 +139,7 @@ export default function News() {
           <SwiperSlide>
             <Link to="/edukasi/dana-desa-karawang-2025-sampah" className="group block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
               <div className="relative h-48 overflow-hidden">
-                <img src={pexelsPhotos[1]?.src?.large || "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"} alt="Dana Desa Karawang 2025" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
+                <img src={pexelsPhotos[3]?.src?.large || "https://images.unsplash.com/photo-1590283603385-17ffb3a7f29f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"} alt="Dana Desa Karawang 2025" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
                 <div className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">10 Mar 2026</div>
                 <div className="absolute bottom-2 right-2 bg-black/50 text-white text-[10px] px-2 py-1 rounded">Photos/ilustration by Pexels</div>
               </div>

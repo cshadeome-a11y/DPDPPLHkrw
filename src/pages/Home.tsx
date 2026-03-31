@@ -437,6 +437,48 @@ export default function Home() {
                 </Link>
               </SwiperSlide>
 
+              {/* News Item Terbaru - Perpres 109/2025 */}
+              <SwiperSlide>
+                <a href="https://www.kompasiana.com/agung68809/69cac2ecc925c46d035e0d72/sekretaris-dpd-pplh-karawang-soroti-perpres-109-2025-dorong-pengelolaan-sampah-desa-dan-tata-kelola-iplt-yang-transparan" target="_blank" rel="noopener noreferrer" className="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 h-full">
+                  <div className="relative h-60 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Sekretaris DPD PPLH Karawang Soroti Perpres 109/2025" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute top-4 left-4 bg-primary text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">31 Mar 2026</div>
+                  </div>
+                  <div className="p-6">
+                    <h3 className="font-heading font-bold text-xl text-dark mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                      Sekretaris DPD PPLH Karawang Soroti Perpres 109/2025: Dorong Pengelolaan Sampah Desa dan Tata Kelola IPLT yang Transparan
+                    </h3>
+                    <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                      Sekretaris DPD PPLH Karawang menyoroti pentingnya transparansi dalam tata kelola IPLT dan pengelolaan sampah desa sesuai Perpres 109/2025.
+                    </p>
+                    <span className="text-primary font-bold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                      Baca Selengkapnya <i className="ph-bold ph-arrow-right"></i>
+                    </span>
+                  </div>
+                </a>
+              </SwiperSlide>
+
+              {/* News Item Terbaru - Anggaran TPAS Jalupang */}
+              <SwiperSlide>
+                <a href="https://www.kompasiana.com/agung68809/69ca8ec5ed64151643026f32/dpd-komnas-pplh-karawang-dukung-anggaran-rp-10-miliar-tpas-jalupang-wahidin-investasi-lingkungan-bukan-sekadar-infrastruktur" target="_blank" rel="noopener noreferrer" className="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 h-full">
+                  <div className="relative h-60 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1532601224476-15c79f2f7a51?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="DPD KOMNAS PPLH Karawang Dukung Anggaran Rp 10 Miliar TPAS Jalupang" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                    <div className="absolute top-4 left-4 bg-primary text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">30 Mar 2026</div>
+                  </div>
+                  <div className="p-6">
+                    <h3 className="font-heading font-bold text-xl text-dark mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                      DPD KOMNAS PPLH Karawang Dukung Anggaran Rp 10 Miliar TPAS Jalupang, Wahidin: Investasi Lingkungan Bukan Sekadar Infrastruktur
+                    </h3>
+                    <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                      Wahidin menekankan bahwa investasi Rp 10 miliar untuk TPAS Jalupang harus dipandang sebagai investasi lingkungan jangka panjang bagi Karawang.
+                    </p>
+                    <span className="text-primary font-bold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                      Baca Selengkapnya <i className="ph-bold ph-arrow-right"></i>
+                    </span>
+                  </div>
+                </a>
+              </SwiperSlide>
+
               {/* News Item Terbaru - Podcast STURADA */}
               <SwiperSlide>
                 <Link to="/berita/dukung-program-mbg" className="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 h-full">

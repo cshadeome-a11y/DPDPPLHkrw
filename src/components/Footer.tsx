@@ -44,7 +44,10 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-800 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p className="text-sm text-gray-500">© 2026 DPD Komnas PPLH Karawang. Hak Cipta Dilindungi.</p>
+          <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4">
+            <p className="text-sm text-gray-500">© 2026 DPD Komnas PPLH Karawang. Hak Cipta Dilindungi.</p>
+            <Link to="/dashboard-laporan" className="text-xs text-gray-700 hover:text-gray-500 transition">Admin Dashboard</Link>
+          </div>
           <div className="flex gap-4">
             <a href="https://www.instagram.com/dpdkomnaspplhkarawang/" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-primary hover:text-white transition"><i className="ph-fill ph-instagram-logo text-xl"></i></a>
             <a href="https://www.tiktok.com/@dpd.komnas.pplh.k" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-gray-400 hover:bg-primary hover:text-white transition"><i className="ph-fill ph-tiktok-logo text-xl"></i></a>
