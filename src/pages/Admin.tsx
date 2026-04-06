@@ -36,11 +36,28 @@ export default function Admin() {
   const [isGeneratingAi, setIsGeneratingAi] = useState(false);
   const [isRegeneratingImage, setIsRegeneratingImage] = useState(false);
 
+  // Custom Alert/Confirm states
+  const [alertMessage, setAlertMessage] = useState('');
+  const [confirmConfig, setConfirmConfig] = useState<{ message: string, onConfirm: () => void } | null>(null);
+
+  const showAlert = (message: string) => setAlertMessage(message);
+  const showConfirm = (message: string, onConfirm: () => void) => setConfirmConfig({ message, onConfirm });
+
   const contentImageInputRef = useRef<HTMLInputElement>(null);
+
+  const slugify = (text: string) => {
+    return text
+      .toString()
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, '-')     // Replace spaces with -
+      .replace(/[^\w-]+/g, '')  // Remove all non-word chars
+      .replace(/--+/g, '-');    // Replace multiple - with single -
+  };
 
   const handleGenerateAi = async () => {
     if (!aiPrompt.trim()) {
-      alert('Mohon masukkan isu atau bahan artikel terlebih dahulu.');
+      setAlertMessage('Mohon masukkan isu atau bahan artikel terlebih dahulu.');
       return;
     }
 
@@ -63,7 +80,9 @@ export default function Admin() {
       // Append image attribution to content if available
       let finalContent = data.content || '';
       if (data.imageAttribution) {
-        finalContent += `<p className="mt-4 text-xs text-gray-500 italic">${data.imageAttribution}</p>`;
+        // Remove ALL old attributions and preceding newlines (handles both HTML and plain text)
+        finalContent = finalContent.replace(/\n*(<p[^>]*>)?Photo by .*? on Pexels(<\/p>)?/gi, '').trim();
+        finalContent += `\n\n<p class="mt-4 text-xs text-gray-500 italic">${data.imageAttribution}</p>`;
       }
       setContent(finalContent);
       
@@ -79,7 +98,7 @@ export default function Admin() {
       setAiPrompt('');
     } catch (error) {
       console.error('AI generation error:', error);
-      alert('Gagal men-generate artikel. Silakan coba lagi.');
+      setAlertMessage('Gagal men-generate artikel. Silakan coba lagi.');
     } finally {
       setIsGeneratingAi(false);
     }
@@ -87,7 +106,7 @@ export default function Admin() {
 
   const handleRegenerateImage = async () => {
     if (!title && !tags) {
-      alert("Judul atau Tag harus diisi terlebih dahulu untuk mencari gambar yang relevan.");
+      setAlertMessage("Judul atau Tag harus diisi terlebih dahulu untuk mencari gambar yang relevan.");
       return;
     }
 
@@ -107,16 +126,17 @@ export default function Admin() {
       // Update attribution in content if it exists
       if (data.imageAttribution) {
         let newContent = content;
-        // Remove old attribution if present (using a more flexible regex)
-        newContent = newContent.replace(/<p className="mt-4 text-xs text-gray-500 italic">Photo by .* on Pexels<\/p>/g, '');
-        newContent += `\n\n<p className="mt-4 text-xs text-gray-500 italic">${data.imageAttribution}</p>`;
+        // Remove ALL old attributions and preceding newlines (handles both HTML and plain text)
+        newContent = newContent.replace(/\n*(<p[^>]*>)?Photo by .*? on Pexels(<\/p>)?/gi, '').trim();
+        // Add the new one with clean newlines
+        newContent += `\n\n<p class="mt-4 text-xs text-gray-500 italic">${data.imageAttribution}</p>`;
         setContent(newContent);
       }
       
-      alert("Gambar berhasil diperbarui!");
+      setAlertMessage("Gambar berhasil diperbarui!");
     } catch (error) {
       console.error("Regenerate image error:", error);
-      alert("Gagal memperbarui gambar.");
+      setAlertMessage("Gagal memperbarui gambar.");
     } finally {
       setIsRegeneratingImage(false);
     }
@@ -163,9 +183,11 @@ export default function Admin() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('isAdminLoggedIn');
-    setIsAuthenticated(false);
-    auth.signOut();
+    showConfirm('Apakah Anda yakin ingin logout?', () => {
+      localStorage.removeItem('isAdminLoggedIn');
+      setIsAuthenticated(false);
+      auth.signOut();
+    });
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -202,7 +224,7 @@ export default function Admin() {
       setImageUrl(data.url);
     } catch (error) {
       console.error('Error uploading image:', error);
-      alert('Gagal mengupload gambar. Silakan coba lagi.');
+      setAlertMessage('Gagal mengupload gambar. Silakan coba lagi.');
     } finally {
       setIsUploading(false);
     }
@@ -247,27 +269,31 @@ export default function Admin() {
   };
 
   const handleDelete = async (id: string) => {
-    if (window.confirm('Apakah Anda yakin ingin menghapus artikel ini?')) {
-      try {
-        const articleToDelete = articles.find(a => a.id === id);
-        if (articleToDelete?.imageUrl) {
-          try {
-            await fetch('/api/delete-image', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ url: articleToDelete.imageUrl })
-            });
-          } catch (err) {
-            console.error('Failed to delete image:', err);
+    setConfirmConfig({
+      message: 'Apakah Anda yakin ingin menghapus artikel ini?',
+      onConfirm: async () => {
+        try {
+          const articleToDelete = articles.find(a => a.id === id);
+          if (articleToDelete?.imageUrl) {
+            try {
+              await fetch('/api/delete-image', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: articleToDelete.imageUrl })
+              });
+            } catch (err) {
+              console.error('Failed to delete image:', err);
+            }
           }
+          await deleteDoc(doc(db, 'news', id));
+          fetchArticles();
+          setAlertMessage('Artikel berhasil dihapus.');
+        } catch (error) {
+          console.error("Error deleting article:", error);
+          handleFirestoreError(error, OperationType.DELETE, `news/${id}`);
         }
-        await deleteDoc(doc(db, 'news', id));
-        fetchArticles();
-      } catch (error) {
-        console.error("Error deleting article:", error);
-        handleFirestoreError(error, OperationType.DELETE, `news/${id}`);
       }
-    }
+    });
   };
 
   const handleContentImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -294,7 +320,7 @@ export default function Admin() {
       setContent(prev => prev + imageMarkdown);
     } catch (error) {
       console.error('Error uploading content image:', error);
-      alert('Gagal mengupload gambar. Silakan coba lagi.');
+      setAlertMessage('Gagal mengupload gambar. Silakan coba lagi.');
     } finally {
       setIsUploadingContentImage(false);
       if (contentImageInputRef.current) {
@@ -311,9 +337,11 @@ export default function Admin() {
 
     try {
       const tagsArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
+      const slug = slugify(title);
       
       const newsData: any = {
         title,
+        slug,
         category,
         teaser,
         content,
@@ -322,6 +350,7 @@ export default function Admin() {
       };
 
       let newDocId = editingId;
+      let finalSlug = slug;
 
       if (editingId) {
         await updateDoc(doc(db, 'news', editingId), newsData).catch(err => {
@@ -338,7 +367,7 @@ export default function Admin() {
         setSuccessMessage('Berita berhasil dipublikasikan!');
       }
 
-      setPublishedUrl(`${window.location.origin}/berita/${newDocId}`);
+      setPublishedUrl(`${window.location.origin}/berita/${finalSlug}`);
       
       setEditingId(null);
       setTitle('');
@@ -349,7 +378,7 @@ export default function Admin() {
       setImageUrl('');
     } catch (error) {
       console.error('Error saving document: ', error);
-      alert('Terjadi kesalahan saat menyimpan berita.');
+      showAlert('Terjadi kesalahan saat menyimpan berita.');
     } finally {
       setIsSubmitting(false);
     }
@@ -503,7 +532,7 @@ export default function Admin() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
-                      <Link to={`/berita/${article.id}`} target="_blank" className="p-2 text-gray-500 hover:text-primary transition-colors bg-gray-50 rounded-lg" title="Lihat Artikel">
+                      <Link to={`/berita/${article.slug || article.id}`} target="_blank" className="p-2 text-gray-500 hover:text-primary transition-colors bg-gray-50 rounded-lg" title="Lihat Artikel">
                         <i className="ph ph-eye text-lg"></i>
                       </Link>
                       <button onClick={() => handleEdit(article)} className="p-2 text-gray-500 hover:text-blue-600 transition-colors bg-gray-50 rounded-lg" title="Edit Artikel">
@@ -539,7 +568,7 @@ export default function Admin() {
                     <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(publishedUrl)}&text=${encodeURIComponent(`${title}\n\n${teaser}`)}`} target="_blank" rel="noopener noreferrer" className="p-2 bg-sky-100 hover:bg-sky-200 rounded-full transition-colors text-sky-800" title="Share ke Twitter">
                       <i className="ph-fill ph-twitter-logo text-lg"></i>
                     </a>
-                    <button onClick={() => { navigator.clipboard.writeText(`*${title}*\n\n${teaser}\n\nBaca selengkapnya: ${publishedUrl}`); alert('Link dan ringkasan disalin!'); }} className="p-2 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors text-gray-800 ml-2" title="Copy Link">
+                    <button onClick={() => { navigator.clipboard.writeText(`*${title}*\n\n${teaser}\n\nBaca selengkapnya: ${publishedUrl}`); showAlert('Link dan ringkasan disalin!'); }} className="p-2 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors text-gray-800 ml-2" title="Copy Link">
                       <i className="ph ph-link text-lg"></i>
                     </button>
                     <Link to={`/berita/${publishedUrl.split('/').pop()}`} target="_blank" className="ml-auto text-sm font-bold text-primary hover:underline flex items-center gap-1">
@@ -626,10 +655,26 @@ export default function Admin() {
                     let newContent = content;
                     // Remove markdown code blocks if AI accidentally included them
                     newContent = newContent.replace(/```html/g, '').replace(/```/g, '');
-                    // Trim
+                    
+                    // Handle multiple Pexels attributions
+                    const attributionRegex = /\n*(<p[^>]*>)?Photo by .*? on Pexels(<\/p>)?/gi;
+                    const matches = newContent.match(attributionRegex);
+                    
+                    if (matches && matches.length > 0) {
+                      // Keep only the last one found
+                      const lastAttribution = matches[matches.length - 1];
+                      // Remove all attributions first
+                      newContent = newContent.replace(attributionRegex, '');
+                      // Add back the last one at the end with proper spacing
+                      // Ensure it's wrapped in <p> if it wasn't already or just use the last one as is
+                      const cleanAttribution = lastAttribution.trim();
+                      newContent = newContent.trim() + "\n\n" + (cleanAttribution.startsWith('<p') ? cleanAttribution : `<p class="mt-4 text-xs text-gray-500 italic">${cleanAttribution}</p>`);
+                    }
+                    
+                    // Final trim
                     newContent = newContent.trim();
                     setContent(newContent);
-                    alert('Format HTML telah diperbaiki!');
+                    showAlert('Format HTML dan atribusi ganda telah diperbaiki!');
                   }}
                   className="ml-auto text-xs bg-primary/10 text-primary px-2 py-1 rounded hover:bg-primary/20 transition-colors flex items-center gap-1 font-bold"
                   title="Perbaiki format HTML (Hapus backticks)"
@@ -746,6 +791,55 @@ export default function Admin() {
         </div>
         )}
       </main>
+
+      {/* Custom Alert Modal */}
+      {alertMessage && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden">
+            <div className="p-6 text-center">
+              <i className="ph-fill ph-info text-4xl text-primary mb-4"></i>
+              <p className="text-gray-700 font-medium">{alertMessage}</p>
+            </div>
+            <div className="p-4 bg-gray-50 flex justify-center">
+              <button 
+                onClick={() => setAlertMessage('')}
+                className="bg-primary text-white px-8 py-2 rounded-full font-bold hover:bg-primary-dark transition-colors"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Confirm Modal */}
+      {confirmConfig && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden">
+            <div className="p-6 text-center">
+              <i className="ph-fill ph-warning text-4xl text-orange-500 mb-4"></i>
+              <p className="text-gray-700 font-medium">{confirmConfig.message}</p>
+            </div>
+            <div className="p-4 bg-gray-50 flex justify-center gap-3">
+              <button 
+                onClick={() => setConfirmConfig(null)}
+                className="bg-gray-200 text-gray-700 px-6 py-2 rounded-full font-bold hover:bg-gray-300 transition-colors"
+              >
+                Batal
+              </button>
+              <button 
+                onClick={() => {
+                  confirmConfig.onConfirm();
+                  setConfirmConfig(null);
+                }}
+                className="bg-red-600 text-white px-6 py-2 rounded-full font-bold hover:bg-red-700 transition-colors"
+              >
+                Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* AI Modal */}
       {isAiModalOpen && (

@@ -413,7 +413,7 @@ export default function Home() {
               {/* Dynamic News from Firestore */}
               {dynamicNews.map((news) => (
                 <SwiperSlide key={news.id}>
-                  <div className="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 h-full cursor-pointer">
+                  <Link to={`/berita/${news.slug || news.id}`} className="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 h-full cursor-pointer">
                     <div className="relative h-60 overflow-hidden">
                       <img src={news.imageUrl || "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"} alt={news.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
                       <div className="absolute top-4 left-4 bg-primary text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
@@ -434,7 +434,7 @@ export default function Home() {
                         Baca Selengkapnya <i className="ph-bold ph-arrow-right"></i>
                       </span>
                     </div>
-                  </div>
+                  </Link>
                 </SwiperSlide>
               ))}
 

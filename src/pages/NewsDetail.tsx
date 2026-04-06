@@ -3,26 +3,27 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import SEO from '../components/SEO';
-import { doc, getDoc } from 'firebase/firestore';
+import { collection, query, where, getDocs, limit, doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import ReactMarkdown from 'react-markdown';
 import rehypeRaw from 'rehype-raw';
 
 export default function NewsDetail() {
-  const { id } = useParams();
+  const { slug } = useParams();
   const navigate = useNavigate();
   const [article, setArticle] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [alertMessage, setAlertMessage] = useState('');
 
   useEffect(() => {
     window.scrollTo(0, 0);
     AOS.init({ duration: 800, once: true });
 
     const fetchArticle = async () => {
-      if (!id) return;
+      if (!slug) return;
       
       // Hardcoded fallback for the existing article
-      if (id === 'dukung-program-mbg') {
+      if (slug === 'dukung-program-mbg') {
         setArticle({
           title: "Dukungan Program MBG Ramah Lingkungan Karawang",
           teaser: "DPD KOMNAS PPLH Karawang dukung program Makan Bergizi Gratis (MBG) di Karawang dengan solusi komposter komunal untuk cegah limbah dapur.",
@@ -60,14 +61,23 @@ Melalui pendekatan ini, Komnas PPLH berharap program MBG tidak hanya meningkatka
       }
 
       try {
-        const docRef = doc(db, 'news', id);
-        const docSnap = await getDoc(docRef);
+        // Try fetching by slug first
+        const q = query(collection(db, 'news'), where('slug', '==', slug), limit(1));
+        const querySnapshot = await getDocs(q);
         
-        if (docSnap.exists()) {
+        if (!querySnapshot.empty) {
+          const docSnap = querySnapshot.docs[0];
           setArticle({ id: docSnap.id, ...docSnap.data() });
         } else {
-          console.log("No such document!");
-          navigate('/berita');
+          // Fallback to fetching by ID for legacy links
+          const docRef = doc(db, 'news', slug);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setArticle({ id: docSnap.id, ...docSnap.data() });
+          } else {
+            console.log("No such document!");
+            navigate('/berita');
+          }
         }
       } catch (error) {
         console.error("Error fetching article:", error);
@@ -77,7 +87,7 @@ Melalui pendekatan ini, Komnas PPLH berharap program MBG tidak hanya meningkatka
     };
 
     fetchArticle();
-  }, [id, navigate]);
+  }, [slug, navigate]);
 
   if (loading) {
     return (
@@ -144,7 +154,7 @@ Melalui pendekatan ini, Komnas PPLH berharap program MBG tidak hanya meningkatka
               <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(`${article.title}\n\n${article.teaser}`)}`} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-sky-100 text-sky-500 flex items-center justify-center hover:bg-sky-500 hover:text-white transition-colors">
                 <i className="ph-fill ph-twitter-logo text-xl"></i>
               </a>
-              <button onClick={() => { navigator.clipboard.writeText(`*${article.title}*\n\n${article.teaser}\n\nBaca selengkapnya: ${shareUrl}`); alert('Link dan ringkasan disalin!'); }} className="w-10 h-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-gray-200 transition-colors">
+              <button onClick={() => { navigator.clipboard.writeText(`*${article.title}*\n\n${article.teaser}\n\nBaca selengkapnya: ${shareUrl}`); setAlertMessage('Link dan ringkasan disalin!'); }} className="w-10 h-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-gray-200 transition-colors">
                 <i className="ph ph-link text-xl"></i>
               </button>
             </div>
@@ -161,6 +171,26 @@ Melalui pendekatan ini, Komnas PPLH berharap program MBG tidak hanya meningkatka
           </div>
         </div>
       </article>
+
+      {/* Custom Alert Modal */}
+      {alertMessage && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm overflow-hidden">
+            <div className="p-6 text-center">
+              <i className="ph-fill ph-info text-4xl text-primary mb-4"></i>
+              <p className="text-gray-700 font-medium">{alertMessage}</p>
+            </div>
+            <div className="p-4 bg-gray-50 flex justify-center">
+              <button 
+                onClick={() => setAlertMessage('')}
+                className="bg-primary text-white px-8 py-2 rounded-full font-bold hover:bg-primary-dark transition-colors"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

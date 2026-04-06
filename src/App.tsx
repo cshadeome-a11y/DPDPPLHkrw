@@ -26,7 +26,7 @@ export default function App() {
           <Route path="/struktur" element={<Structure />} />
           <Route path="/program" element={<Program />} />
           <Route path="/berita" element={<News />} />
-          <Route path="/berita/:id" element={<NewsDetail />} />
+          <Route path="/berita/:slug" element={<NewsDetail />} />
           <Route path="/edukasi" element={<Education />} />
           <Route path="/edukasi/:id" element={<ArticleDetail />} />
           <Route path="/bank-hukum" element={<LegalBank />} />

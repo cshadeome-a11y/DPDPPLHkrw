@@ -11,6 +11,7 @@ service cloud.firestore {
     // Document ID: auto-generated
     // Fields:
     //   - title: string (required, max 200 chars)
+    //   - slug: string (required, max 200 chars)
     //   - category: string (required, max 50 chars)
     //   - teaser: string (required, max 300 chars)
     //   - content: string (required, max 50000 chars)
@@ -26,6 +27,11 @@ service cloud.firestore {
     
     function isAuthenticated() {
       return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && 
+             request.auth.token.email == "agungdj99@komnaspplh.org";
     }
 
     function hasRequiredFields(fields) {
@@ -56,11 +62,12 @@ service cloud.firestore {
     // ===============================================================
 
     function isValidNewsArticle() {
-      let allowedFields = ['title', 'category', 'teaser', 'content', 'tags', 'imageUrl', 'createdAt'];
+      let allowedFields = ['title', 'slug', 'category', 'teaser', 'content', 'tags', 'imageUrl', 'createdAt'];
       
-      return hasRequiredFields(['title', 'category', 'teaser', 'content', 'createdAt']) &&
+      return hasRequiredFields(['title', 'slug', 'category', 'teaser', 'content', 'createdAt']) &&
              hasOnlyAllowedFields(allowedFields) &&
              validStringLength('title', 1, 200) &&
+             validStringLength('slug', 1, 200) &&
              validStringLength('category', 1, 50) &&
              validStringLength('teaser', 1, 300) &&
              validStringLength('content', 1, 50000) &&
@@ -77,10 +84,10 @@ service cloud.firestore {
       // Publicly readable
       allow read: if true;
       
-      // Only authenticated users (admin via anonymous auth after hardcoded login) can write
-      allow create: if isAuthenticated() && isValidNewsArticle();
-      allow update: if isAuthenticated() && isValidNewsArticle();
-      allow delete: if isAuthenticated();
+      // Only admin can write
+      allow create: if isAdmin() && isValidNewsArticle();
+      allow update: if isAdmin() && isValidNewsArticle();
+      allow delete: if isAdmin();
     }
   }
 }
