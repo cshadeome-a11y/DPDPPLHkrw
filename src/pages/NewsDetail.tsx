@@ -1,21 +1,103 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import SEO from '../components/SEO';
-import { Link } from 'react-router-dom';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase';
+import ReactMarkdown from 'react-markdown';
 
 export default function NewsDetail() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [article, setArticle] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     window.scrollTo(0, 0);
     AOS.init({ duration: 800, once: true });
-  }, []);
+
+    const fetchArticle = async () => {
+      if (!id) return;
+      
+      // Hardcoded fallback for the existing article
+      if (id === 'dukung-program-mbg') {
+        setArticle({
+          title: "Dukungan Program MBG Ramah Lingkungan Karawang",
+          teaser: "DPD KOMNAS PPLH Karawang dukung program Makan Bergizi Gratis (MBG) di Karawang dengan solusi komposter komunal untuk cegah limbah dapur.",
+          category: "Kegiatan",
+          createdAt: { toDate: () => new Date('2026-03-09') },
+          imageUrl: "https://fk-kim-karawang.kim.id/assets/files/data/321526100101/_OTR1127_Large.jpeg",
+          content: `**Karawang, 9 Maret 2026** — Dewan Pimpinan Daerah (DPD) Komite Nasional Pemanfaatan dan Pelestarian Lingkungan Hidup (Komnas PPLH) Kabupaten Karawang menghadiri undangan Podcast STURADA Karawang dalam sebuah diskusi yang membahas peran masyarakat dan organisasi lingkungan dalam mendukung program pemerintah secara berkelanjutan.
+
+Dalam kesempatan tersebut, DPD Komnas PPLH Karawang menyampaikan dukungan penuh terhadap program Makan Bergizi Gratis (MBG) yang menjadi salah satu program strategis pemerintah untuk meningkatkan kualitas gizi masyarakat, khususnya bagi pelajar.
+
+Namun demikian, Komnas PPLH menekankan bahwa pelaksanaan program MBG dalam skala besar juga perlu memperhatikan aspek pengelolaan lingkungan, terutama terkait potensi peningkatan limbah organik dari aktivitas dapur produksi makanan.
+
+Ketua DPD Komnas PPLH Kabupaten Karawang, **Abdul Majid**, menjelaskan bahwa program MBG memiliki potensi menghasilkan limbah organik dalam jumlah besar, seperti sisa makanan, sayuran, dan buah. Jika tidak dikelola dengan baik sejak dari sumbernya, limbah tersebut dapat meningkatkan beban Tempat Pembuangan Akhir (TPA) serta berpotensi menimbulkan pencemaran lingkungan.
+
+> “Program MBG adalah program yang sangat baik untuk kesehatan dan masa depan generasi muda. Namun pelaksanaannya juga harus memperhatikan aspek lingkungan agar manfaatnya benar-benar berkelanjutan,” ujarnya dalam podcast tersebut.
+
+Sebagai solusi konkret, Komnas PPLH Karawang menawarkan pengadaan tong komposter komunal di setiap titik dapur MBG. Melalui sistem ini, limbah organik dari sisa makanan dapat diolah menjadi pupuk kompos yang bermanfaat bagi kegiatan penghijauan maupun pertanian.
+
+Model komposter yang direkomendasikan menggunakan drum berbahan HDPE berkapasitas 150–200 liter dengan sistem aerasi sederhana, tutup rapat untuk mencegah bau dan serangga, serta wadah penampung lindi terpisah. Untuk dapur dengan kapasitas produksi yang lebih besar, dapat digunakan unit komposter berkapasitas 500 hingga 1.000 liter atau sistem komposter ganda.
+
+Komnas PPLH juga menekankan pentingnya penggunaan komposter yang memenuhi Standar Nasional Indonesia (SNI), termasuk penggunaan bahan tahan korosi, ventilasi yang memadai untuk mempercepat proses dekomposisi, serta sistem pengambilan kompos matang yang aman.
+
+Dalam implementasinya, Komnas PPLH Karawang mengajak Dinas Lingkungan Hidup Kabupaten Karawang untuk berkolaborasi dalam verifikasi spesifikasi teknis komposter, pelatihan operasional bagi pengelola dapur MBG, serta monitoring kualitas hasil kompos.
+
+Langkah-langkah teknis yang diusulkan meliputi inventarisasi titik dapur MBG, estimasi volume limbah organik, pengadaan unit komposter sesuai kebutuhan, hingga pelatihan pemilahan sampah dan teknik pengomposan bagi pengelola dapur.
+
+Hasil kompos nantinya dapat dimanfaatkan untuk berbagai kegiatan lingkungan seperti penghijauan sekolah, pembuatan lubang biopori, maupun dukungan bagi kelompok tani lokal.
+
+Melalui pendekatan ini, Komnas PPLH berharap program MBG tidak hanya meningkatkan kualitas gizi masyarakat, tetapi juga mampu menjadi contoh program pemerintah yang sehat sekaligus ramah lingkungan.
+
+**“Program MBG harus kita dukung bersama. Dengan pengelolaan limbah yang baik melalui komposter, kita dapat mengurangi sampah organik ke TPA sekaligus menciptakan manfaat bagi lingkungan,”** tutup Abdul Majid.`
+        });
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const docRef = doc(db, 'news', id);
+        const docSnap = await getDoc(docRef);
+        
+        if (docSnap.exists()) {
+          setArticle({ id: docSnap.id, ...docSnap.data() });
+        } else {
+          console.log("No such document!");
+          navigate('/berita');
+        }
+      } catch (error) {
+        console.error("Error fetching article:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchArticle();
+  }, [id, navigate]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <i className="ph ph-spinner animate-spin text-4xl text-primary"></i>
+      </div>
+    );
+  }
+
+  if (!article) return null;
+
+  const shareUrl = window.location.href;
 
   return (
     <>
       <SEO 
-        title="Dukungan Program MBG Ramah Lingkungan Karawang" 
-        description="DPD KOMNAS PPLH Karawang dukung program Makan Bergizi Gratis (MBG) di Karawang dengan solusi komposter komunal untuk cegah limbah dapur."
-        keywords="program MBG Karawang, makan bergizi gratis Karawang, komposter komunal Karawang, Abdul Majid PPLH, limbah dapur MBG"
+        title={article.title} 
+        description={article.teaser}
+        keywords={article.tags ? article.tags.join(', ') : "berita lingkungan, komnas pplh karawang"}
+        ogImage={article.imageUrl}
+        ogType="article"
       />
       
       <article className="py-16 md:py-24 bg-white">
@@ -26,62 +108,55 @@ export default function NewsDetail() {
 
           <header className="mb-10" data-aos="fade-up">
             <div className="flex items-center gap-4 mb-4 text-sm font-semibold text-gray-500">
-              <span className="bg-primary/10 text-primary px-3 py-1 rounded-full">Kegiatan</span>
-              <span>9 Maret 2026</span>
+              <span className="bg-primary/10 text-primary px-3 py-1 rounded-full">{article.category || 'Berita'}</span>
+              <span>{article.createdAt?.toDate ? new Date(article.createdAt.toDate()).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Baru saja'}</span>
             </div>
             <h1 className="font-heading text-3xl md:text-5xl font-bold text-dark leading-tight mb-6">
-              DPD KOMNAS PPLH Karawang Dukung Program MBG dengan Pendekatan Ramah Lingkungan dalam Podcast STURADA
+              {article.title}
             </h1>
           </header>
 
-          <div className="rounded-3xl overflow-hidden shadow-xl mb-12" data-aos="fade-up">
-            <img 
-              src="https://fk-kim-karawang.kim.id/assets/files/data/321526100101/_OTR1127_Large.jpeg" 
-              alt="DPD KOMNAS PPLH Karawang di Podcast STURADA" 
-              className="w-full h-auto object-cover"
-              referrerPolicy="no-referrer"
-            />
-          </div>
-
-          <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed" data-aos="fade-up">
-            <p className="font-bold">Karawang, 9 Maret 2026 — Dewan Pimpinan Daerah (DPD) Komite Nasional Pemanfaatan dan Pelestarian Lingkungan Hidup (Komnas PPLH) Kabupaten Karawang menghadiri undangan Podcast STURADA Karawang dalam sebuah diskusi yang membahas peran masyarakat dan organisasi lingkungan dalam mendukung program pemerintah secara berkelanjutan.</p>
-            
-            <p className="mt-6">Dalam kesempatan tersebut, DPD Komnas PPLH Karawang menyampaikan dukungan penuh terhadap program Makan Bergizi Gratis (MBG) yang menjadi salah satu program strategis pemerintah untuk meningkatkan kualitas gizi masyarakat, khususnya bagi pelajar.</p>
-            
-            <p className="mt-4">Namun demikian, Komnas PPLH menekankan bahwa pelaksanaan program MBG dalam skala besar juga perlu memperhatikan aspek pengelolaan lingkungan, terutama terkait potensi peningkatan limbah organik dari aktivitas dapur produksi makanan.</p>
-
-            <p className="mt-6">Ketua DPD Komnas PPLH Kabupaten Karawang, <strong>Abdul Majid</strong>, menjelaskan bahwa program MBG memiliki potensi menghasilkan limbah organik dalam jumlah besar, seperti sisa makanan, sayuran, dan buah. Jika tidak dikelola dengan baik sejak dari sumbernya, limbah tersebut dapat meningkatkan beban Tempat Pembuangan Akhir (TPA) serta berpotensi menimbulkan pencemaran lingkungan.</p>
-
-            <blockquote className="border-l-4 border-primary pl-6 py-2 my-8 italic text-xl text-dark font-medium">
-              “Program MBG adalah program yang sangat baik untuk kesehatan dan masa depan generasi muda. Namun pelaksanaannya juga harus memperhatikan aspek lingkungan agar manfaatnya benar-benar berkelanjutan,” ujarnya dalam podcast tersebut.
-            </blockquote>
-
-            <p className="mt-6">Sebagai solusi konkret, Komnas PPLH Karawang menawarkan pengadaan tong komposter komunal di setiap titik dapur MBG. Melalui sistem ini, limbah organik dari sisa makanan dapat diolah menjadi pupuk kompos yang bermanfaat bagi kegiatan penghijauan maupun pertanian.</p>
-
-            <p className="mt-4">Model komposter yang direkomendasikan menggunakan drum berbahan HDPE berkapasitas 150–200 liter dengan sistem aerasi sederhana, tutup rapat untuk mencegah bau dan serangga, serta wadah penampung lindi terpisah. Untuk dapur dengan kapasitas produksi yang lebih besar, dapat digunakan unit komposter berkapasitas 500 hingga 1.000 liter atau sistem komposter ganda.</p>
-
-            <p className="mt-4">Komnas PPLH juga menekankan pentingnya penggunaan komposter yang memenuhi Standar Nasional Indonesia (SNI), termasuk penggunaan bahan tahan korosi, ventilasi yang memadai untuk mempercepat proses dekomposisi, serta sistem pengambilan kompos matang yang aman.</p>
-
-            <p className="mt-6">Dalam implementasinya, Komnas PPLH Karawang mengajak Dinas Lingkungan Hidup Kabupaten Karawang untuk berkolaborasi dalam verifikasi spesifikasi teknis komposter, pelatihan operasional bagi pengelola dapur MBG, serta monitoring kualitas hasil kompos.</p>
-
-            <p className="mt-4">Langkah-langkah teknis yang diusulkan meliputi inventarisasi titik dapur MBG, estimasi volume limbah organik, pengadaan unit komposter sesuai kebutuhan, hingga pelatihan pemilahan sampah dan teknik pengomposan bagi pengelola dapur.</p>
-
-            <p className="mt-4">Hasil kompos nantinya dapat dimanfaatkan untuk berbagai kegiatan lingkungan seperti penghijauan sekolah, pembuatan lubang biopori, maupun dukungan bagi kelompok tani lokal.</p>
-
-            <p className="mt-6">Melalui pendekatan ini, Komnas PPLH berharap program MBG tidak hanya meningkatkan kualitas gizi masyarakat, tetapi juga mampu menjadi contoh program pemerintah yang sehat sekaligus ramah lingkungan.</p>
-
-            <p className="mt-8 font-bold italic text-dark">
-              “Program MBG harus kita dukung bersama. Dengan pengelolaan limbah yang baik melalui komposter, kita dapat mengurangi sampah organik ke TPA sekaligus menciptakan manfaat bagi lingkungan,” tutup Abdul Majid.
-            </p>
-          </div>
-
-          <div className="mt-16 pt-10 border-t border-gray-100 flex justify-between items-center">
-            <div className="flex gap-4">
-              <span className="text-gray-500 text-sm">Bagikan:</span>
-              <a href="#" className="text-gray-400 hover:text-primary transition"><i className="ph-fill ph-facebook-logo text-xl"></i></a>
-              <a href="#" className="text-gray-400 hover:text-primary transition"><i className="ph-fill ph-instagram-logo text-xl"></i></a>
-              <a href="#" className="text-gray-400 hover:text-primary transition"><i className="ph-fill ph-whatsapp-logo text-xl"></i></a>
+          {article.imageUrl && (
+            <div className="rounded-3xl overflow-hidden shadow-xl mb-12" data-aos="fade-up">
+              <img 
+                src={article.imageUrl} 
+                alt={article.title} 
+                className="w-full h-auto object-cover max-h-[500px]"
+                referrerPolicy="no-referrer"
+              />
             </div>
+          )}
+
+          <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed markdown-body" data-aos="fade-up">
+            <ReactMarkdown>{article.content}</ReactMarkdown>
+          </div>
+
+          <div className="mt-16 pt-10 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div className="flex gap-4 items-center">
+              <span className="text-gray-500 text-sm font-medium">Bagikan Artikel:</span>
+              <a href={`https://api.whatsapp.com/send?text=${encodeURIComponent(article.title + ' ' + shareUrl)}`} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center hover:bg-green-500 hover:text-white transition-colors">
+                <i className="ph-fill ph-whatsapp-logo text-xl"></i>
+              </a>
+              <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-colors">
+                <i className="ph-fill ph-facebook-logo text-xl"></i>
+              </a>
+              <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(article.title)}`} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-sky-100 text-sky-500 flex items-center justify-center hover:bg-sky-500 hover:text-white transition-colors">
+                <i className="ph-fill ph-twitter-logo text-xl"></i>
+              </a>
+              <button onClick={() => { navigator.clipboard.writeText(shareUrl); alert('Link disalin!'); }} className="w-10 h-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-gray-200 transition-colors">
+                <i className="ph ph-link text-xl"></i>
+              </button>
+            </div>
+            
+            {article.tags && article.tags.length > 0 && (
+              <div className="flex flex-wrap gap-2">
+                {article.tags.map((tag: string, index: number) => (
+                  <span key={index} className="bg-gray-100 text-gray-600 px-3 py-1 rounded-full text-xs font-medium">
+                    #{tag}
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </article>

@@ -15,7 +15,7 @@ export default function SEO({
   keywords, 
   canonical, 
   ogType = 'website',
-  ogImage = 'https://i.postimg.cc/Z5D0H7Q6/LOGO-PPLH-KRW.png'
+  ogImage = 'https://res.cloudinary.com/dnk4d52tv/image/upload/v1775490908/h1gfsevvanvahawghy9g.png'
 }: SEOProps) {
   const siteTitle = 'DPD KOMNAS PPLH Karawang';
   const fullTitle = `${title} | ${siteTitle}`;

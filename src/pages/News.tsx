@@ -89,7 +89,7 @@ export default function News() {
           {/* Dynamic News from Firestore */}
           {dynamicNews.map((news) => (
             <SwiperSlide key={news.id}>
-              <div className="group block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 h-full cursor-pointer">
+              <Link to={`/berita/${news.id}`} className="group block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 h-full cursor-pointer">
                 <div className="relative h-48 overflow-hidden">
                   <img src={news.imageUrl || "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"} alt={news.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
                   <div className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
@@ -110,7 +110,7 @@ export default function News() {
                     Baca Selengkapnya <i className="ph-bold ph-arrow-right"></i>
                   </span>
                 </div>
-              </div>
+              </Link>
             </SwiperSlide>
           ))}
 

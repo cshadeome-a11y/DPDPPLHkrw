@@ -7,7 +7,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12 mb-12 md:mb-16">
           <div>
             <Link to="/" className="flex items-center gap-3 mb-6">
-              <img src="https://i.postimg.cc/Z5D0H7Q6/LOGO-PPLH-KRW.png" alt="Logo PPLH Karawang" className="h-12 w-12 object-contain shrink-0 rounded-full" loading="lazy" decoding="async" />
+              <img src="https://res.cloudinary.com/dnk4d52tv/image/upload/v1775490908/h1gfsevvanvahawghy9g.png" alt="Logo PPLH Karawang" className="h-12 w-12 object-contain shrink-0 rounded-full" loading="lazy" decoding="async" />
               <span className="font-heading font-bold text-xl sm:text-2xl text-white leading-tight">DPD KOMNAS PPLH Karawang</span>
             </Link>
             <p className="text-gray-400 mb-6 leading-relaxed">

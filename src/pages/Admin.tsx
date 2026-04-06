@@ -1,14 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
-import { signInAnonymously } from 'firebase/auth';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
+import { collection, addDoc, serverTimestamp, getDocs, doc, updateDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
 import { auth, db, handleFirestoreError, OperationType } from '../firebase';
+import { Link } from 'react-router-dom';
 
 export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+
+  // Tab state
+  const [activeTab, setActiveTab] = useState<'write' | 'manage'>('write');
+  const [articles, setArticles] = useState<any[]>([]);
+  const [isLoadingArticles, setIsLoadingArticles] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
 
   // Form states
   const [title, setTitle] = useState('');
@@ -18,14 +25,19 @@ export default function Admin() {
   const [tags, setTags] = useState('');
   const [imageUrl, setImageUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
+  const [isUploadingContentImage, setIsUploadingContentImage] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
+  const [publishedUrl, setPublishedUrl] = useState('');
+
+  const contentImageInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const adminStatus = localStorage.getItem('isAdminLoggedIn');
     if (adminStatus === 'true') {
       setIsAuthenticated(true);
-      // Ensure Firebase Auth is signed in anonymously for Firestore rules
-      signInAnonymously(auth).catch(console.error);
+      // Ensure Firebase Auth is signed in for Firestore rules
+      signInWithEmailAndPassword(auth, 'agungdj99@komnaspplh.org', 'Karawang&99/').catch(console.error);
     }
   }, []);
 
@@ -33,12 +45,27 @@ export default function Admin() {
     e.preventDefault();
     if (username === 'agungdj99' && password === 'Karawang&99/') {
       try {
-        await signInAnonymously(auth);
+        const email = 'agungdj99@komnaspplh.org';
+        try {
+          await signInWithEmailAndPassword(auth, email, password);
+        } catch (err: any) {
+          if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
+            // Create the user if it doesn't exist
+            await createUserWithEmailAndPassword(auth, email, password);
+          } else {
+            throw err;
+          }
+        }
         localStorage.setItem('isAdminLoggedIn', 'true');
         setIsAuthenticated(true);
         setLoginError('');
-      } catch (error) {
-        setLoginError('Gagal terhubung ke server otentikasi.');
+      } catch (error: any) {
+        console.error("Auth error:", error);
+        if (error.code === 'auth/operation-not-allowed') {
+          setLoginError('Mohon aktifkan "Email/Password" sign-in di Firebase Console -> Authentication -> Sign-in method.');
+        } else {
+          setLoginError('Gagal terhubung ke server otentikasi: ' + error.message);
+        }
       }
     } else {
       setLoginError('Username atau password salah.');
@@ -51,29 +78,155 @@ export default function Admin() {
     auth.signOut();
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const data = await response.json();
+      setImageUrl(data.url);
+    } catch (error) {
+      console.error('Error uploading image:', error);
+      alert('Gagal mengupload gambar. Silakan coba lagi.');
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const fetchArticles = async () => {
+    setIsLoadingArticles(true);
+    try {
+      const q = query(collection(db, 'news'), orderBy('createdAt', 'desc'));
+      const querySnapshot = await getDocs(q);
+      const articlesData = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setArticles(articlesData);
+    } catch (error) {
+      console.error("Error fetching articles:", error);
+      handleFirestoreError(error, OperationType.GET, 'news');
+    } finally {
+      setIsLoadingArticles(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated && activeTab === 'manage') {
+      fetchArticles();
+    }
+  }, [isAuthenticated, activeTab]);
+
+  const handleEdit = (article: any) => {
+    setEditingId(article.id);
+    setTitle(article.title);
+    setCategory(article.category);
+    setTeaser(article.teaser);
+    setContent(article.content);
+    setTags(article.tags ? article.tags.join(', ') : '');
+    setImageUrl(article.imageUrl);
+    setActiveTab('write');
+    setSuccessMessage('');
+    setPublishedUrl('');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handleDelete = async (id: string) => {
+    if (window.confirm('Apakah Anda yakin ingin menghapus artikel ini?')) {
+      try {
+        await deleteDoc(doc(db, 'news', id));
+        fetchArticles();
+      } catch (error) {
+        console.error("Error deleting article:", error);
+        handleFirestoreError(error, OperationType.DELETE, `news/${id}`);
+      }
+    }
+  };
+
+  const handleContentImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingContentImage(true);
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error('Upload failed');
+      }
+
+      const data = await response.json();
+      // Append image markdown to content
+      const imageMarkdown = `\n\n![Image](${data.url})\n\n`;
+      setContent(prev => prev + imageMarkdown);
+    } catch (error) {
+      console.error('Error uploading content image:', error);
+      alert('Gagal mengupload gambar. Silakan coba lagi.');
+    } finally {
+      setIsUploadingContentImage(false);
+      if (contentImageInputRef.current) {
+        contentImageInputRef.current.value = '';
+      }
+    }
+  };
+
   const handleSubmitNews = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
     setSuccessMessage('');
+    setPublishedUrl('');
 
     try {
       const tagsArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
       
-      const newsData = {
+      const newsData: any = {
         title,
         category,
         teaser,
         content,
         tags: tagsArray,
         imageUrl: imageUrl || 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80', // Default image
-        createdAt: serverTimestamp()
       };
 
-      await addDoc(collection(db, 'news'), newsData).catch(err => {
-        handleFirestoreError(err, OperationType.CREATE, 'news');
-      });
+      let newDocId = editingId;
 
-      setSuccessMessage('Berita berhasil dipublikasikan!');
+      if (editingId) {
+        await updateDoc(doc(db, 'news', editingId), newsData).catch(err => {
+          handleFirestoreError(err, OperationType.UPDATE, `news/${editingId}`);
+        });
+        setSuccessMessage('Berita berhasil diperbarui!');
+      } else {
+        newsData.createdAt = serverTimestamp();
+        const docRef = await addDoc(collection(db, 'news'), newsData).catch(err => {
+          handleFirestoreError(err, OperationType.CREATE, 'news');
+          throw err;
+        });
+        newDocId = docRef.id;
+        setSuccessMessage('Berita berhasil dipublikasikan!');
+      }
+
+      setPublishedUrl(`${window.location.origin}/berita/${newDocId}`);
+      
+      setEditingId(null);
       setTitle('');
       setCategory('');
       setTeaser('');
@@ -81,8 +234,8 @@ export default function Admin() {
       setTags('');
       setImageUrl('');
     } catch (error) {
-      console.error('Error adding document: ', error);
-      alert('Terjadi kesalahan saat mempublikasikan berita.');
+      console.error('Error saving document: ', error);
+      alert('Terjadi kesalahan saat menyimpan berita.');
     } finally {
       setIsSubmitting(false);
     }
@@ -165,7 +318,7 @@ export default function Admin() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <i className="ph-fill ph-pencil-simple-line text-2xl text-primary"></i>
-            <h1 className="font-heading font-bold text-xl text-dark">Tulis Artikel</h1>
+            <h1 className="font-heading font-bold text-xl text-dark">Admin Dashboard</h1>
           </div>
           <button 
             onClick={handleLogout}
@@ -176,17 +329,114 @@ export default function Admin() {
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-10">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
-          
-          {successMessage && (
-            <div className="mb-8 bg-green-50 text-green-700 p-4 rounded-xl flex items-center gap-3 border border-green-100">
-              <i className="ph-fill ph-check-circle text-xl"></i>
-              <p className="font-medium">{successMessage}</p>
-            </div>
-          )}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+        <div className="flex space-x-4 border-b border-gray-200">
+          <button
+            onClick={() => {
+              setActiveTab('write');
+              if (editingId) {
+                setEditingId(null);
+                setTitle('');
+                setCategory('');
+                setTeaser('');
+                setContent('');
+                setTags('');
+                setImageUrl('');
+              }
+            }}
+            className={`py-2 px-4 border-b-2 font-medium text-sm transition-colors ${
+              activeTab === 'write'
+                ? 'border-primary text-primary'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            {editingId ? 'Edit Artikel' : 'Tulis Artikel Baru'}
+          </button>
+          <button
+            onClick={() => setActiveTab('manage')}
+            className={`py-2 px-4 border-b-2 font-medium text-sm transition-colors ${
+              activeTab === 'manage'
+                ? 'border-primary text-primary'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Kelola Artikel
+          </button>
+        </div>
+      </div>
 
-          <form onSubmit={handleSubmitNews} className="space-y-8">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+        {activeTab === 'manage' ? (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+            <h2 className="text-2xl font-bold font-heading mb-6">Daftar Artikel</h2>
+            {isLoadingArticles ? (
+              <div className="flex justify-center items-center py-12">
+                <i className="ph ph-spinner animate-spin text-4xl text-primary"></i>
+              </div>
+            ) : articles.length === 0 ? (
+              <div className="text-center py-12 text-gray-500">
+                Belum ada artikel yang dipublikasikan.
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {articles.map((article) => (
+                  <div key={article.id} className="flex flex-col sm:flex-row items-center justify-between p-4 border border-gray-200 rounded-xl hover:shadow-md transition-shadow gap-4">
+                    <div className="flex items-center gap-4 w-full sm:w-auto">
+                      <img src={article.imageUrl} alt={article.title} className="w-16 h-16 object-cover rounded-lg shrink-0" />
+                      <div>
+                        <h3 className="font-bold text-dark line-clamp-1">{article.title}</h3>
+                        <p className="text-sm text-gray-500">{article.category} • {new Date(article.createdAt?.toDate()).toLocaleDateString('id-ID')}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <Link to={`/berita/${article.id}`} target="_blank" className="p-2 text-gray-500 hover:text-primary transition-colors bg-gray-50 rounded-lg" title="Lihat Artikel">
+                        <i className="ph ph-eye text-lg"></i>
+                      </Link>
+                      <button onClick={() => handleEdit(article)} className="p-2 text-gray-500 hover:text-blue-600 transition-colors bg-gray-50 rounded-lg" title="Edit Artikel">
+                        <i className="ph ph-pencil-simple text-lg"></i>
+                      </button>
+                      <button onClick={() => handleDelete(article.id)} className="p-2 text-gray-500 hover:text-red-600 transition-colors bg-gray-50 rounded-lg" title="Hapus Artikel">
+                        <i className="ph ph-trash text-lg"></i>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+            
+            {successMessage && (
+              <div className="mb-8 bg-green-50 text-green-700 p-4 rounded-xl flex flex-col gap-3 border border-green-100">
+                <div className="flex items-center gap-3">
+                  <i className="ph-fill ph-check-circle text-xl"></i>
+                  <p className="font-medium">{successMessage}</p>
+                </div>
+                {publishedUrl && (
+                  <div className="flex items-center gap-2 mt-2 pt-3 border-t border-green-200/50">
+                    <span className="text-sm font-medium">Bagikan:</span>
+                    <a href={`https://api.whatsapp.com/send?text=${encodeURIComponent(title + ' ' + publishedUrl)}`} target="_blank" rel="noopener noreferrer" className="p-2 bg-green-100 hover:bg-green-200 rounded-full transition-colors text-green-800" title="Share ke WhatsApp">
+                      <i className="ph-fill ph-whatsapp-logo text-lg"></i>
+                    </a>
+                    <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(publishedUrl)}`} target="_blank" rel="noopener noreferrer" className="p-2 bg-blue-100 hover:bg-blue-200 rounded-full transition-colors text-blue-800" title="Share ke Facebook">
+                      <i className="ph-fill ph-facebook-logo text-lg"></i>
+                    </a>
+                    <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(publishedUrl)}&text=${encodeURIComponent(title)}`} target="_blank" rel="noopener noreferrer" className="p-2 bg-sky-100 hover:bg-sky-200 rounded-full transition-colors text-sky-800" title="Share ke Twitter">
+                      <i className="ph-fill ph-twitter-logo text-lg"></i>
+                    </a>
+                    <button onClick={() => { navigator.clipboard.writeText(publishedUrl); alert('Link disalin!'); }} className="p-2 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors text-gray-800 ml-2" title="Copy Link">
+                      <i className="ph ph-link text-lg"></i>
+                    </button>
+                    <Link to={`/berita/${publishedUrl.split('/').pop()}`} target="_blank" className="ml-auto text-sm font-bold text-primary hover:underline flex items-center gap-1">
+                      Lihat Artikel <i className="ph ph-arrow-right"></i>
+                    </Link>
+                  </div>
+                )}
+              </div>
+            )}
+
+            <form onSubmit={handleSubmitNews} className="space-y-8">
             {/* Kategori & Judul */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
               <label className="font-bold text-dark md:mt-3">Kategori</label>
@@ -222,7 +472,7 @@ export default function Admin() {
 
             {/* Content Editor (Simplified) */}
             <div className="border border-gray-200 rounded-xl overflow-hidden">
-              <div className="bg-gray-50 border-b border-gray-200 p-3 flex gap-4 text-gray-600 overflow-x-auto">
+              <div className="bg-gray-50 border-b border-gray-200 p-3 flex gap-4 text-gray-600 overflow-x-auto items-center">
                 <i className="ph ph-text-b hover:text-dark cursor-pointer"></i>
                 <i className="ph ph-text-italic hover:text-dark cursor-pointer"></i>
                 <i className="ph ph-text-underline hover:text-dark cursor-pointer"></i>
@@ -230,7 +480,20 @@ export default function Admin() {
                 <i className="ph ph-list-bullets hover:text-dark cursor-pointer"></i>
                 <i className="ph ph-list-numbers hover:text-dark cursor-pointer"></i>
                 <div className="w-px h-6 bg-gray-300"></div>
-                <i className="ph ph-image hover:text-dark cursor-pointer"></i>
+                
+                <label className="cursor-pointer hover:text-dark flex items-center gap-1" title="Upload Gambar ke Konten">
+                  <i className="ph ph-image"></i>
+                  {isUploadingContentImage && <i className="ph ph-spinner animate-spin text-xs"></i>}
+                  <input 
+                    type="file" 
+                    accept="image/*"
+                    onChange={handleContentImageUpload}
+                    className="hidden"
+                    disabled={isUploadingContentImage}
+                    ref={contentImageInputRef}
+                  />
+                </label>
+                
                 <i className="ph ph-link hover:text-dark cursor-pointer"></i>
               </div>
               <textarea 
@@ -276,15 +539,35 @@ export default function Admin() {
 
             {/* Image URL */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
-              <label className="font-bold text-dark md:mt-3">URL Gambar Cover</label>
-              <div className="md:col-span-3">
+              <label className="font-bold text-dark md:mt-3">Gambar Cover</label>
+              <div className="md:col-span-3 space-y-4">
+                <div className="flex items-center gap-4">
+                  <label className="cursor-pointer bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2">
+                    <i className="ph ph-upload-simple"></i> Upload Gambar
+                    <input 
+                      type="file" 
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      disabled={isUploading}
+                    />
+                  </label>
+                  {isUploading && <span className="text-sm text-gray-500 flex items-center gap-2"><i className="ph ph-spinner animate-spin"></i> Mengupload...</span>}
+                </div>
+                
                 <input 
                   type="url" 
-                  placeholder="https://example.com/image.jpg (Opsional)"
+                  placeholder="Atau masukkan URL gambar langsung (Opsional)"
                   value={imageUrl}
                   onChange={(e) => setImageUrl(e.target.value)}
                   className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                 />
+                
+                {imageUrl && (
+                  <div className="mt-2 rounded-lg overflow-hidden border border-gray-200 w-full max-w-md">
+                    <img src={imageUrl} alt="Preview" className="w-full h-auto object-cover" />
+                  </div>
+                )}
               </div>
             </div>
 
@@ -308,6 +591,7 @@ export default function Admin() {
             </div>
           </form>
         </div>
+        )}
       </main>
     </div>
   );

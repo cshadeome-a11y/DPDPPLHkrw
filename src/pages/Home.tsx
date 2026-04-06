@@ -19,13 +19,13 @@ export default function Home() {
   const [dynamicNews, setDynamicNews] = useState<any[]>([]);
 
   const heroImages = [
-    "https://i.postimg.cc/wMJhYKCd/647150881-122114675943215177-5360993793631409425-n.jpg",
-    "https://i.postimg.cc/RCn1HfNR/648529409-122114675001215177-6631640995499234967-n.jpg",
-    "https://i.postimg.cc/5yvwWchd/648529412-122114675979215177-2337113495329901794-n.jpg",
-    "https://i.postimg.cc/nr7vf8yJ/648722656-122114675859215177-1917562212020656991-n.jpg",
-    "https://i.postimg.cc/BZ15KDXH/648763645-122114675403215177-5301379909082126899-n.jpg",
-    "https://i.postimg.cc/L4Zk1fnj/648809042-122114675889215177-8151982047925485108-n.jpg",
-    "https://i.postimg.cc/2yv4NpsN/649109736-122114675823215177-4299429677004223139-n.jpg"
+    "https://res.cloudinary.com/dnk4d52tv/image/upload/v1775491105/komnas_migrated/exiln2undwodai1fxgn4.jpg",
+    "https://res.cloudinary.com/dnk4d52tv/image/upload/v1775491106/komnas_migrated/tkdzqlusosy65pc5cpeq.jpg",
+    "https://res.cloudinary.com/dnk4d52tv/image/upload/v1775491107/komnas_migrated/hvzalidtwgcpxnvft5pq.jpg",
+    "https://res.cloudinary.com/dnk4d52tv/image/upload/v1775491108/komnas_migrated/zsejyygpknfb2hsqsb38.jpg",
+    "https://res.cloudinary.com/dnk4d52tv/image/upload/v1775491108/komnas_migrated/yieao7kdxfldfww99qh4.jpg",
+    "https://res.cloudinary.com/dnk4d52tv/image/upload/v1775491109/komnas_migrated/ffml8gho4peifjyknubn.jpg",
+    "https://res.cloudinary.com/dnk4d52tv/image/upload/v1775491110/komnas_migrated/bkmkpshxtmuklwoprl9v.jpg"
   ];
 
   useEffect(() => {

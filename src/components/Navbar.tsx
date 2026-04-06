@@ -20,7 +20,7 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
           <Link to="/" className="flex items-center gap-3 group">
-            <img src="https://i.postimg.cc/Z5D0H7Q6/LOGO-PPLH-KRW.png" alt="Logo PPLH Karawang" className="h-12 w-12 object-contain shrink-0 group-hover:scale-105 transition-transform rounded-full" loading="eager" decoding="async" />
+            <img src="https://res.cloudinary.com/dnk4d52tv/image/upload/v1775490908/h1gfsevvanvahawghy9g.png" alt="Logo PPLH Karawang" className="h-12 w-12 object-contain shrink-0 group-hover:scale-105 transition-transform rounded-full" loading="eager" decoding="async" />
             <span className="font-heading font-bold text-sm sm:text-xl md:text-base lg:text-xl text-dark leading-tight max-w-[180px] sm:max-w-none">DPD KOMNAS PPLH Karawang</span>
           </Link>
 
