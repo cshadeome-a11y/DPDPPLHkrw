@@ -916,7 +916,7 @@ export default function ArticleDetail() {
                   <i className="ph-fill ph-facebook-logo text-2xl"></i>
                 </a>
                 <a 
-                  href={`https://wa.me/?text=${encodeURIComponent(article.title + ' ' + window.location.href)}`}
+                  href={`https://wa.me/?text=${encodeURIComponent(`*${article.title}*\n\n${article.description}\n\nBaca selengkapnya: ${window.location.href}`)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-12 h-12 rounded-full bg-green-500 text-white flex items-center justify-center hover:scale-110 transition-transform"
@@ -924,13 +924,19 @@ export default function ArticleDetail() {
                   <i className="ph-fill ph-whatsapp-logo text-2xl"></i>
                 </a>
                 <a 
-                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(window.location.href)}`}
+                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(`${article.title}\n\n${article.description}`)}&url=${encodeURIComponent(window.location.href)}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-12 h-12 rounded-full bg-sky-500 text-white flex items-center justify-center hover:scale-110 transition-transform"
                 >
                   <i className="ph-fill ph-twitter-logo text-2xl"></i>
                 </a>
+                <button 
+                  onClick={() => { navigator.clipboard.writeText(`*${article.title}*\n\n${article.description}\n\nBaca selengkapnya: ${window.location.href}`); alert('Link dan ringkasan disalin!'); }}
+                  className="w-12 h-12 rounded-full bg-gray-200 text-gray-700 flex items-center justify-center hover:scale-110 transition-transform"
+                >
+                  <i className="ph ph-link text-2xl"></i>
+                </button>
               </div>
             </div>
           </div>

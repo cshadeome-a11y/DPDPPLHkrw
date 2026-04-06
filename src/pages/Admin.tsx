@@ -416,16 +416,16 @@ export default function Admin() {
                 {publishedUrl && (
                   <div className="flex items-center gap-2 mt-2 pt-3 border-t border-green-200/50">
                     <span className="text-sm font-medium">Bagikan:</span>
-                    <a href={`https://api.whatsapp.com/send?text=${encodeURIComponent(title + ' ' + publishedUrl)}`} target="_blank" rel="noopener noreferrer" className="p-2 bg-green-100 hover:bg-green-200 rounded-full transition-colors text-green-800" title="Share ke WhatsApp">
+                    <a href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`*${title}*\n\n${teaser}\n\nBaca selengkapnya: ${publishedUrl}`)}`} target="_blank" rel="noopener noreferrer" className="p-2 bg-green-100 hover:bg-green-200 rounded-full transition-colors text-green-800" title="Share ke WhatsApp">
                       <i className="ph-fill ph-whatsapp-logo text-lg"></i>
                     </a>
                     <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(publishedUrl)}`} target="_blank" rel="noopener noreferrer" className="p-2 bg-blue-100 hover:bg-blue-200 rounded-full transition-colors text-blue-800" title="Share ke Facebook">
                       <i className="ph-fill ph-facebook-logo text-lg"></i>
                     </a>
-                    <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(publishedUrl)}&text=${encodeURIComponent(title)}`} target="_blank" rel="noopener noreferrer" className="p-2 bg-sky-100 hover:bg-sky-200 rounded-full transition-colors text-sky-800" title="Share ke Twitter">
+                    <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(publishedUrl)}&text=${encodeURIComponent(`${title}\n\n${teaser}`)}`} target="_blank" rel="noopener noreferrer" className="p-2 bg-sky-100 hover:bg-sky-200 rounded-full transition-colors text-sky-800" title="Share ke Twitter">
                       <i className="ph-fill ph-twitter-logo text-lg"></i>
                     </a>
-                    <button onClick={() => { navigator.clipboard.writeText(publishedUrl); alert('Link disalin!'); }} className="p-2 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors text-gray-800 ml-2" title="Copy Link">
+                    <button onClick={() => { navigator.clipboard.writeText(`*${title}*\n\n${teaser}\n\nBaca selengkapnya: ${publishedUrl}`); alert('Link dan ringkasan disalin!'); }} className="p-2 bg-gray-200 hover:bg-gray-300 rounded-full transition-colors text-gray-800 ml-2" title="Copy Link">
                       <i className="ph ph-link text-lg"></i>
                     </button>
                     <Link to={`/berita/${publishedUrl.split('/').pop()}`} target="_blank" className="ml-auto text-sm font-bold text-primary hover:underline flex items-center gap-1">

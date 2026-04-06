@@ -134,16 +134,16 @@ Melalui pendekatan ini, Komnas PPLH berharap program MBG tidak hanya meningkatka
           <div className="mt-16 pt-10 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-6">
             <div className="flex gap-4 items-center">
               <span className="text-gray-500 text-sm font-medium">Bagikan Artikel:</span>
-              <a href={`https://api.whatsapp.com/send?text=${encodeURIComponent(article.title + ' ' + shareUrl)}`} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center hover:bg-green-500 hover:text-white transition-colors">
+              <a href={`https://api.whatsapp.com/send?text=${encodeURIComponent(`*${article.title}*\n\n${article.teaser}\n\nBaca selengkapnya: ${shareUrl}`)}`} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-green-100 text-green-600 flex items-center justify-center hover:bg-green-500 hover:text-white transition-colors">
                 <i className="ph-fill ph-whatsapp-logo text-xl"></i>
               </a>
               <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center hover:bg-blue-600 hover:text-white transition-colors">
                 <i className="ph-fill ph-facebook-logo text-xl"></i>
               </a>
-              <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(article.title)}`} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-sky-100 text-sky-500 flex items-center justify-center hover:bg-sky-500 hover:text-white transition-colors">
+              <a href={`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(`${article.title}\n\n${article.teaser}`)}`} target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-sky-100 text-sky-500 flex items-center justify-center hover:bg-sky-500 hover:text-white transition-colors">
                 <i className="ph-fill ph-twitter-logo text-xl"></i>
               </a>
-              <button onClick={() => { navigator.clipboard.writeText(shareUrl); alert('Link disalin!'); }} className="w-10 h-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-gray-200 transition-colors">
+              <button onClick={() => { navigator.clipboard.writeText(`*${article.title}*\n\n${article.teaser}\n\nBaca selengkapnya: ${shareUrl}`); alert('Link dan ringkasan disalin!'); }} className="w-10 h-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-gray-200 transition-colors">
                 <i className="ph ph-link text-xl"></i>
               </button>
             </div>
