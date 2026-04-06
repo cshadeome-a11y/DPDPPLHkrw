@@ -6,6 +6,7 @@ import SEO from '../components/SEO';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 import ReactMarkdown from 'react-markdown';
+import rehypeRaw from 'rehype-raw';
 
 export default function NewsDetail() {
   const { id } = useParams();
@@ -128,7 +129,7 @@ Melalui pendekatan ini, Komnas PPLH berharap program MBG tidak hanya meningkatka
           )}
 
           <div className="prose prose-lg max-w-none text-gray-700 leading-relaxed markdown-body" data-aos="fade-up">
-            <ReactMarkdown>{article.content}</ReactMarkdown>
+            <ReactMarkdown rehypePlugins={[rehypeRaw]}>{article.content}</ReactMarkdown>
           </div>
 
           <div className="mt-16 pt-10 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center gap-6">

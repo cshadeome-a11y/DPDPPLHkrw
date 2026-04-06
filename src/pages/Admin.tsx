@@ -30,7 +30,97 @@ export default function Admin() {
   const [successMessage, setSuccessMessage] = useState('');
   const [publishedUrl, setPublishedUrl] = useState('');
 
+  // AI states
+  const [isAiModalOpen, setIsAiModalOpen] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [isGeneratingAi, setIsGeneratingAi] = useState(false);
+  const [isRegeneratingImage, setIsRegeneratingImage] = useState(false);
+
   const contentImageInputRef = useRef<HTMLInputElement>(null);
+
+  const handleGenerateAi = async () => {
+    if (!aiPrompt.trim()) {
+      alert('Mohon masukkan isu atau bahan artikel terlebih dahulu.');
+      return;
+    }
+
+    setIsGeneratingAi(true);
+    try {
+      const response = await fetch('/api/generate-article', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: aiPrompt })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate article');
+      }
+
+      const data = await response.json();
+      
+      setTitle(data.title || '');
+      
+      // Append image attribution to content if available
+      let finalContent = data.content || '';
+      if (data.imageAttribution) {
+        finalContent += `<p className="mt-4 text-xs text-gray-500 italic">${data.imageAttribution}</p>`;
+      }
+      setContent(finalContent);
+      
+      setTeaser(data.teaser || '');
+      setTags(data.tags || '');
+      
+      // Set the cover image if AI found one
+      if (data.imageUrl) {
+        setImageUrl(data.imageUrl);
+      }
+      
+      setIsAiModalOpen(false);
+      setAiPrompt('');
+    } catch (error) {
+      console.error('AI generation error:', error);
+      alert('Gagal men-generate artikel. Silakan coba lagi.');
+    } finally {
+      setIsGeneratingAi(false);
+    }
+  };
+
+  const handleRegenerateImage = async () => {
+    if (!title && !tags) {
+      alert("Judul atau Tag harus diisi terlebih dahulu untuk mencari gambar yang relevan.");
+      return;
+    }
+
+    setIsRegeneratingImage(true);
+    try {
+      const response = await fetch('/api/regenerate-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, tags, oldImageUrl: imageUrl })
+      });
+
+      if (!response.ok) throw new Error('Failed to regenerate image');
+
+      const data = await response.json();
+      setImageUrl(data.imageUrl);
+      
+      // Update attribution in content if it exists
+      if (data.imageAttribution) {
+        let newContent = content;
+        // Remove old attribution if present (using a more flexible regex)
+        newContent = newContent.replace(/<p className="mt-4 text-xs text-gray-500 italic">Photo by .* on Pexels<\/p>/g, '');
+        newContent += `\n\n<p className="mt-4 text-xs text-gray-500 italic">${data.imageAttribution}</p>`;
+        setContent(newContent);
+      }
+      
+      alert("Gambar berhasil diperbarui!");
+    } catch (error) {
+      console.error("Regenerate image error:", error);
+      alert("Gagal memperbarui gambar.");
+    } finally {
+      setIsRegeneratingImage(false);
+    }
+  };
 
   useEffect(() => {
     const adminStatus = localStorage.getItem('isAdminLoggedIn');
@@ -87,6 +177,18 @@ export default function Admin() {
     formData.append('file', file);
 
     try {
+      if (imageUrl) {
+        try {
+          await fetch('/api/delete-image', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: imageUrl })
+          });
+        } catch (err) {
+          console.error('Failed to delete old image:', err);
+        }
+      }
+
       const response = await fetch('/api/upload', {
         method: 'POST',
         body: formData,
@@ -147,6 +249,18 @@ export default function Admin() {
   const handleDelete = async (id: string) => {
     if (window.confirm('Apakah Anda yakin ingin menghapus artikel ini?')) {
       try {
+        const articleToDelete = articles.find(a => a.id === id);
+        if (articleToDelete?.imageUrl) {
+          try {
+            await fetch('/api/delete-image', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ url: articleToDelete.imageUrl })
+            });
+          } catch (err) {
+            console.error('Failed to delete image:', err);
+          }
+        }
         await deleteDoc(doc(db, 'news', id));
         fetchArticles();
       } catch (error) {
@@ -436,6 +550,16 @@ export default function Admin() {
               </div>
             )}
 
+            <div className="mb-8 flex justify-end">
+              <button
+                type="button"
+                onClick={() => setIsAiModalOpen(true)}
+                className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-6 py-2 rounded-full font-bold hover:shadow-lg transition-all flex items-center gap-2"
+              >
+                <i className="ph-fill ph-magic-wand"></i> Auto AI
+              </button>
+            </div>
+
             <form onSubmit={handleSubmitNews} className="space-y-8">
             {/* Kategori & Judul */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-start">
@@ -495,6 +619,23 @@ export default function Admin() {
                 </label>
                 
                 <i className="ph ph-link hover:text-dark cursor-pointer"></i>
+                
+                <button 
+                  type="button"
+                  onClick={() => {
+                    let newContent = content;
+                    // Remove markdown code blocks if AI accidentally included them
+                    newContent = newContent.replace(/```html/g, '').replace(/```/g, '');
+                    // Trim
+                    newContent = newContent.trim();
+                    setContent(newContent);
+                    alert('Format HTML telah diperbaiki!');
+                  }}
+                  className="ml-auto text-xs bg-primary/10 text-primary px-2 py-1 rounded hover:bg-primary/20 transition-colors flex items-center gap-1 font-bold"
+                  title="Perbaiki format HTML (Hapus backticks)"
+                >
+                  <i className="ph ph-wrench"></i> Fix HTML
+                </button>
               </div>
               <textarea 
                 required
@@ -562,6 +703,18 @@ export default function Admin() {
                   onChange={(e) => setImageUrl(e.target.value)}
                   className="w-full border border-gray-300 rounded-lg px-4 py-3 focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all"
                 />
+
+                {imageUrl && (
+                  <button
+                    type="button"
+                    onClick={handleRegenerateImage}
+                    disabled={isRegeneratingImage}
+                    className="text-xs bg-purple-100 text-purple-700 px-3 py-1.5 rounded-lg font-bold hover:bg-purple-200 transition-all flex items-center gap-2"
+                  >
+                    {isRegeneratingImage ? <i className="ph ph-spinner animate-spin"></i> : <i className="ph ph-arrows-clockwise"></i>}
+                    Regenerate Image (Pexels)
+                  </button>
+                )}
                 
                 {imageUrl && (
                   <div className="mt-2 rounded-lg overflow-hidden border border-gray-200 w-full max-w-md">
@@ -593,6 +746,55 @@ export default function Admin() {
         </div>
         )}
       </main>
+
+      {/* AI Modal */}
+      {isAiModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl overflow-hidden flex flex-col max-h-[90vh]">
+            <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gradient-to-r from-purple-50 to-indigo-50">
+              <h3 className="font-heading font-bold text-xl text-dark flex items-center gap-2">
+                <i className="ph-fill ph-magic-wand text-purple-600"></i> Auto AI Generator
+              </h3>
+              <button 
+                onClick={() => setIsAiModalOpen(false)}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <i className="ph ph-x text-2xl"></i>
+              </button>
+            </div>
+            <div className="p-6 overflow-y-auto flex-1">
+              <p className="text-sm text-gray-600 mb-4">
+                Masukkan isu, bahan artikel, atau poin-poin penting. AI akan menyusunnya menjadi artikel profesional yang mematuhi kaidah jurnalistik, PUEBI, dan EYD.
+              </p>
+              <textarea
+                value={aiPrompt}
+                onChange={(e) => setAiPrompt(e.target.value)}
+                placeholder="Contoh: Buat artikel tentang penanaman 1000 pohon mangrove di pesisir Karawang oleh Komnas PPLH yang dihadiri bupati..."
+                className="w-full h-48 p-4 border border-gray-300 rounded-xl focus:outline-none focus:border-purple-500 focus:ring-1 focus:ring-purple-500 resize-y"
+              ></textarea>
+            </div>
+            <div className="p-6 border-t border-gray-100 flex justify-end gap-3 bg-gray-50">
+              <button
+                onClick={() => setIsAiModalOpen(false)}
+                className="px-6 py-2 rounded-full font-medium text-gray-600 hover:bg-gray-200 transition-colors"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleGenerateAi}
+                disabled={isGeneratingAi}
+                className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-6 py-2 rounded-full font-bold hover:shadow-lg transition-all disabled:opacity-70 flex items-center gap-2"
+              >
+                {isGeneratingAi ? (
+                  <><i className="ph ph-spinner animate-spin"></i> Memproses...</>
+                ) : (
+                  <><i className="ph-fill ph-sparkle"></i> Generate Artikel</>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
