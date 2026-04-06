@@ -62,33 +62,6 @@ async function startServer() {
     }
   });
 
-  app.delete("/api/image", async (req, res) => {
-    const { url } = req.body;
-    if (!url) {
-      return res.status(400).json({ error: "URL is required" });
-    }
-
-    try {
-      // Extract public ID from Cloudinary URL
-      // Example: https://res.cloudinary.com/dnk4d52tv/image/upload/v1712345678/komnas_pplh/abcde12345.jpg
-      const parts = url.split('/');
-      const uploadIndex = parts.findIndex((p: string) => p === 'upload');
-      
-      if (uploadIndex !== -1 && parts.length > uploadIndex + 2) {
-        const publicIdWithExtension = parts.slice(uploadIndex + 2).join('/');
-        const publicId = publicIdWithExtension.replace(/\.[^/.]+$/, "");
-        
-        await cloudinary.uploader.destroy(publicId);
-        res.json({ success: true, message: "Image deleted" });
-      } else {
-        res.status(400).json({ error: "Invalid Cloudinary URL" });
-      }
-    } catch (error) {
-      console.error("Cloudinary delete error:", error);
-      res.status(500).json({ error: "Failed to delete image" });
-    }
-  });
-
   app.post("/api/reports", (req, res) => {
     const { Nama, WhatsApp, Lokasi, Deskripsi, "Bukti Lampiran": buktiLampiran } = req.body;
 
