@@ -338,6 +338,16 @@ export default function Admin() {
     try {
       const tagsArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
       const slug = slugify(title);
+
+      // Check for slug uniqueness
+      const q = query(collection(db, 'news'), where('slug', '==', slug), limit(1));
+      const querySnapshot = await getDocs(q);
+      
+      if (!querySnapshot.empty && (!editingId || querySnapshot.docs[0].id !== editingId)) {
+        setIsSubmitting(false);
+        showAlert('Judul ini sudah digunakan untuk artikel lain. Silakan gunakan judul yang berbeda agar link SEO tetap unik.');
+        return;
+      }
       
       const newsData: any = {
         title,

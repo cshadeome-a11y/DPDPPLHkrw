@@ -73,7 +73,13 @@ Melalui pendekatan ini, Komnas PPLH berharap program MBG tidak hanya meningkatka
           const docRef = doc(db, 'news', slug);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
-            setArticle({ id: docSnap.id, ...docSnap.data() });
+            const data = docSnap.data();
+            // If article has a slug and we're accessing by ID, redirect to slug URL
+            if (data.slug && data.slug !== slug) {
+              navigate(`/berita/${data.slug}`, { replace: true });
+              return;
+            }
+            setArticle({ id: docSnap.id, ...data });
           } else {
             console.log("No such document!");
             navigate('/berita');

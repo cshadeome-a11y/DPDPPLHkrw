@@ -6,9 +6,17 @@ import { fileURLToPath } from "url";
 import multer from "multer";
 import { v2 as cloudinary } from "cloudinary";
 import OpenAI from "openai";
+import { initializeApp } from "firebase/app";
+import { getFirestore, collection, getDocs, query, orderBy } from "firebase/firestore";
+import fs from "fs";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Initialize Firebase for sitemap
+const firebaseConfig = JSON.parse(fs.readFileSync(path.join(__dirname, "firebase-applet-config.json"), "utf8"));
+const firebaseApp = initializeApp(firebaseConfig);
+const db_firestore = getFirestore(firebaseApp, firebaseConfig.firestoreDatabaseId);
 
 // Configure Cloudinary
 cloudinary.config({ 
@@ -39,6 +47,69 @@ async function startServer() {
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
+
+  // Sitemap Route
+  app.get("/sitemap.xml", async (req, res) => {
+    try {
+      const baseUrl = `${req.protocol}://${req.get('host')}`;
+      const newsCollection = collection(db_firestore, "news");
+      const q = query(newsCollection, orderBy("createdAt", "desc"));
+      const querySnapshot = await getDocs(q);
+      
+      const staticPages = [
+        "",
+        "tentang-kami",
+        "struktur",
+        "program",
+        "berita",
+        "edukasi",
+        "bank-hukum",
+        "kontak",
+        "lapor"
+      ];
+
+      let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
+      xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
+
+      // Add static pages
+      staticPages.forEach(page => {
+        xml += `  <url>\n`;
+        xml += `    <loc>${baseUrl}/${page}</loc>\n`;
+        xml += `    <changefreq>weekly</changefreq>\n`;
+        xml += `    <priority>${page === "" ? "1.0" : "0.8"}</priority>\n`;
+        xml += `  </url>\n`;
+      });
+
+      // Add news articles
+      querySnapshot.forEach(doc => {
+        const data = doc.data();
+        const slug = data.slug || doc.id;
+        xml += `  <url>\n`;
+        xml += `    <loc>${baseUrl}/berita/${slug}</loc>\n`;
+        xml += `    <changefreq>monthly</changefreq>\n`;
+        xml += `    <priority>0.6</priority>\n`;
+        xml += `  </url>\n`;
+      });
+
+      xml += `</urlset>`;
+      
+      res.header("Content-Type", "application/xml");
+      res.send(xml);
+    } catch (error) {
+      console.error("Sitemap generation error:", error);
+      res.status(500).send("Error generating sitemap");
+    }
+  });
+
+  // Robots.txt Route
+  app.get("/robots.txt", (req, res) => {
+    const baseUrl = `${req.protocol}://${req.get('host')}`;
+    let robots = `User-agent: *\n`;
+    robots += `Allow: /\n`;
+    robots += `Sitemap: ${baseUrl}/sitemap.xml\n`;
+    res.header("Content-Type", "text/plain");
+    res.send(robots);
+  });
 
   // API Routes
   app.post("/api/upload", upload.single("file"), async (req, res) => {
