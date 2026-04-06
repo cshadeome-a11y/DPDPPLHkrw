@@ -144,14 +144,50 @@ export default function Admin() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const handleDelete = async (id: string) => {
+  const deleteImageFromCloudinary = async (url: string) => {
+    if (!url || !url.includes('cloudinary.com')) return;
+    try {
+      await fetch('/api/image', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ url })
+      });
+    } catch (error) {
+      console.error('Failed to delete image from Cloudinary:', error);
+    }
+  };
+
+  const extractImageUrls = (markdown: string) => {
+    const regex = /!\[.*?\]\((.*?)\)/g;
+    const urls: string[] = [];
+    let match;
+    while ((match = regex.exec(markdown)) !== null) {
+      if (match[1]) urls.push(match[1]);
+    }
+    return urls;
+  };
+
+  const handleDelete = async (article: any) => {
     if (window.confirm('Apakah Anda yakin ingin menghapus artikel ini?')) {
       try {
-        await deleteDoc(doc(db, 'news', id));
+        // Delete cover image
+        if (article.imageUrl) {
+          await deleteImageFromCloudinary(article.imageUrl);
+        }
+        
+        // Delete content images
+        if (article.content) {
+          const contentImages = extractImageUrls(article.content);
+          for (const url of contentImages) {
+            await deleteImageFromCloudinary(url);
+          }
+        }
+
+        await deleteDoc(doc(db, 'news', article.id));
         fetchArticles();
       } catch (error) {
         console.error("Error deleting article:", error);
-        handleFirestoreError(error, OperationType.DELETE, `news/${id}`);
+        handleFirestoreError(error, OperationType.DELETE, `news/${article.id}`);
       }
     }
   };
@@ -210,6 +246,24 @@ export default function Admin() {
       let newDocId = editingId;
 
       if (editingId) {
+        // Fetch old article to compare images
+        const oldArticle = articles.find(a => a.id === editingId);
+        if (oldArticle) {
+          // Check cover image
+          if (oldArticle.imageUrl && oldArticle.imageUrl !== newsData.imageUrl) {
+            await deleteImageFromCloudinary(oldArticle.imageUrl);
+          }
+          
+          // Check content images
+          const oldContentImages = extractImageUrls(oldArticle.content || '');
+          const newContentImages = extractImageUrls(newsData.content || '');
+          
+          const removedImages = oldContentImages.filter(url => !newContentImages.includes(url));
+          for (const url of removedImages) {
+            await deleteImageFromCloudinary(url);
+          }
+        }
+
         await updateDoc(doc(db, 'news', editingId), newsData).catch(err => {
           handleFirestoreError(err, OperationType.UPDATE, `news/${editingId}`);
         });
@@ -395,7 +449,7 @@ export default function Admin() {
                       <button onClick={() => handleEdit(article)} className="p-2 text-gray-500 hover:text-blue-600 transition-colors bg-gray-50 rounded-lg" title="Edit Artikel">
                         <i className="ph ph-pencil-simple text-lg"></i>
                       </button>
-                      <button onClick={() => handleDelete(article.id)} className="p-2 text-gray-500 hover:text-red-600 transition-colors bg-gray-50 rounded-lg" title="Hapus Artikel">
+                      <button onClick={() => handleDelete(article)} className="p-2 text-gray-500 hover:text-red-600 transition-colors bg-gray-50 rounded-lg" title="Hapus Artikel">
                         <i className="ph ph-trash text-lg"></i>
                       </button>
                     </div>
