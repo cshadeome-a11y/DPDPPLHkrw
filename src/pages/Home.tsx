@@ -10,10 +10,13 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import SEO from '../components/SEO';
 import LaporForm from '../components/LaporForm';
+import { collection, query, orderBy, limit, onSnapshot } from 'firebase/firestore';
+import { db, handleFirestoreError, OperationType } from '../firebase';
 
 export default function Home() {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [pexelsPhotos, setPexelsPhotos] = useState<any[]>([]);
+  const [dynamicNews, setDynamicNews] = useState<any[]>([]);
 
   const heroImages = [
     "https://i.postimg.cc/wMJhYKCd/647150881-122114675943215177-5360993793631409425-n.jpg",
@@ -54,6 +57,20 @@ export default function Home() {
     };
 
     fetchPhotos();
+
+    // Fetch dynamic news from Firestore
+    const q = query(collection(db, 'news'), orderBy('createdAt', 'desc'), limit(5));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const newsData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setDynamicNews(newsData);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, 'news');
+    });
+
+    return () => unsubscribe();
   }, []);
 
   return (
@@ -393,6 +410,34 @@ export default function Home() {
               }}
               className="news-swiper !pb-16 !px-4"
             >
+              {/* Dynamic News from Firestore */}
+              {dynamicNews.map((news) => (
+                <SwiperSlide key={news.id}>
+                  <div className="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 h-full cursor-pointer">
+                    <div className="relative h-60 overflow-hidden">
+                      <img src={news.imageUrl || "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"} alt={news.title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+                      <div className="absolute top-4 left-4 bg-primary text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+                        {news.createdAt ? new Date(news.createdAt.toDate()).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Baru'}
+                      </div>
+                      <div className="absolute top-4 right-4 bg-dark/80 text-white text-xs font-bold px-3 py-1 rounded-full">
+                        {news.category}
+                      </div>
+                    </div>
+                    <div className="p-6">
+                      <h3 className="font-heading font-bold text-xl text-dark mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                        {news.title}
+                      </h3>
+                      <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                        {news.teaser}
+                      </p>
+                      <span className="text-primary font-bold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                        Baca Selengkapnya <i className="ph-bold ph-arrow-right"></i>
+                      </span>
+                    </div>
+                  </div>
+                </SwiperSlide>
+              ))}
+
               {/* News Item Terbaru - Panduan Pilah Sampah */}
               <SwiperSlide>
                 <Link to="/edukasi/panduan-pilah-sampah-rumah" className="group block bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 h-full">

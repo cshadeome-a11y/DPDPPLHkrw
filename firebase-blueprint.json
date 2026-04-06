@@ -1,0 +1,49 @@
+{
+  "entities": {
+    "NewsArticle": {
+      "title": "NewsArticle",
+      "description": "A news article submitted by the admin.",
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string",
+          "description": "The title of the news article."
+        },
+        "category": {
+          "type": "string",
+          "description": "The category of the news article."
+        },
+        "teaser": {
+          "type": "string",
+          "description": "A short teaser or excerpt of the article."
+        },
+        "content": {
+          "type": "string",
+          "description": "The full content of the article."
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Tags associated with the article."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL of the article's cover image."
+        },
+        "createdAt": {
+          "type": "timestamp",
+          "description": "The time the article was created."
+        }
+      },
+      "required": ["title", "category", "teaser", "content", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/news/{newsId}": {
+      "schema": "NewsArticle",
+      "description": "Collection of news articles."
+    }
+  }
+}

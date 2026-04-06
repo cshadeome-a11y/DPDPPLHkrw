@@ -8,9 +8,12 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import SEO from '../components/SEO';
 import { Link } from 'react-router-dom';
+import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
+import { db, handleFirestoreError, OperationType } from '../firebase';
 
 export default function News() {
   const [pexelsPhotos, setPexelsPhotos] = useState<any[]>([]);
+  const [dynamicNews, setDynamicNews] = useState<any[]>([]);
 
   useEffect(() => {
     AOS.init({ duration: 800, once: true, offset: 100 });
@@ -34,6 +37,20 @@ export default function News() {
     };
 
     fetchPhotos();
+
+    // Fetch dynamic news from Firestore
+    const q = query(collection(db, 'news'), orderBy('createdAt', 'desc'));
+    const unsubscribe = onSnapshot(q, (snapshot) => {
+      const newsData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setDynamicNews(newsData);
+    }, (error) => {
+      handleFirestoreError(error, OperationType.LIST, 'news');
+    });
+
+    return () => unsubscribe();
   }, []);
 
   return (
@@ -69,6 +86,34 @@ export default function News() {
           data-aos="fade-up" 
           data-aos-delay="100"
         >
+          {/* Dynamic News from Firestore */}
+          {dynamicNews.map((news) => (
+            <SwiperSlide key={news.id}>
+              <div className="group block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 h-full cursor-pointer">
+                <div className="relative h-48 overflow-hidden">
+                  <img src={news.imageUrl || "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80"} alt={news.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" decoding="async" />
+                  <div className="absolute top-4 left-4 bg-primary text-white text-xs font-bold px-3 py-1 rounded-full">
+                    {news.createdAt ? new Date(news.createdAt.toDate()).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Baru'}
+                  </div>
+                  <div className="absolute top-4 right-4 bg-dark/80 text-white text-xs font-bold px-3 py-1 rounded-full">
+                    {news.category}
+                  </div>
+                </div>
+                <div className="p-6">
+                  <h3 className="font-heading font-bold text-xl text-dark mb-3 group-hover:text-primary transition-colors line-clamp-2">
+                    {news.title}
+                  </h3>
+                  <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+                    {news.teaser}
+                  </p>
+                  <span className="text-primary font-semibold text-sm flex items-center gap-1 group-hover:gap-2 transition-all">
+                    Baca Selengkapnya <i className="ph-bold ph-arrow-right"></i>
+                  </span>
+                </div>
+              </div>
+            </SwiperSlide>
+          ))}
+
           {/* Berita Terbaru - Perpres 109/2025 */}
           <SwiperSlide>
             <a href="https://www.kompasiana.com/agung68809/69cac2ecc925c46d035e0d72/sekretaris-dpd-pplh-karawang-soroti-perpres-109-2025-dorong-pengelolaan-sampah-desa-dan-tata-kelola-iplt-yang-transparan" target="_blank" rel="noopener noreferrer" className="group block bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 h-full">
