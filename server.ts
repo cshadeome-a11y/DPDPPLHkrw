@@ -210,24 +210,32 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
   "tags": "tag1, tag2, tag3"
 }`;
 
+      console.log("Generating article with prompt length:", prompt.length);
       const response = await fetch("https://ollama.com/api/generate", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "User-Agent": "KomnasPPLH-App/1.0"
         },
         body: JSON.stringify({
           model: "gpt-oss:120b",
           prompt: `${systemInstruction}\n\nBuat artikel berdasarkan bahan berikut:\n\n${prompt}`,
           stream: false,
           format: "json"
-        })
+        }),
+        signal: AbortSignal.timeout(120000) // 2 minutes timeout
       });
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error("Ollama API error response:", errorText);
-        throw new Error(`Ollama API error: ${response.status} ${response.statusText}`);
+        console.error("Ollama API error:", response.status, errorText);
+        return res.status(response.status).json({ 
+          error: "AI Service Error", 
+          details: errorText,
+          status: response.status
+        });
       }
 
       const data = await response.json();

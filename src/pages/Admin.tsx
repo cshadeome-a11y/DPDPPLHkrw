@@ -70,7 +70,8 @@ export default function Admin() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to generate article');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.details || errorData.error || `Server error: ${response.status}`);
       }
 
       const data = await response.json();
@@ -96,9 +97,9 @@ export default function Admin() {
       
       setIsAiModalOpen(false);
       setAiPrompt('');
-    } catch (error) {
+    } catch (error: any) {
       console.error('AI generation error:', error);
-      setAlertMessage('Gagal men-generate artikel. Silakan coba lagi.');
+      setAlertMessage(`Gagal men-generate artikel: ${error.message || 'Silakan coba lagi.'}`);
     } finally {
       setIsGeneratingAi(false);
     }
@@ -593,9 +594,10 @@ export default function Admin() {
               <button
                 type="button"
                 onClick={() => setIsAiModalOpen(true)}
-                className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-6 py-2 rounded-full font-bold hover:shadow-lg transition-all flex items-center gap-2"
+                className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-6 py-2.5 rounded-full font-bold hover:shadow-xl hover:shadow-purple-200 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 group"
+                id="auto-ai-button"
               >
-                <i className="ph-fill ph-magic-wand"></i> Auto AI
+                <i className="ph-fill ph-magic-wand group-hover:rotate-12 transition-transform"></i> Auto AI
               </button>
             </div>
 
