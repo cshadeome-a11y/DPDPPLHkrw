@@ -22,9 +22,9 @@ async function getCloudinary() {
     const cloudinaryModule = await import("cloudinary");
     cloudinary = cloudinaryModule.v2;
     cloudinary.config({ 
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dnk4d52tv', 
-      api_key: process.env.CLOUDINARY_API_KEY || '359541287523991', 
-      api_secret: process.env.CLOUDINARY_API_SECRET || 'orYVrJ3rcivcYzdYbWlIvjCBb30'
+      cloud_name: 'dnk4d52tv', 
+      api_key: '359541287523991', 
+      api_secret: 'orYVrJ3rcivcYzdYbWlIvjCBb30'
     });
   }
   return cloudinary;
@@ -213,7 +213,11 @@ async function createExpressApp() {
       }
 
       const ollamaKey = process.env.OLLAMA_API_KEY || "4a96468257ce4dcd8d43fb8c6b29bfd7.IEftLWjX4teF1epJvG1YB7x8";
-      const geminiKey = process.env.GEMINI_API_KEY || "AIzaSyCMEqZAxGYaea6VX6RRNkCVcct5MuNcDQ8";
+      const geminiKey = "AIzaSyCMEqZAxGYaea6VX6RRNkCVcct5MuNcDQ8";
+
+      if (!ollamaKey) {
+        return res.status(500).json({ error: "Ollama API key is not configured." });
+      }
 
       // 1. Try Ollama (Primary)
       try {
@@ -276,8 +280,12 @@ async function createExpressApp() {
       }
 
       const ollamaKey = process.env.OLLAMA_API_KEY || "4a96468257ce4dcd8d43fb8c6b29bfd7.IEftLWjX4teF1epJvG1YB7x8";
-      const geminiKey = process.env.GEMINI_API_KEY || "AIzaSyCMEqZAxGYaea6VX6RRNkCVcct5MuNcDQ8";
-      const pexelsApiKey = process.env.PEXELS_API_KEY || "HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU";
+      const geminiKey = "AIzaSyCMEqZAxGYaea6VX6RRNkCVcct5MuNcDQ8";
+      const pexelsApiKey = "HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU";
+
+      if (!ollamaKey) {
+        return res.status(500).json({ error: "Ollama API key is not configured." });
+      }
       
       const systemInstruction = `Anda adalah seorang jurnalis profesional dan ahli SEO untuk DPD Komnas PPLH Karawang. 
 Tugas Anda adalah membuat artikel lengkap berdasarkan isu atau bahan yang diberikan.
@@ -436,7 +444,7 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
   app.post("/api/regenerate-image", async (req, res) => {
     try {
       const { title, tags, oldImageUrl } = req.body;
-      const pexelsApiKey = process.env.PEXELS_API_KEY || "HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU";
+      const pexelsApiKey = "HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU";
       
       const cloudinary = await getCloudinary();
 
