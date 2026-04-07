@@ -4,11 +4,31 @@ import Database from "better-sqlite3";
 import path from "path";
 import { fileURLToPath } from "url";
 import multer from "multer";
-import { v2 as cloudinary } from "cloudinary";
 import OpenAI from "openai";
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs, query, orderBy } from "firebase/firestore";
 import fs from "fs";
+
+// Lazy Cloudinary loader
+let cloudinary: any = null;
+async function getCloudinary() {
+  if (!cloudinary) {
+    // Clean up malformed environment variable to prevent library crash
+    if (process.env.CLOUDINARY_URL && (process.env.CLOUDINARY_URL.includes('<') || process.env.CLOUDINARY_URL.includes('>'))) {
+      console.warn("Malformed CLOUDINARY_URL detected, clearing it to use manual config.");
+      delete process.env.CLOUDINARY_URL;
+    }
+    
+    const cloudinaryModule = await import("cloudinary");
+    cloudinary = cloudinaryModule.v2;
+    cloudinary.config({ 
+      cloud_name: 'dnk4d52tv', 
+      api_key: '359541287523991', 
+      api_secret: 'orYVrJ3rcivcYzdYbWlIvjCBb30'
+    });
+  }
+  return cloudinary;
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,13 +37,6 @@ const __dirname = path.dirname(__filename);
 const firebaseConfig = JSON.parse(fs.readFileSync(path.join(__dirname, "firebase-applet-config.json"), "utf8"));
 const firebaseApp = initializeApp(firebaseConfig);
 const db_firestore = getFirestore(firebaseApp, firebaseConfig.firestoreDatabaseId);
-
-// Configure Cloudinary
-cloudinary.config({ 
-  cloud_name: 'dnk4d52tv', 
-  api_key: '359541287523991', 
-  api_secret: 'orYVrJ3rcivcYzdYbWlIvjCBb30'
-});
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -118,6 +131,8 @@ async function startServer() {
         return res.status(400).json({ error: "No file uploaded" });
       }
 
+      const cloudinary = await getCloudinary();
+
       // Convert buffer to base64
       const b64 = Buffer.from(req.file.buffer).toString("base64");
       const dataURI = "data:" + req.file.mimetype + ";base64," + b64;
@@ -141,6 +156,8 @@ async function startServer() {
         return res.status(400).json({ error: "No URL provided" });
       }
 
+      const cloudinary = await getCloudinary();
+
       // Extract public_id from URL
       const parts = url.split('/');
       const filenameWithExtension = parts.pop();
@@ -162,7 +179,6 @@ async function startServer() {
   });
 
   app.post("/api/generate-article", async (req, res) => {
-    console.log("Received article generation request for prompt:", req.body.prompt?.substring(0, 50) + "...");
     try {
       const { prompt } = req.body;
       if (!prompt) {
@@ -170,30 +186,30 @@ async function startServer() {
       }
 
       const apiKey = "5127acae44e443a2bed69d1aa8bf92fa.pK0XZAcF5X7IDZvS2yGJ7N0F";
+      const pexelsApiKey = "HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU";
       
-      const systemInstruction = `Anda adalah Asisten Penulis Profesional dan Ahli Jurnalistik untuk DPD Komnas PPLH Karawang.
-Tugas Anda adalah menyusun artikel berkualitas tinggi yang sesuai dengan standar jurnalistik internasional dan lokal.
+      const systemInstruction = `Anda adalah seorang jurnalis profesional dan ahli SEO untuk DPD Komnas PPLH Karawang. 
+Tugas Anda adalah membuat artikel lengkap berdasarkan isu atau bahan yang diberikan.
+Wajib:
+- Disusun dengan standar profesional dan gaya bahasa manusiawi (formal namun mengalir).
+- Mematuhi kaidah PUEBI, kaidah jurnalistik, dan ejaan (EYD) baku dan benar.
+- Jika artikel berkaitan dengan HUKUM atau REGULASI, Anda WAJIB merujuk pada data aktual dari "Bank Hukum" DPD Komnas PPLH Karawang (seperti UU 32/2009, Perda 9/2017 Karawang, Perbup 39/2025 RISPS, dll).
+- Jika menyebutkan PPLH, gunakan perspektif perlindungan dan pelestarian lingkungan hidup yang aktual.
+- Auto bold pada judul atau subjudul di dalam isi artikel.
+- Italic pada bahasa asing.
+- Buat teaser yang menarik (maksimal 2 kalimat).
+- Buat tags yang relevan (pisahkan dengan koma).
+- Format isi artikel menggunakan HTML MURNI (gunakan tag <p>, <strong>, <em>, <h2>, <h3>, <ul>, <li>, dll). 
+- PENTING: JANGAN PERNAH menggunakan markdown backticks (\`\`\`) untuk membungkus isi artikel atau HTML. Isi artikel harus berupa string HTML mentah di dalam JSON.
 
-KONTEKS:
-Anda menulis untuk website DPD Komnas PPLH Karawang (https://komnaspplhkarawang.my.id/). Gunakan identitas organisasi ini dalam setiap tulisan.
-
-WAJIB:
-- Gaya bahasa: Manusiawi, formal, tajam, namun mudah dipahami (Jurnalistik Profesional).
-- Kepatuhan: PUEBI, EYD, dan Kode Etik Jurnalistik.
-- Referensi Hukum: Jika berkaitan dengan regulasi, rujuk pada UU 32/2009 atau Perda Karawang yang relevan.
-- Format: HTML MURNI (tag <p>, <strong>, <em>, <h2>, <h3>, <ul>, <li>).
-- Visual: Auto bold pada poin penting, Italic pada istilah asing.
-- Metadata: Buat teaser yang menarik dan tags SEO yang relevan.
-- PENTING: JANGAN gunakan markdown backticks (\`\`\`).
-- PENTING: Kembalikan response HANYA dalam format JSON:
+PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid dengan struktur berikut:
 {
   "title": "Judul artikel",
-  "content": "Isi artikel dalam HTML MURNI",
+  "content": "Isi artikel dalam HTML MURNI tanpa backticks",
   "teaser": "Teaser singkat",
-  "tags": "tag1, tag2"
+  "tags": "tag1, tag2, tag3"
 }`;
 
-      console.log("Calling Ollama API...");
       const response = await fetch("https://ollama.com/api/generate", {
         method: "POST",
         headers: {
@@ -218,30 +234,18 @@ WAJIB:
       const resultText = data.response;
       
       if (!resultText) {
-         console.error("Ollama returned empty response");
          throw new Error("No response from AI");
       }
       
-      console.log("Ollama generation successful, parsing JSON...");
       const resultJson = JSON.parse(resultText);
-      res.json(resultJson);
-    } catch (error: any) {
-      console.error("Ollama generation error:", error);
-      res.status(500).json({ error: error.message || "Failed to generate article" });
-    }
-  });
 
-  app.post("/api/get-ai-image", async (req, res) => {
-    try {
-      const { title, tags } = req.body;
-      const pexelsApiKey = "HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU";
-      
       // Search Pexels for a matching image
       let imageUrl = "";
       let imageAttribution = "";
 
       try {
-        const searchQuery = tags?.split(',')[0] || title || "environment";
+        const cloudinary = await getCloudinary();
+        const searchQuery = resultJson.tags.split(',')[0] || resultJson.title;
         const pexelsResponse = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(searchQuery)}&per_page=1`, {
           headers: {
             "Authorization": pexelsApiKey
@@ -266,15 +270,17 @@ WAJIB:
         }
       } catch (pexelsError) {
         console.error("Pexels search/upload error:", pexelsError);
+        // Continue without image if Pexels fails
       }
 
       res.json({
+        ...resultJson,
         imageUrl,
         imageAttribution
       });
     } catch (error) {
-      console.error("Get AI image error:", error);
-      res.status(500).json({ error: "Failed to get image" });
+      console.error("AI generation error:", error);
+      res.status(500).json({ error: error instanceof Error ? error.message : "Failed to generate article" });
     }
   });
 
@@ -282,6 +288,8 @@ WAJIB:
     try {
       const { title, tags, oldImageUrl } = req.body;
       const pexelsApiKey = "HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU";
+      
+      const cloudinary = await getCloudinary();
 
       // 1. Delete old image if exists
       if (oldImageUrl && oldImageUrl.includes("cloudinary.com")) {
@@ -379,7 +387,6 @@ WAJIB:
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
-    console.log("GEMINI_API_KEY is", process.env.GEMINI_API_KEY ? "DEFINED" : "UNDEFINED");
   });
 }
 

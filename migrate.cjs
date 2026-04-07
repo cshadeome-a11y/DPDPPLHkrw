@@ -1,10 +1,14 @@
 const cloudinary = require('cloudinary').v2;
 
-cloudinary.config({
-    cloud_name: 'dnk4d52tv',
-    api_key: '359541287523991',
-    api_secret: 'orYVrJ3rcivcYzdYbWlIvjCBb30'
-});
+if (process.env.CLOUDINARY_URL) {
+    cloudinary.config(true);
+} else {
+    cloudinary.config({
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dnk4d52tv',
+        api_key: process.env.CLOUDINARY_API_KEY || '359541287523991',
+        api_secret: process.env.CLOUDINARY_API_SECRET || 'orYVrJ3rcivcYzdYbWlIvjCBb30'
+    });
+}
 
 const urls = [
     "https://i.postimg.cc/k40bM187/logo-komnas-pplh.png",

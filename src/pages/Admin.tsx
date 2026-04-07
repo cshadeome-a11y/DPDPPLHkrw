@@ -4,7 +4,6 @@ import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'fire
 import { collection, addDoc, serverTimestamp, getDocs, doc, updateDoc, deleteDoc, query, orderBy, where, limit } from 'firebase/firestore';
 import { auth, db, handleFirestoreError, OperationType } from '../firebase';
 import { Link } from 'react-router-dom';
-import { GoogleGenAI, Type } from "@google/genai";
 
 export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -63,153 +62,44 @@ export default function Admin() {
     }
 
     setIsGeneratingAi(true);
-    let resultJson: any = null;
-    let attempts = 0;
-    const maxOllamaAttempts = 2;
-
     try {
-      // 1. Try Ollama first
-      while (attempts < maxOllamaAttempts && !resultJson) {
-        attempts++;
-        try {
-          console.log(`Attempting generation with Ollama (Attempt ${attempts})...`);
-          const ollamaResponse = await fetch('/api/generate-article', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt: aiPrompt })
-          });
+      const response = await fetch('/api/generate-article', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: aiPrompt })
+      });
 
-          if (ollamaResponse.ok) {
-            resultJson = await ollamaResponse.json();
-            console.log(`Ollama generation successful on attempt ${attempts}.`);
-          } else {
-            let errMessage = ollamaResponse.statusText;
-            try {
-              const errData = await ollamaResponse.json();
-              errMessage = errData.error || errMessage;
-            } catch (e) {}
-            console.warn(`Ollama attempt ${attempts} failed:`, errMessage);
-            if (attempts >= maxOllamaAttempts) {
-              throw new Error(`Ollama failed: ${errMessage}`);
-            }
-          }
-        } catch (ollamaError: any) {
-          console.warn(`Ollama error on attempt ${attempts}:`, ollamaError);
-          if (attempts >= maxOllamaAttempts) {
-            console.log('Falling back to Gemini 3...');
-          }
-        }
+      if (!response.ok) {
+        throw new Error('Failed to generate article');
       }
-    } catch (e) {
-      console.error('Ollama process failed completely:', e);
-    }
 
-    // --- 2. Fallback to Gemini 3 if Ollama fails ---
-    if (!resultJson) {
-      try {
-        console.log('Attempting generation with Gemini 3 (Fallback with Web & Site Context)...');
-        const geminiKey = process.env.GEMINI_API_KEY;
-        if (!geminiKey) {
-          throw new Error('GEMINI_API_KEY tidak ditemukan. Silakan cek pengaturan API Key di dashboard.');
-        }
-        const ai = new GoogleGenAI({ apiKey: geminiKey });
-        const model = "gemini-3-flash-preview";
-
-        const systemInstruction = `Anda adalah Asisten Penulis Profesional dan Ahli Jurnalistik untuk DPD Komnas PPLH Karawang.
-Tugas Anda adalah menyusun artikel berkualitas tinggi yang sesuai dengan standar jurnalistik internasional dan lokal.
-
-KEMAMPUAN KHUSUS:
-1. KONTEKS WEBSITE: Anda memiliki akses ke data website utama (https://komnaspplhkarawang.my.id/). Gunakan data dari sana (Berita, Bank Hukum, Struktur) sebagai referensi utama agar gaya penulisan dan informasi selaras dengan identitas organisasi.
-2. REAL-TIME SCRAPING: Gunakan Google Search untuk mencari isu lingkungan terbaru, kasus hukum terkini di Karawang/Nasional, dan data kredibel dari sumber berita terpercaya.
-3. ANALISIS HUKUM: Selalu kaitkan dengan regulasi yang relevan (UU 32/2009, Perda Karawang, dll) yang ada di Bank Hukum kami.
-
-WAJIB:
-- Gaya bahasa: Manusiawi, formal, tajam, namun mudah dipahami (Jurnalistik Profesional).
-- Kepatuhan: PUEBI, EYD, dan Kode Etik Jurnalistik.
-- Format: HTML MURNI (tag <p>, <strong>, <em>, <h2>, <h3>, <ul>, <li>).
-- Visual: Auto bold pada poin penting, Italic pada istilah asing.
-- Metadata: Buat teaser yang provokatif/menarik dan tags SEO yang kuat.
-- PENTING: JANGAN gunakan markdown backticks (\`\`\`).`;
-
-        const response = await ai.models.generateContent({
-          model: model,
-          contents: `Sebagai asisten penulis profesional, buatlah artikel mendalam berdasarkan bahan berikut. Gunakan referensi dari website kami (https://komnaspplhkarawang.my.id/) dan cari data terbaru di internet jika perlu: ${aiPrompt}`,
-          config: {
-            systemInstruction: systemInstruction,
-            responseMimeType: "application/json",
-            responseSchema: {
-              type: Type.OBJECT,
-              properties: {
-                title: { type: Type.STRING },
-                content: { type: Type.STRING },
-                teaser: { type: Type.STRING },
-                tags: { type: Type.STRING }
-              },
-              required: ["title", "content", "teaser", "tags"]
-            },
-            tools: [
-              { googleSearch: {} },
-              { urlContext: { } } // URL context is provided in the prompt/contents or implicitly if supported by the model's tool usage pattern
-            ]
-          }
-        });
-
-        // Note: urlContext tool in Gemini 3 series allows the model to access URLs provided in the prompt.
-        // We included the URL in the contents string above.
-
-        resultJson = JSON.parse(response.text || '{}');
-        console.log('Gemini generation successful.');
-      } catch (geminiError: any) {
-        console.error('Gemini fallback failed:', geminiError);
-        const errorMessage = geminiError.message || 'Error tidak diketahui';
-        setAlertMessage(`Gagal men-generate artikel (Gemini): ${errorMessage}`);
-        setIsGeneratingAi(false);
-        return;
+      const data = await response.json();
+      
+      setTitle(data.title || '');
+      
+      // Append image attribution to content if available
+      let finalContent = data.content || '';
+      if (data.imageAttribution) {
+        // Remove ALL old attributions and preceding newlines (handles both HTML and plain text)
+        finalContent = finalContent.replace(/\n*(<p[^>]*>)?Photo by .*? on Pexels(<\/p>)?/gi, '').trim();
+        finalContent += `\n\n<p class="mt-4 text-xs text-gray-500 italic">${data.imageAttribution}</p>`;
       }
-    }
-
-    // Process the result (from either Ollama or Gemini)
-    if (resultJson) {
-      try {
-        setTitle(resultJson.title || '');
-        
-        // Now get an image for this article from our backend
-        const imgResponse = await fetch('/api/get-ai-image', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title: resultJson.title, tags: resultJson.tags })
-        });
-        
-        if (imgResponse.ok) {
-          const imgData = await imgResponse.json();
-          if (imgData.imageUrl) {
-            setImageUrl(imgData.imageUrl);
-            
-            let finalContent = resultJson.content || '';
-            // Remove ALL old attributions
-            finalContent = finalContent.replace(/\n*(<p[^>]*>)?Photo by .*? on Pexels(<\/p>)?/gi, '').trim();
-            finalContent += `\n\n<p class="mt-4 text-xs text-gray-500 italic">${imgData.imageAttribution}</p>`;
-            setContent(finalContent);
-          } else {
-            setContent(resultJson.content || '');
-          }
-        } else {
-          setContent(resultJson.content || '');
-        }
-        
-        setTeaser(resultJson.teaser || '');
-        setTags(resultJson.tags || '');
-        
-        setIsAiModalOpen(false);
-        setAiPrompt('');
-      } catch (err) {
-        console.error('Error processing AI result:', err);
-        setAlertMessage('Gagal memproses hasil AI. Silakan coba lagi.');
-      } finally {
-        setIsGeneratingAi(false);
+      setContent(finalContent);
+      
+      setTeaser(data.teaser || '');
+      setTags(data.tags || '');
+      
+      // Set the cover image if AI found one
+      if (data.imageUrl) {
+        setImageUrl(data.imageUrl);
       }
-    } else {
+      
+      setIsAiModalOpen(false);
+      setAiPrompt('');
+    } catch (error) {
+      console.error('AI generation error:', error);
       setAlertMessage('Gagal men-generate artikel. Silakan coba lagi.');
+    } finally {
       setIsGeneratingAi(false);
     }
   };
