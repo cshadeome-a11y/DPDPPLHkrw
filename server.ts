@@ -22,9 +22,9 @@ async function getCloudinary() {
     const cloudinaryModule = await import("cloudinary");
     cloudinary = cloudinaryModule.v2;
     cloudinary.config({ 
-      cloud_name: 'dnk4d52tv', 
-      api_key: '359541287523991', 
-      api_secret: 'orYVrJ3rcivcYzdYbWlIvjCBb30'
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dnk4d52tv', 
+      api_key: process.env.CLOUDINARY_API_KEY || '359541287523991', 
+      api_secret: process.env.CLOUDINARY_API_SECRET || 'orYVrJ3rcivcYzdYbWlIvjCBb30'
     });
   }
   return cloudinary;
@@ -33,10 +33,23 @@ async function getCloudinary() {
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Initialize Firebase for sitemap
-const firebaseConfig = JSON.parse(fs.readFileSync(path.join(__dirname, "firebase-applet-config.json"), "utf8"));
-const firebaseApp = initializeApp(firebaseConfig);
-const db_firestore = getFirestore(firebaseApp, firebaseConfig.firestoreDatabaseId);
+// Initialize Firebase for sitemap with robust loading for Vercel
+let firebaseConfig: any;
+try {
+  const configPath = path.join(process.cwd(), "firebase-applet-config.json");
+  if (fs.existsSync(configPath)) {
+    firebaseConfig = JSON.parse(fs.readFileSync(configPath, "utf8"));
+  } else {
+    console.warn("firebase-applet-config.json not found, using empty config");
+    firebaseConfig = {};
+  }
+} catch (e) {
+  console.error("Failed to load Firebase Config:", e);
+  firebaseConfig = {};
+}
+
+const firebaseApp = firebaseConfig.projectId ? initializeApp(firebaseConfig) : null;
+const db_firestore = firebaseApp ? getFirestore(firebaseApp, firebaseConfig.firestoreDatabaseId) : null;
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -75,6 +88,9 @@ async function createExpressApp() {
   // Sitemap Route
   app.get("/sitemap.xml", async (req, res) => {
     try {
+      if (!db_firestore) {
+        return res.status(500).send("Firebase not initialized");
+      }
       const baseUrl = `${req.protocol}://${req.get('host')}`;
       const newsCollection = collection(db_firestore, "news");
       const q = query(newsCollection, orderBy("createdAt", "desc"));
@@ -196,8 +212,8 @@ async function createExpressApp() {
         return res.status(400).json({ error: "Prompt is required." });
       }
 
-      const ollamaKey = "4a96468257ce4dcd8d43fb8c6b29bfd7.IEftLWjX4teF1epJvG1YB7x8";
-      const geminiKey = "AIzaSyCMEqZAxGYaea6VX6RRNkCVcct5MuNcDQ8";
+      const ollamaKey = process.env.OLLAMA_API_KEY || "4a96468257ce4dcd8d43fb8c6b29bfd7.IEftLWjX4teF1epJvG1YB7x8";
+      const geminiKey = process.env.GEMINI_API_KEY || "AIzaSyCMEqZAxGYaea6VX6RRNkCVcct5MuNcDQ8";
 
       // 1. Try Ollama (Primary)
       try {
@@ -212,7 +228,7 @@ async function createExpressApp() {
             prompt: prompt,
             stream: false
           }),
-          signal: AbortSignal.timeout(30000)
+          signal: AbortSignal.timeout(9000) // Reduced for Vercel Hobby (10s limit)
         });
 
         if (ollamaResponse.ok) {
@@ -231,7 +247,7 @@ async function createExpressApp() {
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }]
           }),
-          signal: AbortSignal.timeout(20000)
+          signal: AbortSignal.timeout(9000) // Reduced for Vercel Hobby
         });
 
         if (geminiResponse.ok) {
@@ -259,9 +275,9 @@ async function createExpressApp() {
         return res.status(400).json({ error: "Prompt is required" });
       }
 
-      const ollamaKey = "4a96468257ce4dcd8d43fb8c6b29bfd7.IEftLWjX4teF1epJvG1YB7x8";
-      const geminiKey = "AIzaSyCMEqZAxGYaea6VX6RRNkCVcct5MuNcDQ8";
-      const pexelsApiKey = "HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU";
+      const ollamaKey = process.env.OLLAMA_API_KEY || "4a96468257ce4dcd8d43fb8c6b29bfd7.IEftLWjX4teF1epJvG1YB7x8";
+      const geminiKey = process.env.GEMINI_API_KEY || "AIzaSyCMEqZAxGYaea6VX6RRNkCVcct5MuNcDQ8";
+      const pexelsApiKey = process.env.PEXELS_API_KEY || "HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU";
       
       const systemInstruction = `Anda adalah seorang jurnalis profesional dan ahli SEO untuk DPD Komnas PPLH Karawang. 
 Tugas Anda adalah membuat artikel lengkap berdasarkan isu atau bahan yang diberikan.
@@ -304,7 +320,7 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
             stream: false,
             format: "json"
           }),
-          signal: AbortSignal.timeout(60000) // 1 minute timeout for primary
+          signal: AbortSignal.timeout(9000) // Reduced for Vercel Hobby (10s limit)
         });
 
         if (ollamaResponse.ok) {
@@ -334,7 +350,7 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
                 responseMimeType: "application/json"
               }
             }),
-            signal: AbortSignal.timeout(30000) // 30 seconds for fallback
+            signal: AbortSignal.timeout(9000) // Reduced for Vercel Hobby
           });
 
           if (geminiResponse.ok) {
@@ -420,7 +436,7 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
   app.post("/api/regenerate-image", async (req, res) => {
     try {
       const { title, tags, oldImageUrl } = req.body;
-      const pexelsApiKey = "HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU";
+      const pexelsApiKey = process.env.PEXELS_API_KEY || "HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU";
       
       const cloudinary = await getCloudinary();
 
