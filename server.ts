@@ -40,9 +40,8 @@ const db_firestore = getFirestore(firebaseApp, firebaseConfig.firestoreDatabaseI
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-async function startServer() {
+async function createExpressApp() {
   const app = express();
-  const PORT = 3000;
 
   // Initialize Database
   const db = new Database("database.sqlite");
@@ -225,7 +224,7 @@ async function startServer() {
         return res.status(400).json({ error: "Prompt is required" });
       }
 
-      const apiKey = process.env.OLLAMA_API_KEY || "12a00c067ea64cca8f04e1b452fe9c61.3qc-tQGJJ4rRgdI4Dihwh7IA";
+      const apiKey = process.env.OLLAMA_API_KEY || "4a96468257ce4dcd8d43fb8c6b29bfd7.IEftLWjX4teF1epJvG1YB7x8";
       const pexelsApiKey = "HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU";
       
       const systemInstruction = `Anda adalah seorang jurnalis profesional dan ahli SEO untuk DPD Komnas PPLH Karawang. 
@@ -427,15 +426,26 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
     app.use(vite.middlewares);
   } else {
     // Production static files
-    app.use(express.static(path.join(__dirname, "dist")));
-    app.get("*", (req, res) => {
-      res.sendFile(path.join(__dirname, "dist", "index.html"));
-    });
+    const distPath = path.join(__dirname, "dist");
+    if (fs.existsSync(distPath)) {
+      app.use(express.static(distPath));
+      app.get("*", (req, res) => {
+        res.sendFile(path.join(distPath, "index.html"));
+      });
+    }
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  return app;
+}
+
+// Start server if this file is run directly
+if (import.meta.url === `file://${process.argv[1]}` || process.env.NODE_ENV === 'development') {
+  createExpressApp().then(app => {
+    const PORT = 3000;
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+    });
   });
 }
 
-startServer();
+export default createExpressApp;
