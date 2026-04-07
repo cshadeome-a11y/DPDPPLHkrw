@@ -43,19 +43,31 @@ const upload = multer({ storage: multer.memoryStorage() });
 async function createExpressApp() {
   const app = express();
 
-  // Initialize Database
-  const db = new Database("database.sqlite");
-  db.exec(`
-    CREATE TABLE IF NOT EXISTS reports (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      nama TEXT NOT NULL,
-      whatsapp TEXT NOT NULL,
-      lokasi TEXT NOT NULL,
-      deskripsi TEXT NOT NULL,
-      bukti_lampiran TEXT,
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-    )
-  `);
+  // Initialize Database with error handling for serverless environments
+  let db: any;
+  try {
+    db = new Database("database.sqlite");
+    db.exec(`
+      CREATE TABLE IF NOT EXISTS reports (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nama TEXT NOT NULL,
+        whatsapp TEXT NOT NULL,
+        lokasi TEXT NOT NULL,
+        deskripsi TEXT NOT NULL,
+        bukti_lampiran TEXT,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+  } catch (dbError) {
+    console.error("Database initialization failed (likely serverless environment):", dbError);
+    // Mock DB for serverless if needed
+    db = {
+      prepare: () => ({
+        run: () => ({ lastInsertRowid: 0 }),
+        all: () => []
+      })
+    };
+  }
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
@@ -345,7 +357,19 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
          throw new Error("No response from AI services");
       }
       
-      const resultJson = JSON.parse(aiResponseText);
+      // Clean up response text in case AI wraps it in markdown code blocks
+      let cleanedText = aiResponseText.trim();
+      if (cleanedText.startsWith("```")) {
+        cleanedText = cleanedText.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
+      }
+      
+      let resultJson;
+      try {
+        resultJson = JSON.parse(cleanedText);
+      } catch (parseError) {
+        console.error("Failed to parse AI response as JSON:", cleanedText);
+        throw new Error("AI returned invalid JSON format. Please try again.");
+      }
 
       // Search Pexels for a matching image
       let imageUrl = "";
