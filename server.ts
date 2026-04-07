@@ -213,7 +213,7 @@ async function createExpressApp() {
       }
 
       const ollamaKey = process.env.OLLAMA_API_KEY || "4a96468257ce4dcd8d43fb8c6b29bfd7.IEftLWjX4teF1epJvG1YB7x8";
-      const geminiKey = "AIzaSyCMEqZAxGYaea6VX6RRNkCVcct5MuNcDQ8";
+      const geminiKey = process.env.GEMINI_API_KEY || "AIzaSyBU98fY8LQp4LnG7FexEiDmuK8Kr8vpdYM";
 
       if (!ollamaKey) {
         return res.status(500).json({ error: "Ollama API key is not configured." });
@@ -280,7 +280,7 @@ async function createExpressApp() {
       }
 
       const ollamaKey = process.env.OLLAMA_API_KEY || "4a96468257ce4dcd8d43fb8c6b29bfd7.IEftLWjX4teF1epJvG1YB7x8";
-      const geminiKey = "AIzaSyCMEqZAxGYaea6VX6RRNkCVcct5MuNcDQ8";
+      const geminiKey = process.env.GEMINI_API_KEY || "AIzaSyBU98fY8LQp4LnG7FexEiDmuK8Kr8vpdYM";
       const pexelsApiKey = "HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU";
 
       if (!ollamaKey) {
@@ -328,7 +328,7 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
             stream: false,
             format: "json"
           }),
-          signal: AbortSignal.timeout(9000) // Reduced for Vercel Hobby (10s limit)
+          signal: AbortSignal.timeout(9500) // Maximize time for Vercel Hobby (10s limit)
         });
 
         if (ollamaResponse.ok) {
