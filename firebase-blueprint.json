@@ -9,6 +9,10 @@
           "type": "string",
           "description": "The title of the news article."
         },
+        "slug": {
+          "type": "string",
+          "description": "The URL-friendly slug of the article."
+        },
         "category": {
           "type": "string",
           "description": "The category of the news article."
@@ -32,12 +36,16 @@
           "type": "string",
           "description": "URL of the article's cover image."
         },
+        "imageAttribution": {
+          "type": "string",
+          "description": "Attribution for the cover image."
+        },
         "createdAt": {
           "type": "timestamp",
           "description": "The time the article was created."
         }
       },
-      "required": ["title", "category", "teaser", "content", "createdAt"]
+      "required": ["title", "slug", "category", "teaser", "content", "createdAt"]
     }
   },
   "firestore": {

@@ -17,6 +17,7 @@ service cloud.firestore {
     //   - content: string (required, max 50000 chars)
     //   - tags: list of strings (optional, max 10 items, max 30 chars each)
     //   - imageUrl: string (optional, valid URL)
+    //   - imageAttribution: string (optional, max 200 chars)
     //   - createdAt: timestamp (required)
     //
     // ===============================================================
@@ -62,7 +63,7 @@ service cloud.firestore {
     // ===============================================================
 
     function isValidNewsArticle() {
-      let allowedFields = ['title', 'slug', 'category', 'teaser', 'content', 'tags', 'imageUrl', 'createdAt'];
+      let allowedFields = ['title', 'slug', 'category', 'teaser', 'content', 'tags', 'imageUrl', 'imageAttribution', 'createdAt'];
       
       return hasRequiredFields(['title', 'slug', 'category', 'teaser', 'content', 'createdAt']) &&
              hasOnlyAllowedFields(allowedFields) &&
@@ -73,7 +74,8 @@ service cloud.firestore {
              validStringLength('content', 1, 50000) &&
              request.resource.data.createdAt is timestamp &&
              (!('tags' in request.resource.data) || isValidTags(request.resource.data.tags)) &&
-             (!('imageUrl' in request.resource.data) || isValidUrl(request.resource.data.imageUrl));
+             (!('imageUrl' in request.resource.data) || isValidUrl(request.resource.data.imageUrl)) &&
+             (!('imageAttribution' in request.resource.data) || validStringLength('imageAttribution', 0, 200));
     }
 
     // ===============================================================

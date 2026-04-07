@@ -247,7 +247,7 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
   app.post("/api/generate-ai-image", async (req, res) => {
     try {
       const { title, tags, aiImagePrompt } = req.body;
-      const apiKey = process.env.OLLAMA_API_KEY || "sk-ollama-komnas-pplh-2024"; // Placeholder or from env
+      const apiKey = process.env.OLLAMA_API_KEY || "sk-ollama-komnas-pplh-2024";
 
       const searchQuery = aiImagePrompt || tags?.split(',')[0] || title || "environment";
       const systemInstruction = "Generate a high-quality, professional journalistic photography prompt for a news article. The image should be realistic, 8k, and suitable for a professional news website about environmental protection.";
@@ -282,23 +282,55 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
         console.error("Ollama prompt optimization failed, using default:", err);
       }
 
-      // Use Pollinations as the actual image generator but from backend to avoid client-side rate limits
-      // and provide a more stable URL for Cloudinary
-      const aiImageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(optimizedPrompt)}?width=1024&height=1024&seed=${Math.floor(Math.random() * 1000000)}&nologo=true`;
-
       if (!cloudinary) {
         throw new Error("Cloudinary not initialized");
       }
 
-      const uploadResult = await cloudinary.uploader.upload(aiImageUrl, {
-        folder: "komnas_pplh_ai",
-        resource_type: "image"
-      });
+      // Function to generate and upload image with timeout and retry
+      const generateAndUpload = async (prompt: string, attempt: number = 1): Promise<string> => {
+        const aiImageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=1024&height=1024&seed=${Math.floor(Math.random() * 1000000)}&nologo=true`;
+        
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 90000); // 90 seconds timeout for generation
 
-      res.json({ url: uploadResult.secure_url });
+        try {
+          const imageResponse = await fetch(aiImageUrl, { signal: controller.signal });
+          clearTimeout(timeoutId);
+          
+          if (!imageResponse.ok) {
+            throw new Error(`Pollinations returned ${imageResponse.status}: ${imageResponse.statusText}`);
+          }
+          
+          const arrayBuffer = await imageResponse.arrayBuffer();
+          const buffer = Buffer.from(arrayBuffer);
+          
+          return new Promise((resolve, reject) => {
+            const uploadStream = cloudinary.uploader.upload_stream(
+              { folder: "komnas_pplh_ai", resource_type: "image" },
+              (error, result) => {
+                if (error) reject(error);
+                else resolve(result?.secure_url || "");
+              }
+            );
+            uploadStream.end(buffer);
+          });
+        } catch (err: any) {
+          clearTimeout(timeoutId);
+          if (attempt < 2) {
+            console.warn(`AI Generation attempt ${attempt} failed, retrying with simpler prompt...`, err.message);
+            const simplerPrompt = `professional news photo about ${searchQuery}, realistic, high quality, 8k`;
+            return generateAndUpload(simplerPrompt, attempt + 1);
+          }
+          throw err;
+        }
+      };
+
+      const secureUrl = await generateAndUpload(optimizedPrompt);
+      res.json({ url: secureUrl });
+
     } catch (error) {
       console.error("AI Image generation error:", error);
-      res.status(500).json({ error: "Failed to generate AI image" });
+      res.status(500).json({ error: error instanceof Error ? error.message : "Failed to generate AI image" });
     }
   });
 
