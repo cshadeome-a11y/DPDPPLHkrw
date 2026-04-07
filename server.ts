@@ -169,28 +169,27 @@ async function startServer() {
       }
 
       const apiKey = "5127acae44e443a2bed69d1aa8bf92fa.pK0XZAcF5X7IDZvS2yGJ7N0F";
-      const pexelsApiKey = "HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU";
       
-      const systemInstruction = `Anda adalah seorang jurnalis profesional dan ahli SEO untuk DPD Komnas PPLH Karawang. 
-Tugas Anda adalah membuat artikel lengkap berdasarkan isu atau bahan yang diberikan.
-Wajib:
-- Disusun dengan standar profesional dan gaya bahasa manusiawi (formal namun mengalir).
-- Mematuhi kaidah PUEBI, kaidah jurnalistik, dan ejaan (EYD) baku dan benar.
-- Jika artikel berkaitan dengan HUKUM atau REGULASI, Anda WAJIB merujuk pada data aktual dari "Bank Hukum" DPD Komnas PPLH Karawang (seperti UU 32/2009, Perda 9/2017 Karawang, Perbup 39/2025 RISPS, dll).
-- Jika menyebutkan PPLH, gunakan perspektif perlindungan dan pelestarian lingkungan hidup yang aktual.
-- Auto bold pada judul atau subjudul di dalam isi artikel.
-- Italic pada bahasa asing.
-- Buat teaser yang menarik (maksimal 2 kalimat).
-- Buat tags yang relevan (pisahkan dengan koma).
-- Format isi artikel menggunakan HTML MURNI (gunakan tag <p>, <strong>, <em>, <h2>, <h3>, <ul>, <li>, dll). 
-- PENTING: JANGAN PERNAH menggunakan markdown backticks (\`\`\`) untuk membungkus isi artikel atau HTML. Isi artikel harus berupa string HTML mentah di dalam JSON.
+      const systemInstruction = `Anda adalah Asisten Penulis Profesional dan Ahli Jurnalistik untuk DPD Komnas PPLH Karawang.
+Tugas Anda adalah menyusun artikel berkualitas tinggi yang sesuai dengan standar jurnalistik internasional dan lokal.
 
-PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid dengan struktur berikut:
+KONTEKS:
+Anda menulis untuk website DPD Komnas PPLH Karawang (https://komnaspplhkarawang.my.id/). Gunakan identitas organisasi ini dalam setiap tulisan.
+
+WAJIB:
+- Gaya bahasa: Manusiawi, formal, tajam, namun mudah dipahami (Jurnalistik Profesional).
+- Kepatuhan: PUEBI, EYD, dan Kode Etik Jurnalistik.
+- Referensi Hukum: Jika berkaitan dengan regulasi, rujuk pada UU 32/2009 atau Perda Karawang yang relevan.
+- Format: HTML MURNI (tag <p>, <strong>, <em>, <h2>, <h3>, <ul>, <li>).
+- Visual: Auto bold pada poin penting, Italic pada istilah asing.
+- Metadata: Buat teaser yang menarik dan tags SEO yang relevan.
+- PENTING: JANGAN gunakan markdown backticks (\`\`\`).
+- PENTING: Kembalikan response HANYA dalam format JSON:
 {
   "title": "Judul artikel",
-  "content": "Isi artikel dalam HTML MURNI tanpa backticks",
+  "content": "Isi artikel dalam HTML MURNI",
   "teaser": "Teaser singkat",
-  "tags": "tag1, tag2, tag3"
+  "tags": "tag1, tag2"
 }`;
 
       const response = await fetch("https://ollama.com/api/generate", {
@@ -221,13 +220,24 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
       }
       
       const resultJson = JSON.parse(resultText);
+      res.json(resultJson);
+    } catch (error) {
+      console.error("Ollama generation error:", error);
+      res.status(500).json({ error: error instanceof Error ? error.message : "Failed to generate article" });
+    }
+  });
 
+  app.post("/api/get-ai-image", async (req, res) => {
+    try {
+      const { title, tags } = req.body;
+      const pexelsApiKey = "HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU";
+      
       // Search Pexels for a matching image
       let imageUrl = "";
       let imageAttribution = "";
 
       try {
-        const searchQuery = resultJson.tags.split(',')[0] || resultJson.title;
+        const searchQuery = tags?.split(',')[0] || title || "environment";
         const pexelsResponse = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(searchQuery)}&per_page=1`, {
           headers: {
             "Authorization": pexelsApiKey
@@ -252,17 +262,15 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
         }
       } catch (pexelsError) {
         console.error("Pexels search/upload error:", pexelsError);
-        // Continue without image if Pexels fails
       }
 
       res.json({
-        ...resultJson,
         imageUrl,
         imageAttribution
       });
     } catch (error) {
-      console.error("AI generation error:", error);
-      res.status(500).json({ error: error instanceof Error ? error.message : "Failed to generate article" });
+      console.error("Get AI image error:", error);
+      res.status(500).json({ error: "Failed to get image" });
     }
   });
 
