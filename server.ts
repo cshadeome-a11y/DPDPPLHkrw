@@ -232,7 +232,7 @@ async function createExpressApp() {
             prompt: prompt,
             stream: false
           }),
-          signal: AbortSignal.timeout(9000) // Reduced for Vercel Hobby (10s limit)
+          signal: AbortSignal.timeout(7000) // Shorter timeout (7s) to give Gemini more time
         });
 
         if (ollamaResponse.ok) {
@@ -245,13 +245,13 @@ async function createExpressApp() {
 
       // 2. Try Gemini (Fallback)
       try {
-        const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${geminiKey}`, {
+        const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }]
           }),
-          signal: AbortSignal.timeout(9000) // Reduced for Vercel Hobby
+          signal: AbortSignal.timeout(2500) // Remaining time for Vercel (Total 10s)
         });
 
         if (geminiResponse.ok) {
@@ -328,7 +328,7 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
             stream: false,
             format: "json"
           }),
-          signal: AbortSignal.timeout(9500) // Maximize time for Vercel Hobby (10s limit)
+          signal: AbortSignal.timeout(7000) // Shorter timeout (7s)
         });
 
         if (ollamaResponse.ok) {
@@ -343,7 +343,7 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
         
         // 2. Try Gemini (Fallback)
         try {
-          const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${geminiKey}`, {
+          const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json"
@@ -358,7 +358,7 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
                 responseMimeType: "application/json"
               }
             }),
-            signal: AbortSignal.timeout(9000) // Reduced for Vercel Hobby
+            signal: AbortSignal.timeout(2500) // Remaining time for Vercel
           });
 
           if (geminiResponse.ok) {
