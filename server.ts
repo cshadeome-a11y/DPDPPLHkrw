@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import { createServer as createViteServer } from "vite";
 import Database from "better-sqlite3";
@@ -5,151 +6,54 @@ import path from "path";
 import { fileURLToPath } from "url";
 import multer from "multer";
 import OpenAI from "openai";
-import { initializeApp } from "firebase/app";
-import { getFirestore, collection, getDocs, query, orderBy } from "firebase/firestore";
-import fs from "fs";
 
-// Lazy Cloudinary loader
-let cloudinary: any = null;
-async function getCloudinary() {
-  if (!cloudinary) {
-    // Clean up malformed environment variable to prevent library crash
-    if (process.env.CLOUDINARY_URL && (process.env.CLOUDINARY_URL.includes('<') || process.env.CLOUDINARY_URL.includes('>'))) {
-      console.warn("Malformed CLOUDINARY_URL detected, clearing it to use manual config.");
-      delete process.env.CLOUDINARY_URL;
-    }
-    
-    const cloudinaryModule = await import("cloudinary");
-    cloudinary = cloudinaryModule.v2;
-    cloudinary.config({ 
-      cloud_name: 'dnk4d52tv', 
-      api_key: '359541287523991', 
-      api_secret: 'orYVrJ3rcivcYzdYbWlIvjCBb30'
-    });
-  }
-  return cloudinary;
+// Sanitize Cloudinary URL if it contains placeholders to prevent crash on import
+if (process.env.CLOUDINARY_URL && (process.env.CLOUDINARY_URL.includes('<') || process.env.CLOUDINARY_URL.includes('>'))) {
+  delete process.env.CLOUDINARY_URL;
 }
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Initialize Firebase for sitemap with robust loading for Vercel
-let firebaseConfig: any;
-try {
-  const configPath = path.join(process.cwd(), "firebase-applet-config.json");
-  if (fs.existsSync(configPath)) {
-    firebaseConfig = JSON.parse(fs.readFileSync(configPath, "utf8"));
-  } else {
-    console.warn("firebase-applet-config.json not found, using empty config");
-    firebaseConfig = {};
-  }
-} catch (e) {
-  console.error("Failed to load Firebase Config:", e);
-  firebaseConfig = {};
-}
-
-const firebaseApp = firebaseConfig.projectId ? initializeApp(firebaseConfig) : null;
-const db_firestore = firebaseApp ? getFirestore(firebaseApp, firebaseConfig.firestoreDatabaseId) : null;
+// We'll import Cloudinary dynamically to handle potential initialization errors
+let cloudinary: any;
 
 const upload = multer({ storage: multer.memoryStorage() });
 
-async function createExpressApp() {
-  const app = express();
-
-  // Initialize Database with error handling for serverless environments
-  let db: any;
+async function startServer() {
+  // Initialize Cloudinary
   try {
-    db = new Database("database.sqlite");
-    db.exec(`
-      CREATE TABLE IF NOT EXISTS reports (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nama TEXT NOT NULL,
-        whatsapp TEXT NOT NULL,
-        lokasi TEXT NOT NULL,
-        deskripsi TEXT NOT NULL,
-        bukti_lampiran TEXT,
-        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-      )
-    `);
-  } catch (dbError) {
-    console.error("Database initialization failed (likely serverless environment):", dbError);
-    // Mock DB for serverless if needed
-    db = {
-      prepare: () => ({
-        run: () => ({ lastInsertRowid: 0 }),
-        all: () => []
-      })
-    };
+    const cloudinaryModule = await import("cloudinary");
+    cloudinary = cloudinaryModule.v2;
+    
+    cloudinary.config({ 
+      cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dnk4d52tv', 
+      api_key: process.env.CLOUDINARY_API_KEY || '359541287523991', 
+      api_secret: process.env.CLOUDINARY_API_SECRET || 'orYVrJ3rcivcYzdYbWlIvjCBb30'
+    });
+  } catch (error) {
+    console.error("Failed to initialize Cloudinary:", error);
   }
+
+  const app = express();
+  const PORT = 3000;
+
+  // Initialize Database
+  const db = new Database("database.sqlite");
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS reports (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      nama TEXT NOT NULL,
+      whatsapp TEXT NOT NULL,
+      lokasi TEXT NOT NULL,
+      deskripsi TEXT NOT NULL,
+      bukti_lampiran TEXT,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    )
+  `);
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
-
-  // Sitemap Route
-  app.get("/sitemap.xml", async (req, res) => {
-    try {
-      if (!db_firestore) {
-        return res.status(500).send("Firebase not initialized");
-      }
-      const baseUrl = `${req.protocol}://${req.get('host')}`;
-      const newsCollection = collection(db_firestore, "news");
-      const q = query(newsCollection, orderBy("createdAt", "desc"));
-      const querySnapshot = await getDocs(q);
-      
-      const staticPages = [
-        "",
-        "tentang-kami",
-        "struktur",
-        "program",
-        "berita",
-        "edukasi",
-        "bank-hukum",
-        "kontak",
-        "lapor"
-      ];
-
-      let xml = `<?xml version="1.0" encoding="UTF-8"?>\n`;
-      xml += `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n`;
-
-      // Add static pages
-      staticPages.forEach(page => {
-        xml += `  <url>\n`;
-        xml += `    <loc>${baseUrl}/${page}</loc>\n`;
-        xml += `    <changefreq>weekly</changefreq>\n`;
-        xml += `    <priority>${page === "" ? "1.0" : "0.8"}</priority>\n`;
-        xml += `  </url>\n`;
-      });
-
-      // Add news articles
-      querySnapshot.forEach(doc => {
-        const data = doc.data();
-        const slug = data.slug || doc.id;
-        xml += `  <url>\n`;
-        xml += `    <loc>${baseUrl}/berita/${slug}</loc>\n`;
-        xml += `    <changefreq>monthly</changefreq>\n`;
-        xml += `    <priority>0.6</priority>\n`;
-        xml += `  </url>\n`;
-      });
-
-      xml += `</urlset>`;
-      
-      res.header("Content-Type", "application/xml");
-      res.send(xml);
-    } catch (error) {
-      console.error("Sitemap generation error:", error);
-      res.status(500).send("Error generating sitemap");
-    }
-  });
-
-  // Robots.txt Route
-  app.get("/robots.txt", (req, res) => {
-    const baseUrl = `${req.protocol}://${req.get('host')}`;
-    let robots = `User-agent: *\n`;
-    robots += `Allow: /\n`;
-    robots += `Sitemap: ${baseUrl}/sitemap.xml\n`;
-    res.header("Content-Type", "text/plain");
-    res.send(robots);
-  });
 
   // API Routes
   app.post("/api/upload", upload.single("file"), async (req, res) => {
@@ -158,12 +62,13 @@ async function createExpressApp() {
         return res.status(400).json({ error: "No file uploaded" });
       }
 
-      const cloudinary = await getCloudinary();
-
       // Convert buffer to base64
       const b64 = Buffer.from(req.file.buffer).toString("base64");
       const dataURI = "data:" + req.file.mimetype + ";base64," + b64;
 
+      if (!cloudinary) {
+        throw new Error("Cloudinary not initialized");
+      }
       const result = await cloudinary.uploader.upload(dataURI, {
         folder: "komnas_pplh",
         resource_type: "auto"
@@ -183,8 +88,6 @@ async function createExpressApp() {
         return res.status(400).json({ error: "No URL provided" });
       }
 
-      const cloudinary = await getCloudinary();
-
       // Extract public_id from URL
       const parts = url.split('/');
       const filenameWithExtension = parts.pop();
@@ -197,78 +100,14 @@ async function createExpressApp() {
       const filename = filenameWithExtension.split('.')[0];
       const public_id = `${folder}/${filename}`;
 
+      if (!cloudinary) {
+        throw new Error("Cloudinary not initialized");
+      }
       await cloudinary.uploader.destroy(public_id);
       res.json({ success: true });
     } catch (error) {
       console.error("Cloudinary delete error:", error);
       res.status(500).json({ error: "Failed to delete image" });
-    }
-  });
-
-  app.post("/api/generate", async (req, res) => {
-    try {
-      const { prompt } = req.body;
-      if (!prompt) {
-        return res.status(400).json({ error: "Prompt is required." });
-      }
-
-      const ollamaKey = process.env.OLLAMA_API_KEY || "4a96468257ce4dcd8d43fb8c6b29bfd7.IEftLWjX4teF1epJvG1YB7x8";
-      const geminiKey = process.env.GEMINI_API_KEY || "AIzaSyBU98fY8LQp4LnG7FexEiDmuK8Kr8vpdYM";
-
-      if (!ollamaKey) {
-        return res.status(500).json({ error: "Ollama API key is not configured." });
-      }
-
-      // 1. Try Ollama (Primary)
-      try {
-        const ollamaResponse = await fetch("https://ollama.com/api/generate", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${ollamaKey}`
-          },
-          body: JSON.stringify({
-            model: "gpt-oss:120b",
-            prompt: prompt,
-            stream: false
-          }),
-          signal: AbortSignal.timeout(7000) // Shorter timeout (7s) to give Gemini more time
-        });
-
-        if (ollamaResponse.ok) {
-          const data = await ollamaResponse.json();
-          return res.json(data);
-        }
-      } catch (ollamaError) {
-        console.error("Ollama failed in /api/generate, trying Gemini:", ollamaError);
-      }
-
-      // 2. Try Gemini (Fallback)
-      try {
-        const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: prompt }] }]
-          }),
-          signal: AbortSignal.timeout(2500) // Remaining time for Vercel (Total 10s)
-        });
-
-        if (geminiResponse.ok) {
-          const data = await geminiResponse.json();
-          const text = data.candidates[0].content.parts[0].text;
-          return res.json({ response: text, model: "gemini-3-flash-preview" });
-        } else {
-          const errText = await geminiResponse.text();
-          throw new Error(`Gemini failed: ${errText}`);
-        }
-      } catch (geminiError) {
-        console.error("Both failed in /api/generate:", geminiError);
-        return res.status(500).json({ error: "All AI services failed." });
-      }
-    } catch (error: any) {
-      console.error("General error in /api/generate:", error);
-      res.status(500).json({ error: "Internal server error.", details: error.message });
     }
   });
 
@@ -279,13 +118,8 @@ async function createExpressApp() {
         return res.status(400).json({ error: "Prompt is required" });
       }
 
-      const ollamaKey = process.env.OLLAMA_API_KEY || "4a96468257ce4dcd8d43fb8c6b29bfd7.IEftLWjX4teF1epJvG1YB7x8";
-      const geminiKey = process.env.GEMINI_API_KEY || "AIzaSyBU98fY8LQp4LnG7FexEiDmuK8Kr8vpdYM";
-      const pexelsApiKey = "HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU";
-
-      if (!ollamaKey) {
-        return res.status(500).json({ error: "Ollama API key is not configured." });
-      }
+      const apiKey = process.env.OLLAMA_API_KEY || "5127acae44e443a2bed69d1aa8bf92fa.pK0XZAcF5X7IDZvS2yGJ7N0F";
+      const pexelsApiKey = process.env.PEXELS_API_KEY || "HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU";
       
       const systemInstruction = `Anda adalah seorang jurnalis profesional dan ahli SEO untuk DPD Komnas PPLH Karawang. 
 Tugas Anda adalah membuat artikel lengkap berdasarkan isu atau bahan yang diberikan.
@@ -309,98 +143,40 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
   "tags": "tag1, tag2, tag3"
 }`;
 
-      let aiResponseText = "";
-      let usedFallback = false;
+      const response = await fetch("https://ollama.com/api/generate", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${apiKey}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          model: "gpt-oss:120b",
+          prompt: `${systemInstruction}\n\nBuat artikel berdasarkan bahan berikut:\n\n${prompt}`,
+          stream: false,
+          format: "json"
+        })
+      });
 
-      // 1. Try Ollama (Primary)
-      try {
-        console.log("Attempting primary AI (Ollama)...");
-        const ollamaResponse = await fetch("https://ollama.com/api/generate", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${ollamaKey}`,
-            "Content-Type": "application/json",
-            "Accept": "application/json"
-          },
-          body: JSON.stringify({
-            model: "gpt-oss:120b",
-            prompt: `${systemInstruction}\n\nBuat artikel berdasarkan bahan berikut:\n\n${prompt}`,
-            stream: false,
-            format: "json"
-          }),
-          signal: AbortSignal.timeout(7000) // Shorter timeout (7s)
-        });
-
-        if (ollamaResponse.ok) {
-          const data = await ollamaResponse.json();
-          aiResponseText = data.response;
-        } else {
-          throw new Error(`Ollama returned status ${ollamaResponse.status}`);
-        }
-      } catch (ollamaError) {
-        console.error("Primary AI (Ollama) failed, trying Gemini fallback:", ollamaError);
-        usedFallback = true;
-        
-        // 2. Try Gemini (Fallback)
-        try {
-          const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${geminiKey}`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-              contents: [{
-                parts: [{
-                  text: `${systemInstruction}\n\nBuat artikel berdasarkan bahan berikut:\n\n${prompt}`
-                }]
-              }],
-              generationConfig: {
-                responseMimeType: "application/json"
-              }
-            }),
-            signal: AbortSignal.timeout(2500) // Remaining time for Vercel
-          });
-
-          if (geminiResponse.ok) {
-            const data = await geminiResponse.json();
-            aiResponseText = data.candidates[0].content.parts[0].text;
-          } else {
-            const errText = await geminiResponse.text();
-            throw new Error(`Gemini fallback failed with status ${geminiResponse.status}: ${errText}`);
-          }
-        } catch (geminiError) {
-          console.error("Both AI services failed:", geminiError);
-          return res.status(500).json({ 
-            error: "All AI services failed", 
-            details: geminiError instanceof Error ? geminiError.message : String(geminiError) 
-          });
-        }
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Ollama API error response:", errorText);
+        throw new Error(`Ollama API error: ${response.status} ${response.statusText}`);
       }
 
-      if (!aiResponseText) {
-         throw new Error("No response from AI services");
+      const data = await response.json();
+      const resultText = data.response;
+      
+      if (!resultText) {
+         throw new Error("No response from AI");
       }
       
-      // Clean up response text in case AI wraps it in markdown code blocks
-      let cleanedText = aiResponseText.trim();
-      if (cleanedText.startsWith("```")) {
-        cleanedText = cleanedText.replace(/^```(?:json)?\n?/, "").replace(/\n?```$/, "");
-      }
-      
-      let resultJson;
-      try {
-        resultJson = JSON.parse(cleanedText);
-      } catch (parseError) {
-        console.error("Failed to parse AI response as JSON:", cleanedText);
-        throw new Error("AI returned invalid JSON format. Please try again.");
-      }
+      const resultJson = JSON.parse(resultText);
 
       // Search Pexels for a matching image
       let imageUrl = "";
       let imageAttribution = "";
 
       try {
-        const cloudinary = await getCloudinary();
         const searchQuery = resultJson.tags.split(',')[0] || resultJson.title;
         const pexelsResponse = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(searchQuery)}&per_page=1`, {
           headers: {
@@ -414,6 +190,9 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
             const photo = pexelsData.photos[0];
             const originalUrl = photo.src.large2x || photo.src.large;
             
+            if (!cloudinary) {
+              throw new Error("Cloudinary not initialized");
+            }
             // Upload to Cloudinary for stability
             const uploadResult = await cloudinary.uploader.upload(originalUrl, {
               folder: "komnas_pplh_auto",
@@ -432,8 +211,7 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
       res.json({
         ...resultJson,
         imageUrl,
-        imageAttribution,
-        fallbackUsed: usedFallback
+        imageAttribution
       });
     } catch (error) {
       console.error("AI generation error:", error);
@@ -444,15 +222,13 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
   app.post("/api/regenerate-image", async (req, res) => {
     try {
       const { title, tags, oldImageUrl } = req.body;
-      const pexelsApiKey = "HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU";
-      
-      const cloudinary = await getCloudinary();
+      const pexelsApiKey = process.env.PEXELS_API_KEY || "HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU";
 
       // 1. Delete old image if exists
       if (oldImageUrl && oldImageUrl.includes("cloudinary.com")) {
         try {
           const publicId = oldImageUrl.split("/").pop()?.split(".")[0];
-          if (publicId) {
+          if (publicId && cloudinary) {
             await cloudinary.uploader.destroy(`komnas_pplh_auto/${publicId}`);
           }
         } catch (delErr) {
@@ -477,6 +253,9 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
       const photo = pexelsData.photos[Math.floor(Math.random() * pexelsData.photos.length)];
       const originalUrl = photo.src.large2x || photo.src.large;
 
+      if (!cloudinary) {
+        throw new Error("Cloudinary not initialized");
+      }
       // 3. Upload to Cloudinary
       const uploadResult = await cloudinary.uploader.upload(originalUrl, {
         folder: "komnas_pplh_auto",
@@ -536,26 +315,15 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
     app.use(vite.middlewares);
   } else {
     // Production static files
-    const distPath = path.join(__dirname, "dist");
-    if (fs.existsSync(distPath)) {
-      app.use(express.static(distPath));
-      app.get("*", (req, res) => {
-        res.sendFile(path.join(distPath, "index.html"));
-      });
-    }
+    app.use(express.static(path.join(__dirname, "dist")));
+    app.get("*", (req, res) => {
+      res.sendFile(path.join(__dirname, "dist", "index.html"));
+    });
   }
 
-  return app;
-}
-
-// Start server if this file is run directly
-if (import.meta.url === `file://${process.argv[1]}` || process.env.NODE_ENV === 'development') {
-  createExpressApp().then(app => {
-    const PORT = 3000;
-    app.listen(PORT, "0.0.0.0", () => {
-      console.log(`Server running on http://localhost:${PORT}`);
-    });
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`Server running on http://localhost:${PORT}`);
   });
 }
 
-export default createExpressApp;
+startServer();
