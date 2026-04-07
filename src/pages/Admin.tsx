@@ -67,40 +67,52 @@ export default function Admin() {
     let attempts = 0;
     const maxOllamaAttempts = 2;
 
-    // --- 1. Attempt generation with Ollama (Primary) ---
-    while (attempts < maxOllamaAttempts && !resultJson) {
-      attempts++;
-      try {
-        console.log(`Attempting generation with Ollama (Attempt ${attempts})...`);
-        const ollamaResponse = await fetch('/api/generate-article', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ prompt: aiPrompt })
-        });
+    try {
+      // 1. Try Ollama first
+      while (attempts < maxOllamaAttempts && !resultJson) {
+        attempts++;
+        try {
+          console.log(`Attempting generation with Ollama (Attempt ${attempts})...`);
+          const ollamaResponse = await fetch('/api/generate-article', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt: aiPrompt })
+          });
 
-        if (ollamaResponse.ok) {
-          resultJson = await ollamaResponse.json();
-          console.log(`Ollama generation successful on attempt ${attempts}.`);
-        } else {
-          const errData = await ollamaResponse.json().catch(() => ({}));
-          console.warn(`Ollama attempt ${attempts} failed:`, errData.error || ollamaResponse.statusText);
+          if (ollamaResponse.ok) {
+            resultJson = await ollamaResponse.json();
+            console.log(`Ollama generation successful on attempt ${attempts}.`);
+          } else {
+            let errMessage = ollamaResponse.statusText;
+            try {
+              const errData = await ollamaResponse.json();
+              errMessage = errData.error || errMessage;
+            } catch (e) {}
+            console.warn(`Ollama attempt ${attempts} failed:`, errMessage);
+            if (attempts >= maxOllamaAttempts) {
+              throw new Error(`Ollama failed: ${errMessage}`);
+            }
+          }
+        } catch (ollamaError: any) {
+          console.warn(`Ollama error on attempt ${attempts}:`, ollamaError);
           if (attempts >= maxOllamaAttempts) {
-            throw new Error('Ollama failed after maximum attempts.');
+            console.log('Falling back to Gemini 3...');
           }
         }
-      } catch (ollamaError) {
-        console.warn(`Ollama error on attempt ${attempts}:`, ollamaError);
-        if (attempts >= maxOllamaAttempts) {
-          console.log('Falling back to Gemini 3...');
-        }
       }
+    } catch (e) {
+      console.error('Ollama process failed completely:', e);
     }
 
     // --- 2. Fallback to Gemini 3 if Ollama fails ---
     if (!resultJson) {
       try {
         console.log('Attempting generation with Gemini 3 (Fallback with Web & Site Context)...');
-        const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+        const geminiKey = process.env.GEMINI_API_KEY;
+        if (!geminiKey) {
+          throw new Error('GEMINI_API_KEY tidak ditemukan. Silakan cek pengaturan API Key di dashboard.');
+        }
+        const ai = new GoogleGenAI({ apiKey: geminiKey });
         const model = "gemini-3-flash-preview";
 
         const systemInstruction = `Anda adalah Asisten Penulis Profesional dan Ahli Jurnalistik untuk DPD Komnas PPLH Karawang.
@@ -147,9 +159,10 @@ WAJIB:
 
         resultJson = JSON.parse(response.text || '{}');
         console.log('Gemini generation successful.');
-      } catch (geminiError) {
+      } catch (geminiError: any) {
         console.error('Gemini fallback failed:', geminiError);
-        setAlertMessage('Gagal men-generate artikel dengan semua metode AI. Silakan coba lagi nanti.');
+        const errorMessage = geminiError.message || 'Error tidak diketahui';
+        setAlertMessage(`Gagal men-generate artikel (Gemini): ${errorMessage}`);
         setIsGeneratingAi(false);
         return;
       }

@@ -162,6 +162,7 @@ async function startServer() {
   });
 
   app.post("/api/generate-article", async (req, res) => {
+    console.log("Received article generation request for prompt:", req.body.prompt?.substring(0, 50) + "...");
     try {
       const { prompt } = req.body;
       if (!prompt) {
@@ -192,6 +193,7 @@ WAJIB:
   "tags": "tag1, tag2"
 }`;
 
+      console.log("Calling Ollama API...");
       const response = await fetch("https://ollama.com/api/generate", {
         method: "POST",
         headers: {
@@ -216,14 +218,16 @@ WAJIB:
       const resultText = data.response;
       
       if (!resultText) {
+         console.error("Ollama returned empty response");
          throw new Error("No response from AI");
       }
       
+      console.log("Ollama generation successful, parsing JSON...");
       const resultJson = JSON.parse(resultText);
       res.json(resultJson);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Ollama generation error:", error);
-      res.status(500).json({ error: error instanceof Error ? error.message : "Failed to generate article" });
+      res.status(500).json({ error: error.message || "Failed to generate article" });
     }
   });
 
@@ -375,6 +379,7 @@ WAJIB:
 
   app.listen(PORT, "0.0.0.0", () => {
     console.log(`Server running on http://localhost:${PORT}`);
+    console.log("GEMINI_API_KEY is", process.env.GEMINI_API_KEY ? "DEFINED" : "UNDEFINED");
   });
 }
 
