@@ -14,6 +14,7 @@ import Contact from './pages/Contact';
 import Report from './pages/Report';
 import ReportsDashboard from './pages/ReportsDashboard';
 import Admin from './pages/Admin';
+import AiTest from './pages/AiTest';
 
 export default function App() {
   return (
@@ -34,6 +35,7 @@ export default function App() {
           <Route path="/lapor" element={<Report />} />
           <Route path="/dashboard-laporan" element={<ReportsDashboard />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/ai-test" element={<AiTest />} />
         </Routes>
       </main>
       <Footer />

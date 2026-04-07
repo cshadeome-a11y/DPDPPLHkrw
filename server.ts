@@ -178,6 +178,46 @@ async function startServer() {
     }
   });
 
+  app.post("/api/generate", async (req, res) => {
+    try {
+      const { prompt } = req.body;
+      const apiKey = process.env.OLLAMA_API_KEY;
+
+      if (!apiKey) {
+        return res.status(500).json({ error: "OLLAMA_API_KEY is not configured in environment variables." });
+      }
+
+      if (!prompt) {
+        return res.status(400).json({ error: "Prompt is required." });
+      }
+
+      const response = await fetch("https://ollama.com/api/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`
+        },
+        body: JSON.stringify({
+          model: "gpt-oss:120b",
+          prompt: prompt,
+          stream: false
+        })
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error("Ollama API error:", response.status, errorText);
+        return res.status(response.status).json({ error: `Ollama API error: ${response.status}`, details: errorText });
+      }
+
+      const data = await response.json();
+      res.json(data);
+    } catch (error: any) {
+      console.error("Ollama integration error:", error);
+      res.status(500).json({ error: "Internal server error during AI generation.", details: error.message });
+    }
+  });
+
   app.post("/api/generate-article", async (req, res) => {
     try {
       const { prompt } = req.body;
@@ -185,7 +225,7 @@ async function startServer() {
         return res.status(400).json({ error: "Prompt is required" });
       }
 
-      const apiKey = "12a00c067ea64cca8f04e1b452fe9c61.3qc-tQGJJ4rRgdI4Dihwh7IA";
+      const apiKey = process.env.OLLAMA_API_KEY || "12a00c067ea64cca8f04e1b452fe9c61.3qc-tQGJJ4rRgdI4Dihwh7IA";
       const pexelsApiKey = "HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU";
       
       const systemInstruction = `Anda adalah seorang jurnalis profesional dan ahli SEO untuk DPD Komnas PPLH Karawang. 
