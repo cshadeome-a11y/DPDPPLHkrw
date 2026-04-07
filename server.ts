@@ -7,6 +7,8 @@ import { fileURLToPath } from "url";
 import multer from "multer";
 import OpenAI from "openai";
 
+import { GoogleGenAI } from "@google/genai";
+
 // Sanitize Cloudinary URL if it contains placeholders to prevent crash on import
 if (process.env.CLOUDINARY_URL && (process.env.CLOUDINARY_URL.includes('<') || process.env.CLOUDINARY_URL.includes('>'))) {
   delete process.env.CLOUDINARY_URL;
@@ -14,6 +16,17 @@ if (process.env.CLOUDINARY_URL && (process.env.CLOUDINARY_URL.includes('<') || p
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+
+// Initialize Gemini
+let ai: any;
+try {
+  const geminiKey = process.env.GEMINI_API_KEY || "AIzaSyBU98fY8LQp4LnG7FexEiDmuK8Kr8vpdYM";
+  if (geminiKey) {
+    ai = new GoogleGenAI({ apiKey: geminiKey });
+  }
+} catch (error) {
+  console.error("Failed to initialize Gemini:", error);
+}
 
 // We'll import Cloudinary dynamically to handle potential initialization errors
 let cloudinary: any;
@@ -118,7 +131,8 @@ async function startServer() {
         return res.status(400).json({ error: "Prompt is required" });
       }
 
-      const apiKey = process.env.OLLAMA_API_KEY || "5127acae44e443a2bed69d1aa8bf92fa.pK0XZAcF5X7IDZvS2yGJ7N0F";
+      const apiKey = process.env.OLLAMA_API_KEY || "4a96468257ce4dcd8d43fb8c6b29bfd7.IEftLWjX4teF1epJvG1YB7x8";
+      const geminiApiKey = process.env.GEMINI_API_KEY || "AIzaSyBU98fY8LQp4LnG7FexEiDmuK8Kr8vpdYM";
       const pexelsApiKey = process.env.PEXELS_API_KEY || "HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU";
       
       const systemInstruction = `Anda adalah seorang jurnalis profesional dan ahli SEO untuk DPD Komnas PPLH Karawang. 
@@ -143,34 +157,49 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
   "tags": "tag1, tag2, tag3"
 }`;
 
-      const response = await fetch("https://ollama.com/api/generate", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          model: "gpt-oss:120b",
-          prompt: `${systemInstruction}\n\nBuat artikel berdasarkan bahan berikut:\n\n${prompt}`,
-          stream: false,
-          format: "json"
-        })
-      });
+      let resultJson: any;
+      let resultText: string = "";
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Ollama API error response:", errorText);
-        throw new Error(`Ollama API error: ${response.status} ${response.statusText}`);
+      try {
+        const response = await fetch("https://ollama.com/api/generate", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${apiKey}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model: "gpt-oss:120b",
+            prompt: `${systemInstruction}\n\nBuat artikel berdasarkan bahan berikut:\n\n${prompt}`,
+            stream: false,
+            format: "json"
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          resultText = data.response;
+        } else {
+          console.warn("Ollama API failed, trying Gemini...");
+          throw new Error("Ollama failed");
+        }
+      } catch (ollamaError) {
+        if (ai) {
+          const result = await ai.models.generateContent({
+            model: "gemini-3-flash-preview",
+            contents: [{ role: "user", parts: [{ text: `${systemInstruction}\n\nBuat artikel berdasarkan bahan berikut:\n\n${prompt}` }] }],
+            config: { responseMimeType: "application/json" }
+          });
+          resultText = result.text;
+        } else {
+          throw ollamaError;
+        }
       }
-
-      const data = await response.json();
-      const resultText = data.response;
       
       if (!resultText) {
          throw new Error("No response from AI");
       }
       
-      const resultJson = JSON.parse(resultText);
+      resultJson = JSON.parse(resultText);
 
       // Search Pexels for a matching image
       let imageUrl = "";
