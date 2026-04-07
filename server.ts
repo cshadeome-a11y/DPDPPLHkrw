@@ -181,46 +181,9 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
       
       resultJson = JSON.parse(resultText);
 
-      // Search Pexels for a matching image
-      let imageUrl = "";
-      let imageAttribution = "";
-
-      try {
-        const searchQuery = resultJson.tags.split(',')[0] || resultJson.title;
-        const pexelsResponse = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(searchQuery)}&per_page=1`, {
-          headers: {
-            "Authorization": pexelsApiKey
-          }
-        });
-
-        if (pexelsResponse.ok) {
-          const pexelsData = await pexelsResponse.json();
-          if (pexelsData.photos && pexelsData.photos.length > 0) {
-            const photo = pexelsData.photos[0];
-            const originalUrl = photo.src.large2x || photo.src.large;
-            
-            if (!cloudinary) {
-              throw new Error("Cloudinary not initialized");
-            }
-            // Upload to Cloudinary for stability
-            const uploadResult = await cloudinary.uploader.upload(originalUrl, {
-              folder: "komnas_pplh_auto",
-              resource_type: "image"
-            });
-
-            imageUrl = uploadResult.secure_url;
-            imageAttribution = `Photo by <a href="${photo.photographer_url}" target="_blank" rel="noopener noreferrer">${photo.photographer}</a> on <a href="${photo.url}" target="_blank" rel="noopener noreferrer">Pexels</a>`;
-          }
-        }
-      } catch (pexelsError) {
-        console.error("Pexels search/upload error:", pexelsError);
-        // Continue without image if Pexels fails
-      }
-
+      // Search Pexels for a matching image removed - now handled on frontend
       res.json({
-        ...resultJson,
-        imageUrl,
-        imageAttribution
+        ...resultJson
       });
     } catch (error) {
       console.error("AI generation error:", error);
@@ -278,6 +241,87 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
     } catch (error) {
       console.error("Regenerate image error:", error);
       res.status(500).json({ error: "Failed to regenerate image" });
+    }
+  });
+
+  app.post("/api/generate-ai-image", async (req, res) => {
+    try {
+      const { title, tags, aiImagePrompt } = req.body;
+      const apiKey = process.env.OLLAMA_API_KEY || "sk-ollama-komnas-pplh-2024"; // Placeholder or from env
+
+      const searchQuery = aiImagePrompt || tags?.split(',')[0] || title || "environment";
+      const systemInstruction = "Generate a high-quality, professional journalistic photography prompt for a news article. The image should be realistic, 8k, and suitable for a professional news website about environmental protection.";
+      
+      const fullPrompt = `${systemInstruction}\n\nTopic: ${searchQuery}\n\nReturn ONLY a JSON object with a 'prompt' field containing the optimized image generation prompt.`;
+
+      let optimizedPrompt = `professional journalistic photography for news article about ${searchQuery}, high quality, 8k, realistic, environmental protection theme, actual news style`;
+
+      try {
+        const response = await fetch("https://ollama.com/api/generate", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${apiKey}`,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            model: "gpt-oss:120b",
+            prompt: fullPrompt,
+            stream: false,
+            format: "json"
+          })
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          const result = JSON.parse(data.response);
+          if (result.prompt) {
+            optimizedPrompt = result.prompt;
+          }
+        }
+      } catch (err) {
+        console.error("Ollama prompt optimization failed, using default:", err);
+      }
+
+      // Use Pollinations as the actual image generator but from backend to avoid client-side rate limits
+      // and provide a more stable URL for Cloudinary
+      const aiImageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(optimizedPrompt)}?width=1024&height=1024&seed=${Math.floor(Math.random() * 1000000)}&nologo=true`;
+
+      if (!cloudinary) {
+        throw new Error("Cloudinary not initialized");
+      }
+
+      const uploadResult = await cloudinary.uploader.upload(aiImageUrl, {
+        folder: "komnas_pplh_ai",
+        resource_type: "image"
+      });
+
+      res.json({ url: uploadResult.secure_url });
+    } catch (error) {
+      console.error("AI Image generation error:", error);
+      res.status(500).json({ error: "Failed to generate AI image" });
+    }
+  });
+
+  app.post("/api/upload-url", async (req, res) => {
+    try {
+      const { url, folder } = req.body;
+      if (!url) {
+        return res.status(400).json({ error: "No URL provided" });
+      }
+
+      if (!cloudinary) {
+        throw new Error("Cloudinary not initialized");
+      }
+
+      const result = await cloudinary.uploader.upload(url, {
+        folder: folder || "komnas_pplh_ai",
+        resource_type: "image"
+      });
+
+      res.json({ url: result.secure_url });
+    } catch (error) {
+      console.error("Cloudinary upload URL error:", error);
+      res.status(500).json({ error: "Failed to upload image from URL" });
     }
   });
 

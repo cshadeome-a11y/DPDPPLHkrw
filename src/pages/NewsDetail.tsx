@@ -73,13 +73,7 @@ Melalui pendekatan ini, Komnas PPLH berharap program MBG tidak hanya meningkatka
           const docRef = doc(db, 'news', slug);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
-            const data = docSnap.data();
-            // If article has a slug and we're accessing by ID, redirect to slug URL
-            if (data.slug && data.slug !== slug) {
-              navigate(`/berita/${data.slug}`, { replace: true });
-              return;
-            }
-            setArticle({ id: docSnap.id, ...data });
+            setArticle({ id: docSnap.id, ...docSnap.data() });
           } else {
             console.log("No such document!");
             navigate('/berita');
@@ -134,13 +128,18 @@ Melalui pendekatan ini, Komnas PPLH berharap program MBG tidak hanya meningkatka
           </header>
 
           {article.imageUrl && (
-            <div className="rounded-3xl overflow-hidden shadow-xl mb-12" data-aos="fade-up">
-              <img 
-                src={article.imageUrl} 
-                alt={article.title} 
-                className="w-full h-auto object-cover max-h-[500px]"
-                referrerPolicy="no-referrer"
-              />
+            <div className="mb-12" data-aos="fade-up">
+              <div className="rounded-3xl overflow-hidden shadow-xl">
+                <img 
+                  src={article.imageUrl} 
+                  alt={article.title} 
+                  className="w-full h-auto object-cover max-h-[500px]"
+                  referrerPolicy="no-referrer"
+                />
+              </div>
+              {article.imageAttribution && (
+                <div className="mt-3 text-xs text-gray-500 italic text-center px-4" dangerouslySetInnerHTML={{ __html: article.imageAttribution }}></div>
+              )}
             </div>
           )}
 
