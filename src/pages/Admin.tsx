@@ -1,9 +1,36 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { signInWithEmailAndPassword, createUserWithEmailAndPassword } from 'firebase/auth';
-import { collection, addDoc, serverTimestamp, getDocs, doc, updateDoc, deleteDoc, query, orderBy, where, limit } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, getDocs, doc, updateDoc, deleteDoc, query, orderBy } from 'firebase/firestore';
 import { auth, db, handleFirestoreError, OperationType } from '../firebase';
 import { Link } from 'react-router-dom';
+import { GoogleGenAI } from "@google/genai";
+
+// Initialize Gemini for search functionality
+const geminiKey = process.env.GEMINI_API_KEY || "AIzaSyBU98fY8LQp4LnG7FexEiDmuK8Kr8vpdYM";
+const ai = new GoogleGenAI({ apiKey: geminiKey });
+
+const systemInstruction = `Anda adalah seorang jurnalis profesional dan ahli SEO untuk DPD Komnas PPLH Karawang. 
+Tugas Anda adalah membuat artikel lengkap berdasarkan isu atau bahan yang diberikan.
+Wajib:
+- Disusun dengan standar profesional dan gaya bahasa manusiawi (formal namun mengalir).
+- Mematuhi kaidah PUEBI, kaidah jurnalistik, dan ejaan (EYD) baku dan benar.
+- Jika artikel berkaitan dengan HUKUM atau REGULASI, Anda WAJIB merujuk pada data aktual dari "Bank Hukum" DPD Komnas PPLH Karawang (seperti UU 32/2009, Perda 9/2017 Karawang, Perbup 39/2025 RISPS, dll).
+- Jika menyebutkan PPLH, gunakan perspektif perlindungan dan pelestarian lingkungan hidup yang aktual.
+- Auto bold pada judul atau subjudul di dalam isi artikel.
+- Italic pada bahasa asing.
+- Buat teaser yang menarik (maksimal 2 kalimat).
+- Buat tags yang relevan (pisahkan dengan koma).
+- Format isi artikel menggunakan HTML MURNI (gunakan tag <p>, <strong>, <em>, <h2>, <h3>, <ul>, <li>, dll). 
+- PENTING: JANGAN PERNAH menggunakan markdown backticks (\`\`\`) untuk membungkus isi artikel atau HTML. Isi artikel harus berupa string HTML mentah di dalam JSON.
+
+PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid dengan struktur berikut:
+{
+  "title": "Judul artikel",
+  "content": "Isi artikel dalam HTML MURNI tanpa backticks",
+  "teaser": "Teaser singkat",
+  "tags": "tag1, tag2, tag3"
+}`;
 
 export default function Admin() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -63,15 +90,59 @@ export default function Admin() {
 
     setIsGeneratingAi(true);
     try {
+      // Step 1: Use Gemini to search for the latest news and data
+      let internetContext = "";
+      try {
+        const searchResponse = await ai.models.generateContent({
+          model: "gemini-3-flash-preview",
+          contents: [{ 
+            role: "user", 
+            parts: [{ text: `Cari informasi terbaru, data, dan berita relevan terkait topik berikut untuk bahan artikel jurnalistik: "${aiPrompt}". Berikan ringkasan poin-poin penting yang aktual.` }] 
+          }],
+          config: {
+            tools: [{ googleSearch: {} }]
+          }
+        });
+        internetContext = searchResponse.text || "";
+      } catch (searchError) {
+        console.error("Gemini search error:", searchError);
+        // Continue even if search fails, but without context
+      }
+
+      // Step 2: Call backend to generate article using Ollama (with Gemini context)
       const response = await fetch('/api/generate-article', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: aiPrompt })
+        body: JSON.stringify({ 
+          prompt: aiPrompt,
+          internetContext: internetContext 
+        })
       });
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.details || errorData.error || `Server error: ${response.status}`);
+        console.warn('Ollama generation failed, trying Gemini fallback...');
+        // Fallback to Gemini for article generation
+        const geminiResult = await ai.models.generateContent({
+          model: "gemini-3-flash-preview",
+          contents: [{ 
+            role: "user", 
+            parts: [{ text: `${systemInstruction}\n\n${internetContext ? `DATA INTERNET TERBARU:\n${internetContext}\n\n` : ""}Buat artikel berdasarkan bahan berikut:\n\n${aiPrompt}` }] 
+          }],
+          config: { responseMimeType: "application/json" }
+        });
+        
+        if (!geminiResult.text) throw new Error('Failed to generate article with Gemini fallback');
+        
+        const data = JSON.parse(geminiResult.text);
+        
+        setTitle(data.title || '');
+        let finalContent = data.content || '';
+        setContent(finalContent);
+        setTeaser(data.teaser || '');
+        setTags(data.tags || '');
+        setIsAiModalOpen(false);
+        setAiPrompt('');
+        return;
       }
 
       const data = await response.json();
@@ -97,9 +168,9 @@ export default function Admin() {
       
       setIsAiModalOpen(false);
       setAiPrompt('');
-    } catch (error: any) {
+    } catch (error) {
       console.error('AI generation error:', error);
-      setAlertMessage(`Gagal men-generate artikel: ${error.message || 'Silakan coba lagi.'}`);
+      setAlertMessage('Gagal men-generate artikel. Silakan coba lagi.');
     } finally {
       setIsGeneratingAi(false);
     }
@@ -339,16 +410,6 @@ export default function Admin() {
     try {
       const tagsArray = tags.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
       const slug = slugify(title);
-
-      // Check for slug uniqueness
-      const q = query(collection(db, 'news'), where('slug', '==', slug), limit(1));
-      const querySnapshot = await getDocs(q);
-      
-      if (!querySnapshot.empty && (!editingId || querySnapshot.docs[0].id !== editingId)) {
-        setIsSubmitting(false);
-        showAlert('Judul ini sudah digunakan untuk artikel lain. Silakan gunakan judul yang berbeda agar link SEO tetap unik.');
-        return;
-      }
       
       const newsData: any = {
         title,
@@ -594,10 +655,9 @@ export default function Admin() {
               <button
                 type="button"
                 onClick={() => setIsAiModalOpen(true)}
-                className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-6 py-2.5 rounded-full font-bold hover:shadow-xl hover:shadow-purple-200 hover:scale-105 active:scale-95 transition-all flex items-center gap-2 group"
-                id="auto-ai-button"
+                className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-6 py-2 rounded-full font-bold hover:shadow-lg transition-all flex items-center gap-2"
               >
-                <i className="ph-fill ph-magic-wand group-hover:rotate-12 transition-transform"></i> Auto AI
+                <i className="ph-fill ph-magic-wand"></i> Auto AI
               </button>
             </div>
 
