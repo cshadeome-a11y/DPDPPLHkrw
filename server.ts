@@ -180,40 +180,63 @@ async function createExpressApp() {
   app.post("/api/generate", async (req, res) => {
     try {
       const { prompt } = req.body;
-      const apiKey = process.env.OLLAMA_API_KEY;
-
-      if (!apiKey) {
-        return res.status(500).json({ error: "OLLAMA_API_KEY is not configured in environment variables." });
-      }
-
       if (!prompt) {
         return res.status(400).json({ error: "Prompt is required." });
       }
 
-      const response = await fetch("https://ollama.com/api/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${apiKey}`
-        },
-        body: JSON.stringify({
-          model: "gpt-oss:120b",
-          prompt: prompt,
-          stream: false
-        })
-      });
+      const ollamaKey = "4a96468257ce4dcd8d43fb8c6b29bfd7.IEftLWjX4teF1epJvG1YB7x8";
+      const geminiKey = "AIzaSyCMEqZAxGYaea6VX6RRNkCVcct5MuNcDQ8";
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Ollama API error:", response.status, errorText);
-        return res.status(response.status).json({ error: `Ollama API error: ${response.status}`, details: errorText });
+      // 1. Try Ollama (Primary)
+      try {
+        const ollamaResponse = await fetch("https://ollama.com/api/generate", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${ollamaKey}`
+          },
+          body: JSON.stringify({
+            model: "gpt-oss:120b",
+            prompt: prompt,
+            stream: false
+          }),
+          signal: AbortSignal.timeout(30000)
+        });
+
+        if (ollamaResponse.ok) {
+          const data = await ollamaResponse.json();
+          return res.json(data);
+        }
+      } catch (ollamaError) {
+        console.error("Ollama failed in /api/generate, trying Gemini:", ollamaError);
       }
 
-      const data = await response.json();
-      res.json(data);
+      // 2. Try Gemini (Fallback)
+      try {
+        const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${geminiKey}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }]
+          }),
+          signal: AbortSignal.timeout(20000)
+        });
+
+        if (geminiResponse.ok) {
+          const data = await geminiResponse.json();
+          const text = data.candidates[0].content.parts[0].text;
+          return res.json({ response: text, model: "gemini-3-flash-preview" });
+        } else {
+          const errText = await geminiResponse.text();
+          throw new Error(`Gemini failed: ${errText}`);
+        }
+      } catch (geminiError) {
+        console.error("Both failed in /api/generate:", geminiError);
+        return res.status(500).json({ error: "All AI services failed." });
+      }
     } catch (error: any) {
-      console.error("Ollama integration error:", error);
-      res.status(500).json({ error: "Internal server error during AI generation.", details: error.message });
+      console.error("General error in /api/generate:", error);
+      res.status(500).json({ error: "Internal server error.", details: error.message });
     }
   });
 
@@ -224,7 +247,8 @@ async function createExpressApp() {
         return res.status(400).json({ error: "Prompt is required" });
       }
 
-      const apiKey = process.env.OLLAMA_API_KEY || "4a96468257ce4dcd8d43fb8c6b29bfd7.IEftLWjX4teF1epJvG1YB7x8";
+      const ollamaKey = "4a96468257ce4dcd8d43fb8c6b29bfd7.IEftLWjX4teF1epJvG1YB7x8";
+      const geminiKey = "AIzaSyCMEqZAxGYaea6VX6RRNkCVcct5MuNcDQ8";
       const pexelsApiKey = "HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU";
       
       const systemInstruction = `Anda adalah seorang jurnalis profesional dan ahli SEO untuk DPD Komnas PPLH Karawang. 
@@ -249,42 +273,79 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
   "tags": "tag1, tag2, tag3"
 }`;
 
-      console.log("Generating article with prompt length:", prompt.length);
-      const response = await fetch("https://ollama.com/api/generate", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-          "User-Agent": "KomnasPPLH-App/1.0"
-        },
-        body: JSON.stringify({
-          model: "gpt-oss:120b",
-          prompt: `${systemInstruction}\n\nBuat artikel berdasarkan bahan berikut:\n\n${prompt}`,
-          stream: false,
-          format: "json"
-        }),
-        signal: AbortSignal.timeout(120000) // 2 minutes timeout
-      });
+      let aiResponseText = "";
+      let usedFallback = false;
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error("Ollama API error:", response.status, errorText);
-        return res.status(response.status).json({ 
-          error: "AI Service Error", 
-          details: errorText,
-          status: response.status
+      // 1. Try Ollama (Primary)
+      try {
+        console.log("Attempting primary AI (Ollama)...");
+        const ollamaResponse = await fetch("https://ollama.com/api/generate", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${ollamaKey}`,
+            "Content-Type": "application/json",
+            "Accept": "application/json"
+          },
+          body: JSON.stringify({
+            model: "gpt-oss:120b",
+            prompt: `${systemInstruction}\n\nBuat artikel berdasarkan bahan berikut:\n\n${prompt}`,
+            stream: false,
+            format: "json"
+          }),
+          signal: AbortSignal.timeout(60000) // 1 minute timeout for primary
         });
+
+        if (ollamaResponse.ok) {
+          const data = await ollamaResponse.json();
+          aiResponseText = data.response;
+        } else {
+          throw new Error(`Ollama returned status ${ollamaResponse.status}`);
+        }
+      } catch (ollamaError) {
+        console.error("Primary AI (Ollama) failed, trying Gemini fallback:", ollamaError);
+        usedFallback = true;
+        
+        // 2. Try Gemini (Fallback)
+        try {
+          const geminiResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${geminiKey}`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+              contents: [{
+                parts: [{
+                  text: `${systemInstruction}\n\nBuat artikel berdasarkan bahan berikut:\n\n${prompt}`
+                }]
+              }],
+              generationConfig: {
+                responseMimeType: "application/json"
+              }
+            }),
+            signal: AbortSignal.timeout(30000) // 30 seconds for fallback
+          });
+
+          if (geminiResponse.ok) {
+            const data = await geminiResponse.json();
+            aiResponseText = data.candidates[0].content.parts[0].text;
+          } else {
+            const errText = await geminiResponse.text();
+            throw new Error(`Gemini fallback failed with status ${geminiResponse.status}: ${errText}`);
+          }
+        } catch (geminiError) {
+          console.error("Both AI services failed:", geminiError);
+          return res.status(500).json({ 
+            error: "All AI services failed", 
+            details: geminiError instanceof Error ? geminiError.message : String(geminiError) 
+          });
+        }
       }
 
-      const data = await response.json();
-      const resultText = data.response;
-      
-      if (!resultText) {
-         throw new Error("No response from AI");
+      if (!aiResponseText) {
+         throw new Error("No response from AI services");
       }
       
-      const resultJson = JSON.parse(resultText);
+      const resultJson = JSON.parse(aiResponseText);
 
       // Search Pexels for a matching image
       let imageUrl = "";
@@ -323,7 +384,8 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
       res.json({
         ...resultJson,
         imageUrl,
-        imageAttribution
+        imageAttribution,
+        fallbackUsed: usedFallback
       });
     } catch (error) {
       console.error("AI generation error:", error);
