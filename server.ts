@@ -29,6 +29,11 @@ const upload = multer({ storage: multer.memoryStorage() });
 async function startServer() {
   // Initialize Cloudinary
   try {
+    // Delete CLOUDINARY_URL from env BEFORE importing to prevent the SDK from crashing on a malformed URL
+    if (process.env.CLOUDINARY_URL) {
+      delete process.env.CLOUDINARY_URL;
+    }
+
     const cloudinaryModule = await import("cloudinary");
     cloudinary = cloudinaryModule.v2;
     
@@ -67,6 +72,14 @@ async function startServer() {
   app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
   // API Routes
+  app.get("/api/cloudinary-status", (req, res) => {
+    if (cloudinary) {
+      res.json({ status: "initialized", config: cloudinary.config() });
+    } else {
+      res.status(500).json({ status: "not initialized" });
+    }
+  });
+
   app.post("/api/upload", upload.single("file"), async (req, res) => {
     try {
       if (!req.file) {
@@ -99,9 +112,9 @@ async function startServer() {
 
       const result: any = await uploadFromBuffer(req.file.buffer);
       res.json({ url: result.secure_url });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Cloudinary upload error:", error);
-      res.status(500).json({ error: error instanceof Error ? error.message : "Failed to upload image" });
+      res.status(500).json({ error: error?.message || error?.error?.message || "Failed to upload image" });
     }
   });
 
