@@ -32,15 +32,16 @@ async function startServer() {
     const cloudinaryModule = await import("cloudinary");
     cloudinary = cloudinaryModule.v2;
     
-    if (process.env.CLOUDINARY_URL) {
-      cloudinary.config(true); // Automatically uses CLOUDINARY_URL from env
-    } else {
-      cloudinary.config({ 
-        cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dnk4d52tv', 
-        api_key: process.env.CLOUDINARY_API_KEY || '359541287523991', 
-        api_secret: process.env.CLOUDINARY_API_SECRET || 'orYVrJ3rcivcYzdYbWlIvjCBb30'
-      });
-    }
+    const cloudName = process.env.CLOUDINARY_CLOUD_NAME || 'dnk4d52tv';
+    const apiKey = process.env.CLOUDINARY_API_KEY || '359541287523991';
+    const apiSecret = process.env.CLOUDINARY_API_SECRET || 'orYVrJ3rcivcYzdYbWlIvjCBb30';
+
+    cloudinary.config({ 
+      cloud_name: cloudName, 
+      api_key: apiKey, 
+      api_secret: apiSecret,
+      secure: true
+    });
   } catch (error) {
     console.error("Failed to initialize Cloudinary:", error);
   }
