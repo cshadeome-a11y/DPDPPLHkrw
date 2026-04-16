@@ -32,11 +32,15 @@ async function startServer() {
     const cloudinaryModule = await import("cloudinary");
     cloudinary = cloudinaryModule.v2;
     
-    cloudinary.config({ 
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dnk4d52tv', 
-      api_key: process.env.CLOUDINARY_API_KEY || '359541287523991', 
-      api_secret: process.env.CLOUDINARY_API_SECRET || 'orYVrJ3rcivcYzdYbWlIvjCBb30'
-    });
+    if (process.env.CLOUDINARY_URL) {
+      cloudinary.config(true); // Automatically uses CLOUDINARY_URL from env
+    } else {
+      cloudinary.config({ 
+        cloud_name: process.env.CLOUDINARY_CLOUD_NAME || 'dnk4d52tv', 
+        api_key: process.env.CLOUDINARY_API_KEY || '359541287523991', 
+        api_secret: process.env.CLOUDINARY_API_SECRET || 'orYVrJ3rcivcYzdYbWlIvjCBb30'
+      });
+    }
   } catch (error) {
     console.error("Failed to initialize Cloudinary:", error);
   }
@@ -58,8 +62,8 @@ async function startServer() {
     )
   `);
 
-  app.use(express.json());
-  app.use(express.urlencoded({ extended: true }));
+  app.use(express.json({ limit: '50mb' }));
+  app.use(express.urlencoded({ extended: true, limit: '50mb' }));
 
   // API Routes
   app.post("/api/upload", upload.single("file"), async (req, res) => {
@@ -68,22 +72,35 @@ async function startServer() {
         return res.status(400).json({ error: "No file uploaded" });
       }
 
-      // Convert buffer to base64
-      const b64 = Buffer.from(req.file.buffer).toString("base64");
-      const dataURI = "data:" + req.file.mimetype + ";base64," + b64;
-
       if (!cloudinary) {
         throw new Error("Cloudinary not initialized");
       }
-      const result = await cloudinary.uploader.upload(dataURI, {
-        folder: "komnas_pplh",
-        resource_type: "auto"
-      });
 
+      // Use upload_stream for better performance with buffers
+      const uploadFromBuffer = (fileBuffer: Buffer) => {
+        return new Promise((resolve, reject) => {
+          const stream = cloudinary.uploader.upload_stream(
+            {
+              folder: "komnas_pplh",
+              resource_type: "auto"
+            },
+            (error: any, result: any) => {
+              if (result) {
+                resolve(result);
+              } else {
+                reject(error);
+              }
+            }
+          );
+          stream.end(fileBuffer);
+        });
+      };
+
+      const result: any = await uploadFromBuffer(req.file.buffer);
       res.json({ url: result.secure_url });
     } catch (error) {
       console.error("Cloudinary upload error:", error);
-      res.status(500).json({ error: "Failed to upload image" });
+      res.status(500).json({ error: error instanceof Error ? error.message : "Failed to upload image" });
     }
   });
 
@@ -124,7 +141,7 @@ async function startServer() {
         return res.status(400).json({ error: "Prompt is required" });
       }
 
-      const apiKey = process.env.OLLAMA_API_KEY || "4a96468257ce4dcd8d43fb8c6b29bfd7.IEftLWjX4teF1epJvG1YB7x8";
+      const apiKey = process.env.OPENROUTER_API_KEY || "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";
       const pexelsApiKey = process.env.PEXELS_API_KEY || "HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU";
       
       const systemInstruction = `Anda adalah seorang jurnalis profesional dan ahli SEO untuk DPD Komnas PPLH Karawang. 
@@ -152,27 +169,33 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
       let resultJson: any;
       let resultText: string = "";
 
-      const fullPrompt = `${systemInstruction}\n\n${internetContext ? `DATA INTERNET TERBARU:\n${internetContext}\n\n` : ""}Buat artikel berdasarkan bahan berikut:\n\n${prompt}`;
+      const fullPrompt = `${internetContext ? `DATA INTERNET TERBARU:\n${internetContext}\n\n` : ""}Buat artikel berdasarkan bahan berikut:\n\n${prompt}`;
 
-      const response = await fetch("https://ollama.com/api/generate", {
+      const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${apiKey}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+          "HTTP-Referer": "https://komnaspplh.org",
+          "X-Title": "Komnas PPLH"
         },
         body: JSON.stringify({
-          model: "gpt-oss:120b",
-          prompt: fullPrompt,
-          stream: false,
-          format: "json"
+          model: "meta-llama/llama-3.3-70b-instruct",
+          messages: [
+            { role: "system", content: systemInstruction },
+            { role: "user", content: fullPrompt }
+          ],
+          response_format: { type: "json_object" }
         })
       });
 
       if (response.ok) {
         const data = await response.json();
-        resultText = data.response;
+        resultText = data.choices[0].message.content;
       } else {
-        throw new Error("Ollama API failed");
+        const errorText = await response.text();
+        console.error("OpenRouter API error:", errorText);
+        throw new Error("OpenRouter API failed");
       }
       
       if (!resultText) {
@@ -247,39 +270,45 @@ PENTING: Anda harus mengembalikan response HANYA dalam format JSON yang valid de
   app.post("/api/generate-ai-image", async (req, res) => {
     try {
       const { title, tags, aiImagePrompt } = req.body;
-      const apiKey = process.env.OLLAMA_API_KEY || "sk-ollama-komnas-pplh-2024";
+      const apiKey = process.env.OPENROUTER_API_KEY || "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";
 
       const searchQuery = aiImagePrompt || tags?.split(',')[0] || title || "environment";
       const systemInstruction = "Generate a high-quality, professional journalistic photography prompt for a news article. The image should be realistic, 8k, and suitable for a professional news website about environmental protection.";
       
-      const fullPrompt = `${systemInstruction}\n\nTopic: ${searchQuery}\n\nReturn ONLY a JSON object with a 'prompt' field containing the optimized image generation prompt.`;
+      const fullPrompt = `Topic: ${searchQuery}\n\nReturn ONLY a JSON object with a 'prompt' field containing the optimized image generation prompt.`;
 
       let optimizedPrompt = `professional journalistic photography for news article about ${searchQuery}, high quality, 8k, realistic, environmental protection theme, actual news style`;
 
       try {
-        const response = await fetch("https://ollama.com/api/generate", {
+        const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
           method: "POST",
           headers: {
             "Authorization": `Bearer ${apiKey}`,
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://komnaspplh.org",
+            "X-Title": "Komnas PPLH"
           },
           body: JSON.stringify({
-            model: "gpt-oss:120b",
-            prompt: fullPrompt,
-            stream: false,
-            format: "json"
+            model: "meta-llama/llama-3.3-70b-instruct",
+            messages: [
+              { role: "system", content: systemInstruction },
+              { role: "user", content: fullPrompt }
+            ],
+            response_format: { type: "json_object" }
           })
         });
 
         if (response.ok) {
           const data = await response.json();
-          const result = JSON.parse(data.response);
+          const result = JSON.parse(data.choices[0].message.content);
           if (result.prompt) {
             optimizedPrompt = result.prompt;
           }
+        } else {
+          console.error("OpenRouter API error:", await response.text());
         }
       } catch (err) {
-        console.error("Ollama prompt optimization failed, using default:", err);
+        console.error("OpenRouter prompt optimization failed, using default:", err);
       }
 
       if (!cloudinary) {
