@@ -39,20 +39,27 @@ export default function Home() {
     AOS.init({ duration: 800, once: true, offset: 100 });
 
     const fetchPhotos = async () => {
+      const queries = ['waste sorting', 'village environment'];
       try {
-        const queries = ['waste sorting', 'village environment'];
-        const results = await Promise.all(queries.map(q => 
-          fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(q)}&per_page=1`, {
-            headers: {
-              Authorization: 'HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU'
-            }
-          }).then(res => res.json())
-        ));
+        const photos = await Promise.all(queries.map(async (q) => {
+          try {
+            const res = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(q)}&per_page=1`, {
+              headers: {
+                Authorization: 'HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU'
+              }
+            });
+            if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+            const data = await res.json();
+            return data.photos?.[0];
+          } catch (err) {
+            console.warn(`Failed to fetch Pexels photo for "${q}":`, err);
+            return null; // Return null if one fails
+          }
+        }));
         
-        const photos = results.map(data => data.photos?.[0]);
-        setPexelsPhotos(photos);
+        setPexelsPhotos(photos.filter(p => p !== null));
       } catch (error) {
-        console.error('Error fetching Pexels photos:', error);
+        console.error('Error in Pexels photos Promise.all:', error);
       }
     };
 

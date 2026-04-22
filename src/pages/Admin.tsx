@@ -5,10 +5,80 @@ import { collection, addDoc, serverTimestamp, getDocs, doc, updateDoc, deleteDoc
 import { auth, db, handleFirestoreError, OperationType } from '../firebase';
 import { Link } from 'react-router-dom';
 import { GoogleGenAI } from "@google/genai";
+import CryptoJS from 'crypto-js';
 
 // Initialize Gemini for search functionality
 const geminiKey = process.env.GEMINI_API_KEY || "AIzaSyBU98fY8LQp4LnG7FexEiDmuK8Kr8vpdYM";
 const ai = new GoogleGenAI({ apiKey: geminiKey });
+
+const CLOUDINARY_CLOUD_NAME = 'dnk4d52tv';
+const CLOUDINARY_API_KEY = '359541287523991';
+const CLOUDINARY_API_SECRET = 'orYVrJ3rcivcYzdYbWlIvjCBb30';
+const OPENROUTER_API_KEY = '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';
+const PEXELS_API_KEY = 'HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU';
+
+const generateSHA1 = (message: string) => {
+  return CryptoJS.SHA1(message).toString(CryptoJS.enc.Hex);
+};
+
+const uploadToCloudinary = async (file: File, folder: string = 'komnas_pplh') => {
+  const timestamp = Math.round((new Date).getTime() / 1000);
+  const signatureString = `folder=${folder}&timestamp=${timestamp}${CLOUDINARY_API_SECRET}`;
+  const signature = generateSHA1(signatureString);
+
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('api_key', CLOUDINARY_API_KEY);
+  formData.append('timestamp', timestamp.toString());
+  formData.append('signature', signature);
+  formData.append('folder', folder);
+
+  const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/upload`, {
+    method: 'POST',
+    body: formData
+  });
+
+  const responseText = await response.text();
+  let data;
+  try {
+    data = JSON.parse(responseText);
+  } catch (err) {
+    console.error("Cloudinary raw response:", responseText);
+    throw new Error(`Cloudinary error: ${response.status} ${response.statusText}. Raw: ${responseText.substring(0, 50)}...`);
+  }
+
+  if (!response.ok) throw new Error(data.error?.message || 'Upload failed');
+  return data.secure_url;
+};
+
+const deleteFromCloudinary = async (imageUrl: string) => {
+  if (!imageUrl || !imageUrl.includes('cloudinary.com')) return;
+  
+  try {
+    const parts = imageUrl.split('/');
+    const filenameWithExt = parts.pop();
+    const folder = parts.pop();
+    if (!filenameWithExt || !folder) return;
+    
+    const publicId = `${folder}/${filenameWithExt.split('.')[0]}`;
+    const timestamp = Math.round((new Date).getTime() / 1000);
+    const signatureString = `public_id=${publicId}&timestamp=${timestamp}${CLOUDINARY_API_SECRET}`;
+    const signature = generateSHA1(signatureString);
+
+    const formData = new FormData();
+    formData.append('public_id', publicId);
+    formData.append('api_key', CLOUDINARY_API_KEY);
+    formData.append('timestamp', timestamp.toString());
+    formData.append('signature', signature);
+
+    await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/destroy`, {
+      method: 'POST',
+      body: formData
+    });
+  } catch (err) {
+    console.error('Failed to delete image from Cloudinary:', err);
+  }
+};
 
 const systemInstruction = `Anda adalah seorang jurnalis profesional dan ahli SEO untuk DPD Komnas PPLH Karawang. 
 Tugas Anda adalah membuat artikel lengkap berdasarkan isu atau bahan yang diberikan.
@@ -39,10 +109,15 @@ export default function Admin() {
   const [loginError, setLoginError] = useState('');
 
   // Tab state
-  const [activeTab, setActiveTab] = useState<'write' | 'manage'>('write');
+  const [activeTab, setActiveTab] = useState<'write' | 'manage' | 'gallery'>('write');
   const [articles, setArticles] = useState<any[]>([]);
   const [isLoadingArticles, setIsLoadingArticles] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
+
+  // Gallery states
+  const [galleryFolder, setGalleryFolder] = useState('khitanan brayden');
+  const [galleryPhotos, setGalleryPhotos] = useState<any[]>([]);
+  const [isLoadingGallery, setIsLoadingGallery] = useState(false);
 
   // Form states
   const [title, setTitle] = useState('');
@@ -63,6 +138,7 @@ export default function Admin() {
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [aiPrompt, setAiPrompt] = useState('');
   const [isGeneratingAi, setIsGeneratingAi] = useState(false);
+  const [isSearchingInternet, setIsSearchingInternet] = useState(false);
   const [isRegeneratingImage, setIsRegeneratingImage] = useState(false);
   const [aiImagePrompt, setAiImagePrompt] = useState('');
 
@@ -71,6 +147,33 @@ export default function Admin() {
   const [confirmConfig, setConfirmConfig] = useState<{ message: string, onConfirm: () => void } | null>(null);
 
   const showAlert = (message: string) => setAlertMessage(message);
+
+  const fetchGallery = async () => {
+    if (!galleryFolder) return;
+    setIsLoadingGallery(true);
+    try {
+      const response = await fetch(`/api/gallery/${encodeURIComponent(galleryFolder)}`);
+      if (!response.ok) throw new Error("Gagal mengambil respon dari server");
+      
+      const responseText = await response.text();
+      let data;
+      try {
+        data = JSON.parse(responseText);
+      } catch (err) {
+        throw new Error("Invalid gallery response");
+      }
+      
+      if (data.success) {
+        setGalleryPhotos(data.photos);
+      } else {
+        showAlert(data.error || "Gagal mengambil isi folder");
+      }
+    } catch (e: any) {
+      showAlert(`Gagal mengambil galeri: ${e.message}`);
+    } finally {
+      setIsLoadingGallery(false);
+    }
+  };
   const showConfirm = (message: string, onConfirm: () => void) => setConfirmConfig({ message, onConfirm });
 
   const contentImageInputRef = useRef<HTMLInputElement>(null);
@@ -92,6 +195,7 @@ export default function Admin() {
     }
 
     setIsGeneratingAi(true);
+    setIsSearchingInternet(true);
     try {
       // Step 1: Use Gemini to search for the latest news and data
       let internetContext = "";
@@ -100,7 +204,7 @@ export default function Admin() {
           model: "gemini-3-flash-preview",
           contents: [{ 
             role: "user", 
-            parts: [{ text: `Cari informasi terbaru, data, dan berita relevan terkait topik berikut untuk bahan artikel jurnalistik: "${aiPrompt}". Berikan ringkasan poin-poin penting yang aktual.` }] 
+            parts: [{ text: `Cari informasi terbaru, berita terkini, data aktual, dan fakta pendukung terkait isu berikut di Karawang atau Nasional untuk bahan artikel jurnalistik: "${aiPrompt}". Berikan ringkasan poin-poin penting yang sangat aktual.` }] 
           }],
           config: {
             tools: [{ googleSearch: {} }]
@@ -109,20 +213,30 @@ export default function Admin() {
         internetContext = searchResponse.text || "";
       } catch (searchError) {
         console.error("Gemini search error:", searchError);
-        // Continue even if search fails, but without context
+      } finally {
+        setIsSearchingInternet(false);
       }
 
-      // Step 2: Call backend to generate article using OpenRouter (with Gemini context)
-      const response = await fetch('/api/generate-article', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          prompt: aiPrompt,
-          internetContext: internetContext 
+      // Step 2: Call OpenRouter directly to generate article
+      const openRouterResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+          "Content-Type": "application/json",
+          "HTTP-Referer": "https://komnaspplh.org",
+          "X-Title": "Komnas PPLH"
+        },
+        body: JSON.stringify({
+          model: "meta-llama/llama-3.3-70b-instruct",
+          messages: [
+            { role: "system", content: systemInstruction },
+            { role: "user", content: `${internetContext ? `DATA INTERNET TERBARU:\n${internetContext}\n\n` : ""}Buat artikel berdasarkan bahan berikut:\n\n${aiPrompt}` }
+          ],
+          response_format: { type: "json_object" }
         })
       });
 
-      if (!response.ok) {
+      if (!openRouterResponse.ok) {
         console.warn('OpenRouter generation failed, trying Gemini fallback...');
         // Fallback to Gemini for article generation
         const geminiResult = await ai.models.generateContent({
@@ -148,7 +262,14 @@ export default function Admin() {
         return;
       }
 
-      const data = await response.json();
+      const openRouterText = await openRouterResponse.text();
+      let openRouterData;
+      try {
+        openRouterData = JSON.parse(openRouterText);
+      } catch (e) {
+        throw new Error("Invalid response from OpenRouter: " + openRouterText.substring(0, 50));
+      }
+      const data = JSON.parse(openRouterData.choices[0].message.content);
       
       setTitle(data.title || '');
       setContent(data.content || '');
@@ -174,22 +295,46 @@ export default function Admin() {
 
     setIsRegeneratingImage(true);
     try {
-      const response = await fetch('/api/regenerate-image', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, tags, oldImageUrl: imageUrl })
+      const searchQuery = tags?.split(',')[0] || title || "environment";
+      const pexelsResponse = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(searchQuery)}&per_page=5`, {
+        headers: { "Authorization": PEXELS_API_KEY }
       });
 
-      if (!response.ok) throw new Error('Failed to regenerate image');
+      if (!pexelsResponse.ok) throw new Error("Pexels API error");
 
-      const data = await response.json();
-      setImageUrl(data.imageUrl);
-      setImageAttribution(data.imageAttribution || '');
+      const pexelsText = await pexelsResponse.text();
+      let pexelsData;
+      try {
+        pexelsData = JSON.parse(pexelsText);
+      } catch(e) {
+        throw new Error("Invalid response from Pexels: " + pexelsText.substring(0, 50));
+      }
+      
+      if (!pexelsData.photos || pexelsData.photos.length === 0) {
+        throw new Error("No images found on Pexels");
+      }
+
+      // Pick a random one from top 5 to get variety
+      const photo = pexelsData.photos[Math.floor(Math.random() * pexelsData.photos.length)];
+      const originalUrl = photo.src.large2x || photo.src.large;
+
+      // Delete old image if exists
+      if (imageUrl && imageUrl.includes("cloudinary.com")) {
+        await deleteFromCloudinary(imageUrl);
+      }
+
+      // Upload to Cloudinary via frontend
+      const blob = await fetch(originalUrl).then(r => r.blob());
+      const file = new File([blob], 'pexels-image.jpg', { type: 'image/jpeg' });
+      const cloudinaryUrl = await uploadToCloudinary(file, 'komnas_pplh_auto');
+
+      setImageUrl(cloudinaryUrl);
+      setImageAttribution(`Photo by <a href="${photo.photographer_url}" target="_blank" rel="noopener noreferrer">${photo.photographer}</a> on <a href="${photo.url}" target="_blank" rel="noopener noreferrer">Pexels</a>`);
       
       setAlertMessage("Gambar berhasil diperbarui!");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Regenerate image error:", error);
-      setAlertMessage("Gagal memperbarui gambar.");
+      setAlertMessage(`Gagal memperbarui gambar: ${error.message}`);
     } finally {
       setIsRegeneratingImage(false);
     }
@@ -203,42 +348,66 @@ export default function Admin() {
 
     setIsGeneratingImageAi(true);
     try {
+      const searchQuery = aiImagePrompt || tags?.split(',')[0] || title || "environment";
+      const imageSystemInstruction = "Generate a high-quality, professional journalistic photography prompt for a news article. The image should be realistic, 8k, and suitable for a professional news website about environmental protection.";
+      const fullPrompt = `Topic: ${searchQuery}\n\nReturn ONLY a JSON object with a 'prompt' field containing the optimized image generation prompt.`;
+
+      let optimizedPrompt = `professional journalistic photography for news article about ${searchQuery}, high quality, 8k, realistic, environmental protection theme, actual news style`;
+
+      try {
+        const promptResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://komnaspplh.org",
+            "X-Title": "Komnas PPLH"
+          },
+          body: JSON.stringify({
+            model: "meta-llama/llama-3.3-70b-instruct",
+            messages: [
+              { role: "system", content: imageSystemInstruction },
+              { role: "user", content: fullPrompt }
+            ],
+            response_format: { type: "json_object" }
+          })
+        });
+
+        if (promptResponse.ok) {
+          const promptText = await promptResponse.text();
+          let promptData;
+          try {
+            promptData = JSON.parse(promptText);
+          } catch(e) {
+            throw new Error("Invalid response from OpenRouter");
+          }
+          const result = JSON.parse(promptData.choices[0].message.content);
+          if (result.prompt) {
+            optimizedPrompt = result.prompt;
+          }
+        }
+      } catch (err) {
+        console.error("OpenRouter prompt optimization failed, using default:", err);
+      }
+
       // Delete old image if exists
       if (imageUrl && imageUrl.includes("cloudinary.com")) {
-        try {
-          await fetch('/api/delete-image', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url: imageUrl })
-          });
-        } catch (err) {
-          console.error('Failed to delete old image before AI generation:', err);
-        }
+        await deleteFromCloudinary(imageUrl);
       }
 
-      // Call backend to generate AI image using OpenRouter-optimized prompt
-      const response = await fetch('/api/generate-ai-image', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ 
-          title, 
-          tags, 
-          aiImagePrompt 
-        })
-      });
+      // Generate image using Pollinations
+      const aiImageUrl = `https://image.pollinations.ai/prompt/${encodeURIComponent(optimizedPrompt)}?width=1024&height=1024&seed=${Math.floor(Math.random() * 1000000)}&nologo=true`;
+      
+      const imageBlob = await fetch(aiImageUrl).then(r => r.blob());
+      const imageFile = new File([imageBlob], 'ai-generated.jpg', { type: 'image/jpeg' });
+      const cloudinaryUrl = await uploadToCloudinary(imageFile, 'komnas_pplh_auto');
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to generate AI image');
-      }
-
-      const data = await response.json();
-      setImageUrl(data.url);
+      setImageUrl(cloudinaryUrl);
       setImageAttribution('Generated by AI (OpenRouter + Pollinations)');
       setAlertMessage("Gambar AI berhasil di-generate!");
-    } catch (error) {
+    } catch (error: any) {
       console.error("AI Image generation error:", error);
-      setAlertMessage(error instanceof Error ? error.message : "Gagal men-generate gambar AI.");
+      setAlertMessage(error.message || "Gagal men-generate gambar AI.");
     } finally {
       setIsGeneratingImageAi(false);
     }
@@ -349,37 +518,13 @@ export default function Admin() {
     
     try {
       const compressedFile = await compressImage(file);
-      const formData = new FormData();
-      formData.append('file', compressedFile);
 
       if (imageUrl && imageUrl.includes("cloudinary.com")) {
-        try {
-          await fetch('/api/delete-image', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url: imageUrl })
-          });
-        } catch (err) {
-          console.error('Failed to delete old image:', err);
-        }
+        await deleteFromCloudinary(imageUrl);
       }
 
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        if (response.status === 413) {
-           throw new Error('Ukuran file masih terlalu besar meskipun sudah dikompresi.');
-        }
-        const errorData = await response.json().catch(() => ({}));
-        console.error('Server upload error:', errorData);
-        throw new Error(errorData.error || 'Upload failed');
-      }
-
-      const data = await response.json();
-      setImageUrl(data.url);
+      const url = await uploadToCloudinary(compressedFile);
+      setImageUrl(url);
     } catch (error: any) {
       console.error('Error uploading image:', error);
       setAlertMessage(`Gagal mengupload gambar: ${error.message || 'Silakan coba lagi.'}`);
@@ -434,15 +579,7 @@ export default function Admin() {
         try {
           const articleToDelete = articles.find(a => a.id === id);
           if (articleToDelete?.imageUrl && articleToDelete.imageUrl.includes("cloudinary.com")) {
-            try {
-              await fetch('/api/delete-image', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ url: articleToDelete.imageUrl })
-              });
-            } catch (err) {
-              console.error('Failed to delete image:', err);
-            }
+            await deleteFromCloudinary(articleToDelete.imageUrl);
           }
           await deleteDoc(doc(db, 'news', id));
           fetchArticles();
@@ -463,26 +600,10 @@ export default function Admin() {
     
     try {
       const compressedFile = await compressImage(file);
-      const formData = new FormData();
-      formData.append('file', compressedFile);
+      const url = await uploadToCloudinary(compressedFile);
 
-      const response = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        if (response.status === 413) {
-           throw new Error('Ukuran file masih terlalu besar meskipun sudah dikompresi.');
-        }
-        const errorData = await response.json().catch(() => ({}));
-        console.error('Server upload error:', errorData);
-        throw new Error(errorData.error || 'Upload failed');
-      }
-
-      const data = await response.json();
       // Append image markdown to content
-      const imageMarkdown = `\n\n![Image](${data.url})\n\n`;
+      const imageMarkdown = `\n\n![Image](${url})\n\n`;
       setContent(prev => prev + imageMarkdown);
     } catch (error: any) {
       console.error('Error uploading content image:', error);
@@ -676,11 +797,60 @@ export default function Admin() {
           >
             Kelola Artikel
           </button>
+          <button
+            onClick={() => { setActiveTab('gallery'); fetchGallery(); }}
+            className={`py-2 px-4 border-b-2 font-medium text-sm transition-colors ${
+              activeTab === 'gallery'
+                ? 'border-primary text-primary'
+                : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+            }`}
+          >
+            Album Cloudinary
+          </button>
         </div>
       </div>
 
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
-        {activeTab === 'manage' ? (
+        {activeTab === 'gallery' ? (
+          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+            <h2 className="text-2xl font-bold font-heading mb-6">Galeri Cloudinary</h2>
+            <div className="flex gap-4 mb-6">
+              <input 
+                type="text" 
+                value={galleryFolder} 
+                onChange={(e) => setGalleryFolder(e.target.value)} 
+                placeholder="Nama Folder (contoh: khitanan brayden)" 
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-xl focus:ring-primary focus:border-primary"
+              />
+              <button 
+                onClick={fetchGallery} 
+                disabled={isLoadingGallery}
+                className="bg-primary text-white px-6 py-2 rounded-xl flex items-center gap-2 hover:bg-opacity-90"
+              >
+                {isLoadingGallery ? <i className="ph animate-spin ph-spinner"></i> : <i className="ph ph-magnifying-glass"></i>}
+                Tampilkan
+              </button>
+            </div>
+            
+            {galleryPhotos.length > 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {galleryPhotos.map((photo) => (
+                  <div key={photo.asset_id} className="relative group rounded-xl overflow-hidden shadow-sm aspect-square bg-gray-100 border border-gray-200">
+                    <img src={photo.secure_url} alt={photo.public_id} loading="lazy" className="w-full h-full object-cover" />
+                    <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                       <button onClick={() => window.open(photo.secure_url, '_blank')} className="bg-white text-gray-900 p-2 rounded-full hover:scale-110 transition"><i className="ph ph-eye"></i></button>
+                       <button onClick={() => navigator.clipboard.writeText(photo.secure_url).then(() => showAlert("URL Disalin!"))} className="bg-primary text-white p-2 rounded-full hover:scale-110 transition"><i className="ph ph-copy"></i></button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-12 text-gray-500">
+                {!isLoadingGallery && <p>Tidak ada foto ditemukan di folder "{galleryFolder}".<br/>Pastikan nama folder benar.</p>}
+              </div>
+            )}
+          </div>
+        ) : activeTab === 'manage' ? (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
             <h2 className="text-2xl font-bold font-heading mb-6">Daftar Artikel</h2>
             {isLoadingArticles ? (
@@ -1061,7 +1231,7 @@ export default function Admin() {
             </div>
             <div className="p-6 overflow-y-auto flex-1">
               <p className="text-sm text-gray-600 mb-4">
-                Masukkan isu, bahan artikel, atau poin-poin penting. AI akan menyusunnya menjadi artikel profesional yang mematuhi kaidah jurnalistik, PUEBI, dan EYD.
+                Masukkan isu, bahan artikel, atau poin-poin penting. <strong>AI akan otomatis mencari informasi terbaru di internet</strong> dan menyusunnya menjadi artikel profesional yang mematuhi kaidah jurnalistik, PUEBI, dan EYD.
               </p>
               <textarea
                 value={aiPrompt}
@@ -1083,9 +1253,12 @@ export default function Admin() {
                 className="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-6 py-2 rounded-full font-bold hover:shadow-lg transition-all disabled:opacity-70 flex items-center gap-2"
               >
                 {isGeneratingAi ? (
-                  <><i className="ph ph-spinner animate-spin"></i> Memproses...</>
+                  <>
+                    <i className="ph ph-spinner animate-spin"></i> 
+                    {isSearchingInternet ? 'Mencari Info Terbaru...' : 'Menyusun Artikel...'}
+                  </>
                 ) : (
-                  <><i className="ph-fill ph-sparkle"></i> Generate Artikel</>
+                  <><i className="ph-fill ph-sparkle"></i> Generate Artikel & Cari Info</>
                 )}
               </button>
             </div>

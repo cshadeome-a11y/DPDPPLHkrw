@@ -829,12 +829,13 @@ export default function ArticleDetail() {
               Authorization: 'HIe7SL8iHfGX7IeKM0P9n4JISw9DAW90FlZ9x5QwUOHlte4NsNbREFAU'
             }
           });
+          if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
           const data = await response.json();
           if (data && data.photos && data.photos.length > 0) {
             setPexelsPhoto(data.photos[0].src.large);
           }
         } catch (error) {
-          console.error('Error fetching Pexels photos:', error);
+          console.warn('Error fetching Pexels photo:', error);
         }
       };
       fetchPhoto();
