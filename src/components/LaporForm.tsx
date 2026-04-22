@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { db } from '../firebase';
 
 const LaporForm: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
@@ -10,42 +12,38 @@ const LaporForm: React.FC = () => {
     setIsLoading(true);
     setError(null);
 
-    const scriptURL = 'https://script.google.com/macros/s/AKfycbwrSL8hY87_uqG9S97MHHxN_41lv_78ArA7Q5xFzzFrkGCinuBAy7AkTkMZdLW9Gw7Lvw/exec';
-    const localAPI = '/api/reports';
     const formElement = e.currentTarget;
 
     try {
       const formData = new FormData(formElement);
+      const data = Object.fromEntries(formData.entries());
       
-      // 1. Send to local API (SQLite)
-      const localData = Object.fromEntries(formData.entries());
-      const localResponse = await fetch(localAPI, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(localData),
+      // 1. Send to Firebase Firestore
+      await addDoc(collection(db, 'reports'), {
+        nama: data.Nama,
+        whatsapp: data.WhatsApp,
+        lokasi: data.Lokasi,
+        deskripsi: data.Deskripsi,
+        bukti_lampiran: data['Bukti Lampiran'] || null,
+        created_at: serverTimestamp()
       });
-
-      if (!localResponse.ok) {
-        throw new Error('Gagal menyimpan ke database lokal.');
-      }
 
       // 2. Send to Google Apps Script (Optional/Backup)
-      // Konversi FormData menjadi URLSearchParams agar cocok dengan Google Apps Script
-      const data = new URLSearchParams(formData as any).toString();
-      
-      await fetch(scriptURL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: data,
-      });
+      try {
+        const scriptURL = 'https://script.google.com/macros/s/AKfycbwrSL8hY87_uqG9S97MHHxN_41lv_78ArA7Q5xFzzFrkGCinuBAy7AkTkMZdLW9Gw7Lvw/exec';
+        const urlParams = new URLSearchParams(formData as any).toString();
+        await fetch(scriptURL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: urlParams,
+        });
+      } catch (backupErr) {
+        console.warn("Backup to Google Apps Script failed, but Firestore succeeded.");
+      }
 
-      // Karena mode 'no-cors', kita tidak bisa membaca respon sukses/gagal dari server Google.
-      // Kita asumsikan berhasil jika tidak ada error network.
       setIsSuccess(true);
       formElement.reset();
       

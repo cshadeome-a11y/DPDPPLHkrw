@@ -91,5 +91,15 @@ service cloud.firestore {
       allow update: if isAdmin() && isValidNewsArticle();
       allow delete: if isAdmin();
     }
+    
+    match /reports/{reportId} {
+      // Anyone can submit a report
+      allow create: if true;
+      
+      // Only admin can read reports for privacy
+      allow read: if isAdmin();
+      
+      allow update, delete: if isAdmin();
+    }
   }
 }

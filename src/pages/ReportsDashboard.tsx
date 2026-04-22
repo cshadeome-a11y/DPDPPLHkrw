@@ -1,16 +1,18 @@
 import { useState, useEffect } from 'react';
+import { collection, query, orderBy, getDocs } from 'firebase/firestore';
+import { db } from '../firebase';
 import SEO from '../components/SEO';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 
 interface Report {
-  id: number;
+  id: string;
   nama: string;
   whatsapp: string;
   lokasi: string;
   deskripsi: string;
   bukti_lampiran: string | null;
-  created_at: string;
+  created_at: any;
 }
 
 export default function ReportsDashboard() {
@@ -26,19 +28,25 @@ export default function ReportsDashboard() {
   const fetchReports = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch('/api/reports');
-      if (!response.ok) throw new Error('Gagal mengambil data laporan.');
-      const data = await response.json();
+      const q = query(collection(db, 'reports'), orderBy('created_at', 'desc'));
+      const querySnapshot = await getDocs(q);
+      const data: Report[] = [];
+      querySnapshot.forEach((doc) => {
+        data.push({ id: doc.id, ...doc.data() } as Report);
+      });
       setReports(data);
     } catch (err) {
+      console.error(err);
       setError(err instanceof Error ? err.message : 'Terjadi kesalahan.');
     } finally {
       setIsLoading(false);
     }
   };
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+  const formatDate = (timestamp: any) => {
+    if (!timestamp) return 'Waktu tidak tersedia';
+    // Handle both Firestore Timestamp and fallback strings
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
     return new Intl.DateTimeFormat('id-ID', {
       day: 'numeric',
       month: 'long',

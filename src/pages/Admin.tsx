@@ -152,23 +152,34 @@ export default function Admin() {
     if (!galleryFolder) return;
     setIsLoadingGallery(true);
     try {
-      const response = await fetch(`/api/gallery/${encodeURIComponent(galleryFolder)}`);
-      if (!response.ok) throw new Error("Gagal mengambil respon dari server");
+      // Cloudinary allows Basic Auth directly for the Admin API or creating a Search API request
+      // WARNING: Exposing the API secret on the frontend is a security risk but matches current setup 
+      // since CLOUDINARY_API_SECRET is already used in front-end for generating signatures.
+      const authHeader = 'Basic ' + btoa(`${CLOUDINARY_API_KEY}:${CLOUDINARY_API_SECRET}`);
+      
+      const response = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/resources/image/upload?prefix=${encodeURIComponent(galleryFolder)}/&max_results=100`, {
+        headers: {
+          'Authorization': authHeader
+        }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.text();
+        console.error("Cloudinary Admin API Error:", errorData);
+        throw new Error("Gagal mengambil respon dari Cloudinary");
+      }
       
       const responseText = await response.text();
       let data;
       try {
         data = JSON.parse(responseText);
       } catch (err) {
-        throw new Error("Invalid gallery response");
+        throw new Error("Invalid gallery response dari Cloudinary");
       }
       
-      if (data.success) {
-        setGalleryPhotos(data.photos);
-      } else {
-        showAlert(data.error || "Gagal mengambil isi folder");
-      }
+      setGalleryPhotos(data.resources || []);
     } catch (e: any) {
+      console.error(e);
       showAlert(`Gagal mengambil galeri: ${e.message}`);
     } finally {
       setIsLoadingGallery(false);
