@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import SEO from '../components/SEO';
@@ -853,8 +854,35 @@ export default function ArticleDetail() {
         description={article.description}
         keywords={article.keywords}
         ogType="article"
-        ogImage={article.image}
+        ogImage={displayImage}
       />
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": article.title,
+            "image": [
+              displayImage || "https://res.cloudinary.com/dnk4d52tv/image/upload/v1775490908/h1gfsevvanvahawghy9g.png"
+            ],
+            "datePublished": new Date().toISOString(),
+            "author": [{
+                "@type": "Organization",
+                "name": "DPD KOMNAS PPLH Karawang",
+                "url": "https://komnaspplhkarawang.my.id/"
+            }],
+            "publisher": {
+              "@type": "Organization",
+              "name": "DPD KOMNAS PPLH Karawang",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://res.cloudinary.com/dnk4d52tv/image/upload/v1775491206/twapzecpeayjox9tgptp.png"
+              }
+            },
+            "description": article.description
+          })}
+        </script>
+      </Helmet>
 
       <article className="pt-24 pb-16 md:pb-24 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">

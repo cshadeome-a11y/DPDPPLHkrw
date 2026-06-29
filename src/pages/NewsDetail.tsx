@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import AOS from 'aos';
 import 'aos/dist/aos.css';
 import SEO from '../components/SEO';
@@ -110,6 +111,34 @@ Melalui pendekatan ini, Komnas PPLH berharap program MBG tidak hanya meningkatka
         ogImage={article.imageUrl}
         ogType="article"
       />
+      <Helmet>
+        <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "NewsArticle",
+            "headline": article.title,
+            "image": [
+              article.imageUrl || "https://res.cloudinary.com/dnk4d52tv/image/upload/v1775490908/h1gfsevvanvahawghy9g.png"
+            ],
+            "datePublished": article.createdAt?.toDate ? new Date(article.createdAt.toDate()).toISOString() : new Date().toISOString(),
+            "dateModified": article.createdAt?.toDate ? new Date(article.createdAt.toDate()).toISOString() : new Date().toISOString(),
+            "author": [{
+                "@type": "Organization",
+                "name": "DPD KOMNAS PPLH Karawang",
+                "url": "https://komnaspplhkarawang.my.id/"
+            }],
+            "publisher": {
+              "@type": "Organization",
+              "name": "DPD KOMNAS PPLH Karawang",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://res.cloudinary.com/dnk4d52tv/image/upload/v1775491206/twapzecpeayjox9tgptp.png"
+              }
+            },
+            "description": article.teaser
+          })}
+        </script>
+      </Helmet>
       
       <article className="py-16 md:py-24 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
