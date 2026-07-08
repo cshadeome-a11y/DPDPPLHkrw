@@ -17,7 +17,7 @@ import Admin from './pages/Admin';
 import { Helmet } from 'react-helmet-async';
 
 // SET TO TRUE TO ENABLE MAINTENANCE MODE GLOBALLY
-const MAINTENANCE_MODE = true;
+const MAINTENANCE_MODE = false;
 
 export default function App() {
   if (MAINTENANCE_MODE) {
